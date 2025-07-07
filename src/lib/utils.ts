@@ -5,12 +5,10 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny : Important fot the lib
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type WithoutChildren<T> = T extends { children?: any }
-	? Omit<T, "children">
-	: T;
+// biome-ignore lint/suspicious/noExplicitAny : Important fot the lib
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & {
 	ref?: U | null;
