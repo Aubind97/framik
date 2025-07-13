@@ -12,7 +12,7 @@ const { image }: { image: string | undefined } = $props();
     {:else}
         <img
             alt="widget renderer"
-            src={`data:image/png;base64,${image}`}
+            src={image}
             style="image-rendering: pixelated;"
         />{/if}
 </div>

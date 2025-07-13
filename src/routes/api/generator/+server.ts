@@ -1,4 +1,5 @@
 import { SCREENS } from "$lib/constants";
+import { applyFloydSteinbergDithering } from "$lib/services/image";
 import puppeteer from "puppeteer";
 import type { RequestHandler } from "./$types";
 
@@ -19,8 +20,9 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	await page.goto(widgetURL, { waitUntil: "networkidle0" });
 
-	const base64Img = await page.screenshot({ encoding: "base64", type: "webp" });
+	const base64Img = await page.screenshot({ encoding: "base64", type: "jpeg" });
+	const formattedImage = await applyFloydSteinbergDithering(base64Img);
 	await browser.close();
 
-	return new Response(base64Img);
+	return new Response(formattedImage);
 };
