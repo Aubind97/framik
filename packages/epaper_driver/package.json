@@ -11,24 +11,22 @@
     }
   },
   "scripts": {
-    "build": "npm run build:native && bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
-    "build:native": "node-gyp rebuild",
+    "build": "make clean && make && bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
+    "build:native": "make",
     "build:types": "tsc --emitDeclarationOnly",
     "dev": "bun build src/index.ts --outdir dist --target node --format esm --watch",
-    "install": "npm run build:native",
-    "clean": "node-gyp clean",
+    "install": "bun run build:native",
+    "clean": "make clean",
     "lint": "echo 'lint epaper_driver'"
   },
   "dependencies": {
-    "node-addon-api": "^7.0.0",
     "sharp": "^0.34.3"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "node-gyp": "^10.0.0"
+    "typescript": "^5.0.0"
   },
   "engines": {
-    "node": ">=14.0.0"
-  },
-  "gypfile": true
+    "node": ">=14.0.0",
+    "bun": ">=1.0.0"
+  }
 }
