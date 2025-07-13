@@ -13,6 +13,7 @@
       "name": "@framink/daemon",
       "version": "0.0.1",
       "dependencies": {
+        "@framink/epaper_driver": "workspace:*",
         "@framink/shared": "workspace:*",
         "elysia": "^1.3.5",
       },

@@ -32,6 +32,7 @@
 #define __GPIOD_
 
 #include <stdio.h>
+#include <time.h>
 #include <gpiod.h>
 
 #define GPIOD_IN  0

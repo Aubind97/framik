@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include <gpiod.h>
 
 struct gpiod_chip *gpiochip;
