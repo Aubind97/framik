@@ -7,7 +7,7 @@
 	],
 	"scripts": {
 		"build": "turbo build",
-		"dev": "turbo dev",
+		"dev": "turbo dev --ui=tui",
 		"lint": "bunx biome check --write",
 		"clean": "turbo clean"
 	},
