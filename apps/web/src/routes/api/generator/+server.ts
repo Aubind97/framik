@@ -1,6 +1,6 @@
+import puppeteer from "puppeteer";
 import { SCREENS } from "$lib/constants";
 import { applyFloydSteinbergDithering } from "$lib/services/image";
-import puppeteer from "puppeteer";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ url }) => {
