@@ -35,7 +35,7 @@ export interface ColorDistribution {
   uniqueColors: number;
 }
 
-export class EPD7in3e {
+export declare class EPD7in3e {
   readonly width: number;
   readonly height: number;
   readonly bufferSize: number;
@@ -192,4 +192,4 @@ export class EPD7in3e {
   analyzeColorDistribution(buffer: Buffer): ColorDistribution;
 }
 
-export const Colors: Colors;
+export declare const Colors: Colors;
