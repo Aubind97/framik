@@ -153,10 +153,6 @@ export interface ColorDistribution {
 export class EPaperDriver {
   private _colors: Colors | null = null;
 
-  constructor() {
-    // Colors are lazy-loaded when first accessed
-  }
-
   get width(): number {
     return lib.symbols.epd_get_width();
   }
@@ -359,7 +355,6 @@ export class EPaperDriver {
     }
 
     const displayBuffer = new Uint8Array(this.bufferSize);
-    const displayWidth = (this.width % 2 === 0) ? (this.width / 2) : (this.width / 2 + 1);
 
     for (let y = 0; y < height && y < this.height; y++) {
       for (let x = 0; x < width && x < this.width; x++) {
@@ -382,11 +377,8 @@ export class EPaperDriver {
   createBufferFromRGBAdvanced(
     rgbBuffer: Uint8Array,
     width: number,
-    height: number,
-    options?: ColorMappingOptions
+    height: number
   ): Uint8Array {
-    // For now, just use the basic implementation
-    // Advanced options can be implemented later
     return this.createBufferFromRGB(rgbBuffer, width, height);
   }
 
@@ -458,7 +450,6 @@ export class EPaperDriver {
    */
   analyzeColorDistribution(buffer: Uint8Array): ColorDistribution {
     const colorCount = new Map<number, number>();
-    const width = (this.width % 2 === 0) ? (this.width / 2) : (this.width / 2 + 1);
     let totalPixels = 0;
 
     for (let y = 0; y < this.height; y++) {
