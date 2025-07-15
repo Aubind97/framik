@@ -1,32 +1,32 @@
 {
-  "name": "@framink/epaper_driver",
-  "version": "0.0.1",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "scripts": {
-    "build": "make clean && make && bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
-    "build:native": "make",
-    "build:types": "tsc --emitDeclarationOnly",
-    "dev": "bun build src/index.ts --outdir dist --target node --format esm --watch",
-    "install": "bun run build:native",
-    "clean": "make clean",
-    "lint": "echo 'lint epaper_driver'"
-  },
-  "dependencies": {
-    "sharp": "^0.34.3"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "engines": {
-    "node": ">=14.0.0",
-    "bun": ">=1.0.0"
-  }
+	"name": "@framink/epaper_driver",
+	"version": "0.0.1",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"scripts": {
+		"build": "make clean && make && bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
+		"build:native": "make",
+		"build:types": "tsc --emitDeclarationOnly",
+		"dev": "bun build src/index.ts --outdir dist --target node --format esm --watch",
+		"install": "bun run build:native",
+		"clean": "make clean",
+		"lint": "echo 'lint epaper_driver'"
+	},
+	"dependencies": {
+		"sharp": "^0.34.3"
+	},
+	"devDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"engines": {
+		"node": ">=14.0.0",
+		"bun": ">=1.0.0"
+	}
 }

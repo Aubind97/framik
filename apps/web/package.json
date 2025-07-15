@@ -39,7 +39,6 @@
 		"@framink/shared": "workspace:*",
 		"@libsql/client": "^0.14.0",
 		"better-auth": "^1.2.12",
-		"canvas": "^3.1.2",
 		"drizzle-orm": "^0.40.0",
 		"puppeteer": "^24.12.0"
 	}

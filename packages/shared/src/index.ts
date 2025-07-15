@@ -1,7 +1,3 @@
-export const sharedFunction = () => {
-	return "Hello from shared package!";
-};
-
 export type Color = { r: number; g: number; b: number };
 
 export const COLOR_PALETTE_6 = [

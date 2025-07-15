@@ -1,4 +1,4 @@
-import { COLOR_PALETTE_6, type Color, findClosestPaletteColor } from "@framink/shared";
+import { COLOR_PALETTE_6, type Color, findClosestPaletteColor } from "../index.js";
 
 function distributeError(data: Uint8ClampedArray, x: number, y: number, width: number, height: number, errR: number, errG: number, errB: number, factor: number) {
 	if (x >= 0 && x < width && y >= 0 && y < height) {
@@ -15,16 +15,7 @@ function distributeError(data: Uint8ClampedArray, x: number, y: number, width: n
 	}
 }
 
-export const applyFloydSteinbergDithering = async (base64Image: string): Promise<string> => {
-	const { createCanvas, loadImage } = await import("canvas");
-
-	const image = await loadImage(`data:image/png;base64,${base64Image}`);
-	const canvas = createCanvas(image.width, image.height);
-	const ctx = canvas.getContext("2d");
-
-	ctx.drawImage(image, 0, 0);
-
-	const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+export const applyFloydSteinbergDithering = (imageData: { data: Uint8ClampedArray; width: number; height: number }): { data: Uint8ClampedArray; width: number; height: number } => {
 	const data = imageData.data;
 	const width = imageData.width;
 	const height = imageData.height;
@@ -61,7 +52,5 @@ export const applyFloydSteinbergDithering = async (base64Image: string): Promise
 		}
 	}
 
-	ctx.putImageData(imageData, 0, 0);
-
-	return canvas.toDataURL();
+	return imageData;
 };

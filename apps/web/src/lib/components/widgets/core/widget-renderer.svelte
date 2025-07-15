@@ -1,5 +1,17 @@
 <script lang="ts">
+import { applyFloydSteinbergDitheringBrowser } from "@framink/shared/browser";
 const { image }: { image: string | undefined } = $props();
+
+let formattedImage = $state<undefined | string>(undefined);
+
+$effect(() => {
+	if (image) {
+		applyFloydSteinbergDitheringBrowser(image).then((img) => {
+			console.log(img);
+			formattedImage = img;
+		});
+	}
+});
 </script>
 
 <div class="bg-muted rounded overflow-hidden flex items-center justify-center">
@@ -12,7 +24,7 @@ const { image }: { image: string | undefined } = $props();
     {:else}
         <img
             alt="widget renderer"
-            src={image}
+            src={formattedImage}
             style="image-rendering: pixelated;"
         />{/if}
 </div>

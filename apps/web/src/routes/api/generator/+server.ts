@@ -1,6 +1,5 @@
 import puppeteer from "puppeteer";
 import { SCREENS } from "$lib/constants";
-import { applyFloydSteinbergDithering } from "$lib/services/image";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -20,9 +19,8 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	await page.goto(widgetURL, { waitUntil: "networkidle0" });
 
-	const base64Img = await page.screenshot({ encoding: "base64", type: "jpeg" });
-	const formattedImage = await applyFloydSteinbergDithering(base64Img);
+	const base64Img = await page.screenshot({ encoding: "base64", type: "png" });
 	await browser.close();
 
-	return new Response(formattedImage);
+	return new Response(base64Img);
 };
