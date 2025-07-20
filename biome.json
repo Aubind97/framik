@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,svelte}", "!**/.svelte-kit/*"]
+		"includes": ["**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,svelte}", "!**/.svelte-kit/*", "!**/build/*", "!**/dist/*"]
 	},
 	"formatter": {
 		"enabled": true,

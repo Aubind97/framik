@@ -1,3 +1,4 @@
+import { Jimp } from "jimp";
 import { applyFloydSteinbergDithering } from "./dithering.js";
 
 export const applyFloydSteinbergDitheringNode = async (base64Image: string): Promise<string> => {
@@ -9,7 +10,14 @@ export const applyFloydSteinbergDitheringNode = async (base64Image: string): Pro
 
 	ctx.drawImage(image, 0, 0);
 
-	const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	const canvasImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	const jimpImage = await Jimp.fromBitmap(canvasImage);
+
+	jimpImage.contrast(0).brightness(1);
+
+	const imageData = new ImageData(new Uint8ClampedArray(jimpImage.bitmap.data), jimpImage.bitmap.width, jimpImage.bitmap.height);
+
+	// Reduce the color spectrum using Floyd Steinberg dithering algorithm
 	applyFloydSteinbergDithering(imageData);
 
 	ctx.putImageData(imageData, 0, 0);

@@ -1,3 +1,3 @@
-<div class="border p-4 rounded">
+<div class="border p-16 rounded h-full">
     <slot />
 </div>
