@@ -10,11 +10,14 @@
 		"test": "bun test"
 	},
 	"dependencies": {
-		"@framink/shared": "workspace:*",
+		"@elysiajs/cron": "^1.3.0",
 		"@framink/epaper_driver": "workspace:*",
+		"@framink/shared": "workspace:*",
+		"@logtape/logtape": "^1.0.4",
 		"elysia": "^1.3.5"
 	},
 	"devDependencies": {
+		"@logtape/pretty": "^1.0.4",
 		"bun-types": "latest"
 	}
 }

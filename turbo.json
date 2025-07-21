@@ -1,16 +1,20 @@
 {
-	"$schema": "https://turbo.build/schema.json",
-	"globalDependencies": [".env"],
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"outputs": ["./dist/**", "./build/**"]
-		},
-		"lint": {},
-		"dev": {
-			"cache": false,
-			"persistent": true
-		}
-	},
-	"globalPassThroughEnv": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL"]
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [".env"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["./dist/**", "./build/**"]
+    },
+    "lint": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  },
+  "globalPassThroughEnv": [
+    "DATABASE_URL",
+    "BETTER_AUTH_SECRET",
+    "BETTER_AUTH_URL"
+  ]
 }
