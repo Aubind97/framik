@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_ZC99czLCWC
 createdAt: 2025-07-21T14:45:24.974940
-updatedAt: 2025-07-21T14:48:35.411356
+updatedAt: 2025-07-21T15:09:02.365144
 workspaceId: wk_FQnZ9kZaYb
 folderId: null
 authentication: {}
@@ -14,7 +14,7 @@ headers: []
 method: POST
 name: ''
 sortPriority: -1753109089793.0
-url: ${[ DAEMON_DOMAIN ]}/push
+url: ${[ DAEMON_DOMAIN ]}/screen/push
 urlParameters:
 - enabled: true
   name: ''

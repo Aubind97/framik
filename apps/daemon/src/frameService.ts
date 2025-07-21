@@ -3,70 +3,86 @@ import { getLogger } from "@logtape/logtape";
 
 const logger = getLogger(["@framik", "screen"]);
 
-let frame: EPaperDriver | null = null;
+let _frame: EPaperDriver | null = null;
 export let updateDate: number | null = null;
 
+// To avoid screen burning, avoid updating the screen more than 15 seconds
+export const MAXIMUM_UPDATE_RATE = 15 * 1000;
+
 async function getFrame() {
+	updateDate = Date.now();
+
 	if (Bun.env.SKIP_FRAME_UPDATE === "true") {
 		logger.debug`[SKIP FRAME CALLS] The frame can only be controlled from a raspberry. If you are not in a raspberry, all calls will be skipped`;
-		return frame;
+		return _frame;
 	}
 
-	if (frame === null) {
+	if (_frame === null) {
 		logger.info`Create frame instance`;
 
 		const FrameDriver = await import("@framink/epaper_driver").then((module) => module.EPaperDriver);
-		frame = new FrameDriver();
+		_frame = new FrameDriver();
 	}
 
-	return frame;
+	return _frame;
 }
 
-export async function showImageOnFrame() {
-	updateDate = Date.now();
+export async function showImageOnFrame(frame?: EPaperDriver | null) {
+	const usedFrame = frame ?? (await getFrame());
+
+	if (!usedFrame) {
+		logger.info`No frame instance available`;
+		return;
+	}
+
+	await clearFrame(usedFrame);
+	usedFrame.show7Block();
+	await new Promise((resolve) => setTimeout(resolve, 3000));
+
+	await turnOnSleepMode(usedFrame);
 }
 
-export async function clearFrame() {
-	const frame = await getFrame();
+export async function clearFrame(frame?: EPaperDriver | null) {
+	const usedFrame = frame ?? (await getFrame());
 
-	if (!frame) {
+	if (!usedFrame) {
 		logger.info`No frame instance available`;
 		return;
 	}
 
 	const WHITE = await import("@framink/epaper_driver").then((module) => module.Colors.WHITE);
 	logger.info`Init frame`;
-	frame.init();
+	usedFrame.init();
 	logger.info`Frame initialization DONE`;
 
 	// Clear the display with white
 	logger.info`Start to clear the frame`;
-	frame.clear(WHITE);
+	usedFrame.clear(WHITE);
 	logger.info`Frame clean up DONE`;
 }
 
-export async function turnOnSleepMode() {
-	const frame = await getFrame();
+export async function turnOnSleepMode(frame?: EPaperDriver | null) {
+	const usedFrame = frame ?? (await getFrame());
 
-	if (!frame) {
+	if (!usedFrame) {
 		logger.info`No frame instance available`;
 		return;
 	}
 
-	frame.sleep();
-	frame.exit();
+	usedFrame.sleep();
+	usedFrame.exit();
 	logger.info`Frame in sleep mode`;
 }
 
 export async function refresh() {
 	logger.info`To preserve screen integrity, refresh the current image`;
 
-	await clearFrame();
-	// TO DO: Reload current image;
-	await showImageOnFrame();
-	await turnOnSleepMode();
+	const frame = await getFrame();
 
-	updateDate = Date.now();
+	await clearFrame(frame);
+	// TO DO: Reload current image;
+	await showImageOnFrame(frame);
+	await turnOnSleepMode(frame);
 
 	logger.info`Refresh DONE`;
 }

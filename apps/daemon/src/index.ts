@@ -1,8 +1,8 @@
 import { cron, Patterns } from "@elysiajs/cron";
 import { ansiColorFormatter, configure, getConsoleSink, getLogger } from "@logtape/logtape";
-import { Elysia, error } from "elysia";
+import { Elysia } from "elysia";
 import packageJSON from "../package.json";
-import { clearFrame, refresh, turnOnSleepMode, updateDate } from "./frameService";
+import { clearFrame, MAXIMUM_UPDATE_RATE, refresh, showImageOnFrame, turnOnSleepMode, updateDate } from "./frameService";
 
 await configure({
 	sinks: {
@@ -15,6 +15,26 @@ await configure({
 });
 
 const app = new Elysia()
+	.group(
+		"screen",
+		{
+			beforeHandle: ({ error }) => {
+				// Screen updates should not be too frequent, limit the screen update rate
+				if (Date.now() - (updateDate ?? 0) < MAXIMUM_UPDATE_RATE) {
+					return error("Too Many Requests");
+				}
+			},
+		},
+		(app) =>
+			app
+				.post("/push", async () => {
+					await showImageOnFrame();
+				})
+				.post("/clear", async () => {
+					await clearFrame();
+					await turnOnSleepMode();
+				}),
+	)
 	.use(
 		cron({
 			name: "heartbeat",
@@ -28,14 +48,6 @@ const app = new Elysia()
 			},
 		}),
 	)
-	.post("/push", () => {
-		getLogger(["@framik"]).fatal(`Implement frame image update`);
-		return error("Not Implemented");
-	})
-	.post("/clear", async () => {
-		await clearFrame();
-		await turnOnSleepMode();
-	})
 	.get("/status", () => ({
 		online: true,
 		version: packageJSON.version,

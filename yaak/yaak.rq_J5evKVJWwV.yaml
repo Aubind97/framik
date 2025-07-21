@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_J5evKVJWwV
 createdAt: 2025-07-21T14:44:49.795153
-updatedAt: 2025-07-21T14:47:18.306285
+updatedAt: 2025-07-21T15:11:03.400099
 workspaceId: wk_FQnZ9kZaYb
 folderId: null
 authentication: {}
@@ -14,5 +14,5 @@ headers: []
 method: POST
 name: ''
 sortPriority: -1753109089793.0
-url: ${[ DAEMON_DOMAIN ]}/clear
+url: ${[ DAEMON_DOMAIN ]}/screen/clear
 urlParameters: []
