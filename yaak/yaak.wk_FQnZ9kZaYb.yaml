@@ -1,0 +1,14 @@
+type: workspace
+model: workspace
+id: wk_FQnZ9kZaYb
+createdAt: 2025-07-21T14:44:33.917708
+updatedAt: 2025-07-21T14:44:33.917708
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: Framik
+encryptionKeyChallenge: null
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

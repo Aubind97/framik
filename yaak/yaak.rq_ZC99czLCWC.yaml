@@ -1,0 +1,22 @@
+type: http_request
+model: http_request
+id: rq_ZC99czLCWC
+createdAt: 2025-07-21T14:45:24.974940
+updatedAt: 2025-07-21T14:48:35.411356
+workspaceId: wk_FQnZ9kZaYb
+folderId: null
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: POST
+name: ''
+sortPriority: -1753109089793.0
+url: ${[ DAEMON_DOMAIN ]}/push
+urlParameters:
+- enabled: true
+  name: ''
+  value: ''
+  id: q6YDY4FUwI
