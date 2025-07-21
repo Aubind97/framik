@@ -1,6 +1,5 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [".env"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -11,10 +10,5 @@
       "cache": false,
       "persistent": true
     }
-  },
-  "globalPassThroughEnv": [
-    "DATABASE_URL",
-    "BETTER_AUTH_SECRET",
-    "BETTER_AUTH_URL"
-  ]
+  }
 }
