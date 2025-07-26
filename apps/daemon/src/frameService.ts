@@ -50,7 +50,9 @@ export async function clearFrame(frame?: EPaperDriver | null) {
 		return;
 	}
 
-	const WHITE = await import("@framink/epaper_driver").then((module) => module.Colors.WHITE);
+	const { Colors } = await import("@framink/epaper_driver");
+	const WHITE = Colors.WHITE;
+
 	logger.info`Init frame`;
 	usedFrame.init();
 	logger.info`Frame initialization DONE`;
