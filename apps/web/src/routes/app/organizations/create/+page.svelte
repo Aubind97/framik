@@ -1,9 +1,9 @@
 <script lang="ts">
 import { toast } from "svelte-sonner";
+import { goto } from "$app/navigation";
 import { createOrganization, selectActiveOrganization, useActiveOrganization } from "$lib/auth-client";
 import OrganizationCreationForm from "$lib/components/forms/organization-creation.form.svelte";
 import type { OrganizationCreationFormValue } from "$lib/components/forms/utils/schemas";
-    import { goto } from "$app/navigation";
 
 async function handleSubmit(formValue: OrganizationCreationFormValue) {
 	const { data, error } = await createOrganization({
@@ -22,7 +22,7 @@ async function handleSubmit(formValue: OrganizationCreationFormValue) {
 			label: "Switch to this organization",
 			onClick: async () => {
 				await selectActiveOrganization({ organizationId: data?.id });
-				goto('/app')
+				goto("/app");
 			},
 		},
 	});

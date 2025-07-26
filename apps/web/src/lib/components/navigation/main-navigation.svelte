@@ -1,6 +1,7 @@
 <script lang="ts">
-import { GalleryVerticalEnd, LayoutDashboard, Settings2 } from "@lucide/svelte";
+import { GalleryVerticalEnd, LayoutDashboard, Settings2, TvMinimal } from "@lucide/svelte";
 import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+import { goto } from "$app/navigation";
 import * as Collapsible from "$lib/components/ui/collapsible/index.ts";
 import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
 
@@ -12,10 +13,16 @@ const items = [
 		url: "/app",
 	},
 	{
-		title: "Widgets",
+		title: "Widgets Library",
 		isActive: false,
 		icon: GalleryVerticalEnd,
 		url: "/app/widgets",
+	},
+	{
+		title: "Frames",
+		isActive: false,
+		icon: TvMinimal,
+		url: "/app/frames",
 	},
 	{
 		title: "Settings",
@@ -23,12 +30,8 @@ const items = [
 		icon: Settings2,
 		items: [
 			{
-				title: "Frames",
-				url: "#",
-			},
-			{
-				title: "Account",
-				url: "#",
+				title: "Organization",
+				url: "/app/organizations/settings",
 			},
 		],
 	},
@@ -72,15 +75,14 @@ const items = [
               </Sidebar.MenuSub>
             </Collapsible.Content>
             {:else}
-            <Sidebar.MenuButton {...props} tooltipContent={item.title}>
-
-              {#if item.icon}
-                <item.icon />
-              {/if}
                 <a href={item.url}>
-                    <span>{item.title}</span>
+                    <Sidebar.MenuButton {...props} tooltipContent={item.title} class="cursor-pointer">
+                        {#if item.icon}
+                            <item.icon />
+                        {/if}
+                        <span>{item.title}</span>
+                    </Sidebar.MenuButton>
                 </a>
-            </Sidebar.MenuButton>
             {/if}
           </Sidebar.MenuItem>
         {/snippet}
