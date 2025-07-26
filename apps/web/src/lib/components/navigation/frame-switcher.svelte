@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getInitials } from "@framik/shared/browser";
+import { TvMinimal } from "@lucide/svelte";
 import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 import PlusIcon from "@lucide/svelte/icons/plus";
 import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
@@ -28,7 +28,7 @@ let activeFrame = $state(frames[0]);
             <div
               class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
             >
-                {getInitials(activeFrame.name)}
+                <TvMinimal class="h-4 w-4" />
             </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">
@@ -50,7 +50,7 @@ let activeFrame = $state(frames[0]);
         {#each frames as frame, index (frame.name)}
           <DropdownMenu.Item onSelect={() => (activeFrame = frame)} class="gap-2 p-2">
             <div class="flex size-6 items-center justify-center rounded-md border">
-              {getInitials(frame.name)}
+              <TvMinimal />
             </div>
             {frame.name}
           </DropdownMenu.Item>

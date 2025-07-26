@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Images, Settings2 } from "@lucide/svelte";
+import { GalleryVerticalEnd, Settings2 } from "@lucide/svelte";
 import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 import * as Collapsible from "$lib/components/ui/collapsible/index.ts";
 import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
@@ -8,7 +8,7 @@ const items = [
 	{
 		title: "Widgets",
 		isActive: false,
-		icon: Images,
+		icon: GalleryVerticalEnd,
 		url: "#",
 	},
 	{
