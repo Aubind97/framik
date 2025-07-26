@@ -32,9 +32,9 @@ const activeOrganization = $derived($organizations.data?.find((organization) => 
             </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">
-                {activeOrganization?.name}
+                {activeOrganization?.name ?? 'No organization selected'}
               </span>
-              <span class="truncate text-xs">TODO: ADD DOMAIN HERE</span>
+              <span class="truncate text-xs">Change organization</span>
             </div>
             <ChevronsUpDownIcon class="ml-auto" />
           </Sidebar.MenuButton>
@@ -46,7 +46,7 @@ const activeOrganization = $derived($organizations.data?.find((organization) => 
         side={sidebar.isMobile ? "bottom" : "right"}
         sideOffset={4}
       >
-        <DropdownMenu.Label class="text-muted-foreground text-xs">Frames</DropdownMenu.Label>
+        <DropdownMenu.Label class="text-muted-foreground text-xs">Organization</DropdownMenu.Label>
         {#each ($organizations?.data ?? []) as organization, index (organization.id)}
           <DropdownMenu.Item onSelect={() => {
             console.log('TODO: implement organization switch')
@@ -64,7 +64,7 @@ const activeOrganization = $derived($organizations.data?.find((organization) => 
           >
             <PlusIcon class="size-4" />
           </div>
-          <div class="text-muted-foreground font-medium">Add Frame</div>
+          <div class="text-muted-foreground font-medium">Create an Organization</div>
         </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
