@@ -6,10 +6,10 @@ import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 import CreditCardIcon from "@lucide/svelte/icons/credit-card";
 import LogOutIcon from "@lucide/svelte/icons/log-out";
 import SparklesIcon from "@lucide/svelte/icons/sparkles";
-import * as Avatar from "$lib/components/ui/avatar/index.js";
-import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-import { useSidebar } from "$lib/components/ui/sidebar/index.js";
+import * as Avatar from "$lib/components/ui/avatar/index.ts";
+import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
+import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
+import { useSidebar } from "$lib/components/ui/sidebar/index.ts";
 
 // TODO: get from db
 const user = { name: "Joe Doe", email: "joe@doe.fr" };

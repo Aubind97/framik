@@ -1,8 +1,8 @@
 <script lang="ts">
 import { Images, Settings2 } from "@lucide/svelte";
 import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-import * as Collapsible from "$lib/components/ui/collapsible/index.js";
-import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+import * as Collapsible from "$lib/components/ui/collapsible/index.ts";
+import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
 
 const items = [
 	{

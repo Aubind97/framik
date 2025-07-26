@@ -2,9 +2,9 @@
 import { getInitials } from "@framik/shared/browser";
 import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 import PlusIcon from "@lucide/svelte/icons/plus";
-import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-import { useSidebar } from "$lib/components/ui/sidebar/index.js";
+import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
+import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
+import { useSidebar } from "$lib/components/ui/sidebar/index.ts";
 
 const sidebar = useSidebar();
 

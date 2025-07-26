@@ -6,8 +6,8 @@ export const frame = sqliteTable("frame", {
 	organizationId: text("organization_id")
 		.notNull()
 		.references(() => organization.id),
-	name: text('name').notNull(),
-	apiUrl: text('apiUrl').notNull(),
+	name: text("name").notNull(),
+	apiUrl: text("apiUrl").notNull(),
 	createdAt: integer("created_at", { mode: "timestamp" })
 		.$defaultFn(() => /* @__PURE__ */ new Date())
 		.notNull(),
