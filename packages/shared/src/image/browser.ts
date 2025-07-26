@@ -1,6 +1,5 @@
 import { Jimp } from "jimp";
 import { applyFloydSteinbergDithering } from "./dithering";
-// import { applyFloydSteinbergDithering } from "./dithering.js";
 
 export const applyFloydSteinbergDitheringBrowser = async (base64Image: string): Promise<string> => {
 	const image = new Image();

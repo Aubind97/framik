@@ -10,12 +10,12 @@
       },
     },
     "apps/daemon": {
-      "name": "@framink/daemon",
+      "name": "@framik/daemon",
       "version": "0.0.1",
       "dependencies": {
         "@elysiajs/cron": "^1.3.0",
-        "@framink/epaper_driver": "workspace:*",
-        "@framink/shared": "workspace:*",
+        "@framik/epaper_driver": "workspace:*",
+        "@framik/shared": "workspace:*",
         "@logtape/logtape": "^1.0.4",
         "elysia": "^1.3.5",
       },
@@ -25,10 +25,10 @@
       },
     },
     "apps/web": {
-      "name": "@framink/web",
+      "name": "@framik/web",
       "version": "0.0.1",
       "dependencies": {
-        "@framink/shared": "workspace:*",
+        "@framik/shared": "workspace:*",
         "@libsql/client": "^0.14.0",
         "better-auth": "^1.2.12",
         "drizzle-orm": "^0.40.0",
@@ -36,7 +36,7 @@
       },
       "devDependencies": {
         "@internationalized/date": "^3.8.1",
-        "@lucide/svelte": "^0.525.0",
+        "@lucide/svelte": "^0.515.0",
         "@sveltejs/adapter-auto": "^6.0.0",
         "@sveltejs/kit": "^2.16.0",
         "@sveltejs/vite-plugin-svelte": "^5.0.0",
@@ -58,7 +58,7 @@
       },
     },
     "packages/epaper_driver": {
-      "name": "@framink/epaper_driver",
+      "name": "@framik/epaper_driver",
       "version": "0.0.1",
       "dependencies": {
         "sharp": "^0.34.3",
@@ -69,7 +69,7 @@
       },
     },
     "packages/shared": {
-      "name": "@framink/shared",
+      "name": "@framik/shared",
       "version": "0.0.1",
       "dependencies": {
         "canvas": "^3.1.2",
@@ -177,13 +177,13 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.10", "", {}, "sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ=="],
 
-    "@framink/daemon": ["@framink/daemon@workspace:apps/daemon"],
+    "@framik/daemon": ["@framik/daemon@workspace:apps/daemon"],
 
-    "@framink/epaper_driver": ["@framink/epaper_driver@workspace:packages/epaper_driver"],
+    "@framik/epaper_driver": ["@framik/epaper_driver@workspace:packages/epaper_driver"],
 
-    "@framink/shared": ["@framink/shared@workspace:packages/shared"],
+    "@framik/shared": ["@framik/shared@workspace:packages/shared"],
 
-    "@framink/web": ["@framink/web@workspace:apps/web"],
+    "@framik/web": ["@framik/web@workspace:apps/web"],
 
     "@hexagon/base64": ["@hexagon/base64@1.1.28", "", {}, "sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw=="],
 
@@ -329,7 +329,7 @@
 
     "@logtape/pretty": ["@logtape/pretty@1.0.4", "", { "peerDependencies": { "@logtape/logtape": "1.0.4" } }, "sha512-jdQ2rErYNalDdtVBropN2I9Fyc4hLxKgYVq5t75KIprXekueuFeOxqeROgYOdOhSpBi4knfr2XvlXBmjaVNPrA=="],
 
-    "@lucide/svelte": ["@lucide/svelte@0.525.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-dyUxkXzepagLUzL8jHQNdeH286nC66ClLACsg+Neu/bjkRJWPWMzkT+H0DKlE70QdkicGCfs1ZGmXCc351hmZA=="],
+    "@lucide/svelte": ["@lucide/svelte@0.515.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-CEAyqcZmNBfYzVgaRmK2RFJP5tnbXxekRyDk0XX/eZQRfsJmkDvmQwXNX8C869BgNeryzmrRyjHhUL6g9ZOHNA=="],
 
     "@neon-rs/load": ["@neon-rs/load@0.0.4", "", {}, "sha512-kTPhdZyTQxB+2wpiRcFWrDcejc4JI6tkPuS7UZCG4l6Zvc5kU/gGQ/ozvHTh1XR5tS+UlfAfGuPajjzQjCiHCw=="],
 

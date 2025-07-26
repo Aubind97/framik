@@ -1,26 +1,26 @@
 {
-  "name": "framik",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "bunx turbo build",
-    "dev": "bunx turbo dev --ui=tui",
-    "start:all": "bunx turbo start --ui=tui",
-    "start:daemon": "bunx turbo start --ui=tui --filter=@framik/daemon",
-    "start:web": "bunx turbo start --ui=tui --filter=@framik/web",
-    "lint": "bunx biome check --write",
-    "clean": "bunx turbo clean"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.1.1",
-    "@types/bun": "^1.2.18",
-    "turbo": "^2.5.4"
-  },
-  "packageManager": "bun@1.0.0",
-  "engines": {
-    "node": ">=18"
-  }
+	"name": "framik",
+	"private": true,
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"scripts": {
+		"build": "bunx turbo build",
+		"dev": "bunx turbo dev --ui=tui",
+		"start:all": "bunx turbo start --ui=tui",
+		"start:daemon": "bunx turbo start --ui=tui --filter=@framik/daemon",
+		"start:web": "bunx turbo start --ui=tui --filter=@framik/web",
+		"lint": "bunx biome check --write",
+		"clean": "bunx turbo clean"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.1.1",
+		"@types/bun": "^1.2.18",
+		"turbo": "^2.5.4"
+	},
+	"packageManager": "bun@1.0.0",
+	"engines": {
+		"node": ">=18"
+	}
 }

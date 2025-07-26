@@ -1,4 +1,12 @@
-import { COLOR_PALETTE_6, type Color, findClosestPaletteColor } from "../index.js";
+type Color = { r: number; g: number; b: number };
+
+const COLOR_PALETTE_6 = [
+	{ r: 255, g: 0, b: 0 }, // Red
+	{ r: 0, g: 255, b: 0 }, // Green
+	{ r: 0, g: 0, b: 255 }, // Blue
+	{ r: 0, g: 0, b: 0 }, // Black
+	{ r: 255, g: 255, b: 255 }, // White
+] satisfies Color[];
 
 function distributeError(data: Uint8ClampedArray, x: number, y: number, width: number, height: number, errR: number, errG: number, errB: number, factor: number) {
 	if (x >= 0 && x < width && y >= 0 && y < height) {
@@ -15,7 +23,7 @@ function distributeError(data: Uint8ClampedArray, x: number, y: number, width: n
 	}
 }
 
-export const applyFloydSteinbergDithering = (imageData: { data: Uint8ClampedArray; width: number; height: number }): { data: Uint8ClampedArray; width: number; height: number } => {
+export function applyFloydSteinbergDithering(imageData: { data: Uint8ClampedArray; width: number; height: number }): { data: Uint8ClampedArray; width: number; height: number } {
 	const data = imageData.data;
 	const width = imageData.width;
 	const height = imageData.height;
@@ -53,4 +61,29 @@ export const applyFloydSteinbergDithering = (imageData: { data: Uint8ClampedArra
 	}
 
 	return imageData;
-};
+}
+
+export function findClosestPaletteColor(color: Color, palette: Color[]): Color {
+	if (palette.length === 0) {
+		throw new Error("Palette is empty. Cannot determine the closest color.");
+	}
+
+	const firstColor = palette[0];
+	if (!firstColor) {
+		throw new Error("Invalid palette color.");
+	}
+
+	let closestColor = firstColor;
+	let minDistance = Number.MAX_VALUE;
+
+	for (const paletteColor of palette) {
+		const distance = Math.sqrt((color.r - paletteColor.r) ** 2 + (color.g - paletteColor.g) ** 2 + (color.b - paletteColor.b) ** 2);
+
+		if (distance < minDistance) {
+			closestColor = paletteColor;
+			minDistance = distance;
+		}
+	}
+
+	return closestColor;
+}

@@ -1,30 +1,21 @@
 <script lang="ts">
-import { ImageIcon } from "@lucide/svelte";
 import type { ComponentProps } from "svelte";
 import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+import FrameSwitcher from "./frame-switcher.svelte";
+import MainNavigation from "./main-navigation.svelte";
+import UserSwitcher from "./user-switcher.svelte";
 
 let { ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
-<Sidebar.Root collapsible="offcanvas" {...restProps}>
+<Sidebar.Root collapsible="icon" {...restProps}>
   <Sidebar.Header>
-    <Sidebar.Menu>
-      <Sidebar.MenuItem>
-        <Sidebar.MenuButton class="data-[slot=sidebar-menu-button]:!p-1.5">
-          {#snippet child({ props })}
-            <a href="##" {...props}>
-              <ImageIcon />
-              <span class="text-base font-semibold">Framik</span>
-            </a>
-          {/snippet}
-        </Sidebar.MenuButton>
-      </Sidebar.MenuItem>
-    </Sidebar.Menu>
+    <FrameSwitcher />
   </Sidebar.Header>
   <Sidebar.Content>
-    Main
+    <MainNavigation />
   </Sidebar.Content>
   <Sidebar.Footer>
-    Footer
+    <UserSwitcher />
   </Sidebar.Footer>
 </Sidebar.Root>

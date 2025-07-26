@@ -1,12 +1,3 @@
 {
-  "words": [
-    "WAVESHARE",
-    "Steinberg",
-    "framik",
-    "elysia",
-    "elysiajs",
-    "framik",
-    "logtape",
-    "epaper"
-  ]
+	"words": ["WAVESHARE", "Steinberg", "framik", "elysia", "elysiajs", "framik", "logtape", "epaper"]
 }

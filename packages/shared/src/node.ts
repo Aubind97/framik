@@ -1,2 +1,2 @@
-export { applyFloydSteinbergDithering } from "./image/dithering.js";
-export { applyFloydSteinbergDitheringNode } from "./image/node.js";
+export { applyFloydSteinbergDitheringNode } from "./image/node.ts";
+export * from "./index.ts";

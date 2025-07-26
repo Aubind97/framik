@@ -11,7 +11,7 @@ const { children } = $props();
 <SidebarProvider
   style="--sidebar-width: calc(var(--spacing) * 72); --header-height: calc(var(--spacing) * 12);"
 >
-    <Sidebar variant="inset"/>
+    <Sidebar variant="sidebar" />
     <SidebarInset>
         <HeaderNavigation />
         <div class="flex flex-1 flex-col">

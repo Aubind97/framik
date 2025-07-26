@@ -1,5 +1,5 @@
 import { Jimp } from "jimp";
-import { applyFloydSteinbergDithering } from "./dithering.js";
+import { applyFloydSteinbergDithering } from "./dithering";
 
 export const applyFloydSteinbergDitheringNode = async (base64Image: string): Promise<string> => {
 	const { createCanvas, loadImage } = await import("canvas");
