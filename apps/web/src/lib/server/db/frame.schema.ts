@@ -5,7 +5,7 @@ export const frame = sqliteTable("frame", {
 	id: text("id").primaryKey(),
 	organizationId: text("organization_id")
 		.notNull()
-		.references(() => organization.id),
+		.references(() => organization.id, { onDelete: "cascade" }),
 	name: text("name").notNull(),
 	apiUrl: text("apiUrl").notNull(),
 	createdAt: integer("created_at", { mode: "timestamp" })
