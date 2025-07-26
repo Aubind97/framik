@@ -6,10 +6,13 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev --ui=tui",
+    "build": "bunx turbo build",
+    "dev": "bunx turbo dev --ui=tui",
+    "start:all": "bunx turbo start --ui=tui",
+    "start:daemon": "bunx turbo start --ui=tui --filter=@framink/daemon",
+    "start:web": "bunx turbo start --ui=tui --filter=@framink/web",
     "lint": "bunx biome check --write",
-    "clean": "turbo clean"
+    "clean": "bunx turbo clean"
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
