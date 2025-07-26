@@ -9,9 +9,9 @@ import * as Avatar from "$lib/components/ui/avatar/index.ts";
 import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
 import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
 import { useSidebar } from "$lib/components/ui/sidebar/index.ts";
+import type { AuthUser } from "$lib/server/db/types";
 
-const session = useSession()
-const user = $derived($session.data?.user)
+const { user }: { user: AuthUser } = $props();
 
 const sidebar = useSidebar();
 
@@ -37,11 +37,11 @@ async function handleLogout() {
             {...props}
           >
             <Avatar.Root class="size-8 rounded-lg">
-              <Avatar.Fallback class="rounded-lg">{getInitials(user?.name)}</Avatar.Fallback>
+              <Avatar.Fallback class="rounded-lg">{getInitials(user.name)}</Avatar.Fallback>
             </Avatar.Root>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{user?.name}</span>
-              <span class="truncate text-xs">{user?.email}</span>
+              <span class="truncate font-medium">{user.name}</span>
+              <span class="truncate text-xs">{user.email}</span>
             </div>
             <ChevronsUpDownIcon class="ml-auto size-4" />
           </Sidebar.MenuButton>
@@ -56,11 +56,11 @@ async function handleLogout() {
         <DropdownMenu.Label class="p-0 font-normal">
           <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar.Root class="size-8 rounded-lg">
-              <Avatar.Fallback class="rounded-lg">{getInitials(user?.name)}</Avatar.Fallback>
+              <Avatar.Fallback class="rounded-lg">{getInitials(user.name)}</Avatar.Fallback>
             </Avatar.Root>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{user?.name}</span>
-              <span class="truncate text-xs">{user?.email}</span>
+              <span class="truncate font-medium">{user.name}</span>
+              <span class="truncate text-xs">{user.email}</span>
             </div>
           </div>
         </DropdownMenu.Label>

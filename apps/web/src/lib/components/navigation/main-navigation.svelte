@@ -1,15 +1,21 @@
 <script lang="ts">
-import { GalleryVerticalEnd, Settings2 } from "@lucide/svelte";
+import { GalleryVerticalEnd, LayoutDashboard, Settings2 } from "@lucide/svelte";
 import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 import * as Collapsible from "$lib/components/ui/collapsible/index.ts";
 import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
 
 const items = [
 	{
+		title: "Home",
+		isActive: false,
+		icon: LayoutDashboard,
+		url: "/app",
+	},
+	{
 		title: "Widgets",
 		isActive: false,
 		icon: GalleryVerticalEnd,
-		url: "#",
+		url: "/app/widgets",
 	},
 	{
 		title: "Settings",
@@ -67,10 +73,13 @@ const items = [
             </Collapsible.Content>
             {:else}
             <Sidebar.MenuButton {...props} tooltipContent={item.title}>
+
               {#if item.icon}
                 <item.icon />
               {/if}
-              <span>{item.title}</span>
+                <a href={item.url}>
+                    <span>{item.title}</span>
+                </a>
             </Sidebar.MenuButton>
             {/if}
           </Sidebar.MenuItem>

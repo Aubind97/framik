@@ -7,10 +7,12 @@ import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
 import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
 import { useSidebar } from "$lib/components/ui/sidebar/index.ts";
 
-const sidebar = useSidebar();
+let { activeOrganizationId }: { activeOrganizationId: string | null } = $props();
 
+const sidebar = useSidebar();
 const organizations = useListOrganizations();
-const activeOrganization = useActiveOrganization();
+
+const activeOrganization = $derived($organizations.data?.find((organization) => organization.id === activeOrganizationId));
 </script>
 
 <Sidebar.Menu>
@@ -30,7 +32,7 @@ const activeOrganization = useActiveOrganization();
             </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">
-                {$activeOrganization?.data?.name}
+                {activeOrganization?.name}
               </span>
               <span class="truncate text-xs">TODO: ADD DOMAIN HERE</span>
             </div>
