@@ -1,11 +1,10 @@
 <script lang="ts">
 import { getInitials } from "@framik/shared/browser";
-import BadgeCheckIcon from "@lucide/svelte/icons/badge-check";
-import BellIcon from "@lucide/svelte/icons/bell";
 import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
-import CreditCardIcon from "@lucide/svelte/icons/credit-card";
 import LogOutIcon from "@lucide/svelte/icons/log-out";
-import SparklesIcon from "@lucide/svelte/icons/sparkles";
+import { toast } from "svelte-sonner";
+import { goto } from "$app/navigation";
+import { signOut } from "$lib/auth-client";
 import * as Avatar from "$lib/components/ui/avatar/index.ts";
 import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
 import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
@@ -15,6 +14,16 @@ import { useSidebar } from "$lib/components/ui/sidebar/index.ts";
 const user = { name: "Joe Doe", email: "joe@doe.fr" };
 
 const sidebar = useSidebar();
+
+async function handleLogout() {
+	const { error } = await signOut();
+
+	if (error?.code) {
+		toast.error(error.code);
+	}
+
+	goto("/sign-in");
+}
 </script>
 
 <Sidebar.Menu>
@@ -56,7 +65,7 @@ const sidebar = useSidebar();
           </div>
         </DropdownMenu.Label>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item>
+        <DropdownMenu.Item onclick={handleLogout}>
           <LogOutIcon />
           Log out
         </DropdownMenu.Item>
