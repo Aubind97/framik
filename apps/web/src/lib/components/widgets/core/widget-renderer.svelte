@@ -1,5 +1,5 @@
 <script lang="ts">
-import { applyFloydSteinbergDitheringBrowser } from "@framink/shared/browser";
+import { applyFloydSteinbergDitheringBrowser } from "@framik/shared/browser";
 import { SCREENS } from "$lib/constants";
 
 const { image }: { image: string | undefined } = $props();

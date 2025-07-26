@@ -1,4 +1,4 @@
-# Framink
+# Framik
 
 ## Requirements
 

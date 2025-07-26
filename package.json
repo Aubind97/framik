@@ -1,5 +1,5 @@
 {
-  "name": "framink",
+  "name": "framik",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -9,8 +9,8 @@
     "build": "bunx turbo build",
     "dev": "bunx turbo dev --ui=tui",
     "start:all": "bunx turbo start --ui=tui",
-    "start:daemon": "bunx turbo start --ui=tui --filter=@framink/daemon",
-    "start:web": "bunx turbo start --ui=tui --filter=@framink/web",
+    "start:daemon": "bunx turbo start --ui=tui --filter=@framik/daemon",
+    "start:web": "bunx turbo start --ui=tui --filter=@framik/web",
     "lint": "bunx biome check --write",
     "clean": "bunx turbo clean"
   },

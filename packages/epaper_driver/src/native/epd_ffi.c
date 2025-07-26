@@ -1,6 +1,6 @@
 /*****************************************************************************
 * | File        :   epd_ffi.c
-* | Author      :   Framink team
+* | Author      :   Framik team
 * | Function    :   FFI-compatible interface for EPD 7in3e
 * | Info        :   Exposes C functions for Bun FFI usage
 ******************************************************************************/
@@ -17,11 +17,11 @@ int epd_init(void) {
     if (is_initialized) {
         return 0; // Already initialized
     }
-    
+
     if (DEV_Module_Init() != 0) {
         return -1; // Failed to initialize
     }
-    
+
     EPD_7IN3E_Init();
     is_initialized = 1;
     return 0;
@@ -32,7 +32,7 @@ int epd_clear(int color) {
     if (!is_initialized) {
         return -1;
     }
-    
+
     EPD_7IN3E_Clear((UBYTE)color);
     return 0;
 }
@@ -42,7 +42,7 @@ int epd_show7block(void) {
     if (!is_initialized) {
         return -1;
     }
-    
+
     EPD_7IN3E_Show7Block();
     return 0;
 }
@@ -52,7 +52,7 @@ int epd_show(void) {
     if (!is_initialized) {
         return -1;
     }
-    
+
     EPD_7IN3E_Show();
     return 0;
 }
@@ -62,16 +62,16 @@ int epd_display(unsigned char* image_buffer, int buffer_size) {
     if (!is_initialized || !image_buffer) {
         return -1;
     }
-    
+
     // Calculate expected buffer size
     int width = (EPD_7IN3E_WIDTH % 2 == 0) ? (EPD_7IN3E_WIDTH / 2) : (EPD_7IN3E_WIDTH / 2 + 1);
     int height = EPD_7IN3E_HEIGHT;
     int expected_size = width * height;
-    
+
     if (buffer_size != expected_size) {
         return -2; // Buffer size mismatch
     }
-    
+
     EPD_7IN3E_Display(image_buffer);
     return 0;
 }
@@ -81,7 +81,7 @@ int epd_sleep(void) {
     if (!is_initialized) {
         return -1;
     }
-    
+
     EPD_7IN3E_Sleep();
     return 0;
 }
@@ -91,7 +91,7 @@ int epd_exit(void) {
     if (!is_initialized) {
         return 0; // Already cleaned up
     }
-    
+
     DEV_Module_Exit();
     is_initialized = 0;
     return 0;
@@ -126,14 +126,14 @@ int epd_get_color_green(void) { return EPD_7IN3E_GREEN; }
 unsigned char* epd_create_buffer(int color) {
     int buffer_size = epd_get_buffer_size();
     unsigned char* buffer = (unsigned char*)malloc(buffer_size);
-    
+
     if (!buffer) {
         return NULL;
     }
-    
+
     unsigned char fill_value = (unsigned char)((color << 4) | color);
     memset(buffer, fill_value, buffer_size);
-    
+
     return buffer;
 }
 
@@ -149,10 +149,10 @@ int epd_set_pixel(unsigned char* buffer, int x, int y, int color) {
     if (!buffer || x < 0 || y < 0 || x >= EPD_7IN3E_WIDTH || y >= EPD_7IN3E_HEIGHT) {
         return -1;
     }
-    
+
     int width = (EPD_7IN3E_WIDTH % 2 == 0) ? (EPD_7IN3E_WIDTH / 2) : (EPD_7IN3E_WIDTH / 2 + 1);
     int byte_index = (y * width) + (x / 2);
-    
+
     if (x % 2 == 0) {
         // Left pixel (upper 4 bits)
         buffer[byte_index] = (buffer[byte_index] & 0x0F) | ((color & 0x0F) << 4);
@@ -160,7 +160,7 @@ int epd_set_pixel(unsigned char* buffer, int x, int y, int color) {
         // Right pixel (lower 4 bits)
         buffer[byte_index] = (buffer[byte_index] & 0xF0) | (color & 0x0F);
     }
-    
+
     return 0;
 }
 
@@ -169,10 +169,10 @@ int epd_get_pixel(unsigned char* buffer, int x, int y) {
     if (!buffer || x < 0 || y < 0 || x >= EPD_7IN3E_WIDTH || y >= EPD_7IN3E_HEIGHT) {
         return -1;
     }
-    
+
     int width = (EPD_7IN3E_WIDTH % 2 == 0) ? (EPD_7IN3E_WIDTH / 2) : (EPD_7IN3E_WIDTH / 2 + 1);
     int byte_index = (y * width) + (x / 2);
-    
+
     if (x % 2 == 0) {
         // Left pixel (upper 4 bits)
         return (buffer[byte_index] >> 4) & 0x0F;
@@ -186,31 +186,31 @@ int epd_get_pixel(unsigned char* buffer, int x, int y) {
 int epd_map_rgb_to_display_color(int r, int g, int b) {
     // Simple color mapping based on dominant color
     // This is a basic implementation - you may want to improve this
-    
+
     if (r < 64 && g < 64 && b < 64) {
         return EPD_7IN3E_BLACK;
     }
-    
+
     if (r > 192 && g > 192 && b > 192) {
         return EPD_7IN3E_WHITE;
     }
-    
+
     if (r > g && r > b) {
         return EPD_7IN3E_RED;
     }
-    
+
     if (g > r && g > b) {
         return EPD_7IN3E_GREEN;
     }
-    
+
     if (b > r && b > g) {
         return EPD_7IN3E_BLUE;
     }
-    
+
     if (r > 128 && g > 128 && b < 64) {
         return EPD_7IN3E_YELLOW;
     }
-    
+
     return EPD_7IN3E_WHITE; // Default fallback
 }
 

@@ -1,4 +1,4 @@
-# @framink/epaper_driver
+# @framik/epaper_driver
 
 A high-performance e-Paper display driver for the Waveshare 7.3inch e-Paper display (EPD_7in3e) using Bun's FFI system.
 
@@ -14,7 +14,7 @@ A high-performance e-Paper display driver for the Waveshare 7.3inch e-Paper disp
 ## Installation
 
 ```bash
-bun add @framink/epaper_driver
+bun add @framik/epaper_driver
 ```
 
 ### System Requirements
@@ -34,7 +34,7 @@ sudo apt-get install build-essential libgpiod-dev
 ### Build the Native Library
 
 ```bash
-cd node_modules/@framink/epaper_driver
+cd node_modules/@framik/epaper_driver
 make build-rpi     # For Raspberry Pi
 # or
 make build-jetson  # For Jetson Nano
@@ -43,28 +43,28 @@ make build-jetson  # For Jetson Nano
 ## Quick Start
 
 ```typescript
-import { EPaperDriver } from "@framink/epaper_driver";
+import { EPaperDriver } from "@framik/epaper_driver";
 
 const epd = new EPaperDriver();
 
 try {
   // Initialize the display
   epd.init();
-  
+
   // Clear with white background
   epd.clear(epd.colors.WHITE);
-  
+
   // Show 7-color test pattern
   epd.show7Block();
-  
+
   // Create custom image
   const buffer = epd.createBuffer(epd.colors.WHITE);
   epd.setPixel(buffer, 100, 100, epd.colors.RED);
   epd.display(buffer);
-  
+
   // Sleep mode
   epd.sleep();
-  
+
 } finally {
   // Always cleanup
   epd.exit();
@@ -78,7 +78,7 @@ try {
 #### Properties
 
 - `width: number` - Display width (800px)
-- `height: number` - Display height (480px)  
+- `height: number` - Display height (480px)
 - `bufferSize: number` - Required buffer size in bytes
 - `colors: Colors` - Available color constants
 - `version: string` - Driver version
@@ -121,7 +121,7 @@ try {
 ```typescript
 const colors = {
   BLACK: 0,
-  WHITE: 1, 
+  WHITE: 1,
   YELLOW: 2,
   RED: 3,
   BLUE: 5,
@@ -134,7 +134,7 @@ const colors = {
 ### Basic Usage
 
 ```typescript
-import { EPaperDriver } from "@framink/epaper_driver";
+import { EPaperDriver } from "@framik/epaper_driver";
 
 const epd = new EPaperDriver();
 
@@ -180,7 +180,7 @@ The package uses a Makefile-based build system for the native library:
 
 ```bash
 make build-rpi      # Build for Raspberry Pi
-make build-jetson   # Build for Jetson Nano  
+make build-jetson   # Build for Jetson Nano
 make debug          # Debug build
 make clean          # Clean build artifacts
 make test-build     # Test build process
@@ -221,7 +221,7 @@ sudo usermod -a -G gpio $USER
 All methods throw descriptive errors for common issues:
 
 - Initialization failures
-- Buffer size mismatches  
+- Buffer size mismatches
 - Invalid coordinates
 - Hardware communication errors
 
@@ -253,7 +253,7 @@ bun run build
 # Software tests only
 bun run examples/basic.ts
 
-# With hardware tests  
+# With hardware tests
 bun run examples/basic.ts --hardware
 ```
 

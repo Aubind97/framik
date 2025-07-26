@@ -1,6 +1,6 @@
 /*****************************************************************************
 * | File        :   epd_ffi.h
-* | Author      :   Framink team
+* | Author      :   Framik team
 * | Function    :   FFI-compatible interface for EPD 7in3e
 * | Info        :   Header file for Bun FFI usage
 ******************************************************************************/

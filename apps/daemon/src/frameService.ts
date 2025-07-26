@@ -1,4 +1,4 @@
-import type { EPaperDriver } from "@framink/epaper_driver";
+import type { EPaperDriver } from "@framik/epaper_driver";
 import { getLogger } from "@logtape/logtape";
 
 const logger = getLogger(["@framik", "screen"]);
@@ -20,7 +20,7 @@ async function getFrame() {
 	if (_frame === null) {
 		logger.info`Create frame instance`;
 
-		const FrameDriver = await import("@framink/epaper_driver").then((module) => module.EPaperDriver);
+		const FrameDriver = await import("@framik/epaper_driver").then((module) => module.EPaperDriver);
 		_frame = new FrameDriver();
 	}
 
@@ -50,7 +50,7 @@ export async function clearFrame(frame?: EPaperDriver | null) {
 		return;
 	}
 
-	const { Colors } = await import("@framink/epaper_driver");
+	const { Colors } = await import("@framik/epaper_driver");
 	const WHITE = Colors.WHITE;
 
 	logger.info`Init frame`;

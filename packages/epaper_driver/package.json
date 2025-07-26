@@ -1,5 +1,5 @@
 {
-	"name": "@framink/epaper_driver",
+	"name": "@framik/epaper_driver",
 	"version": "0.0.1",
 	"type": "module",
 	"main": "./dist/index.js",
