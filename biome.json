@@ -7,7 +7,17 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,svelte}", "!**/.svelte-kit/*", "!**/build/*", "!**/dist/*"]
+		"includes": [
+			"**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,svelte}",
+			"!**/.svelte-kit/*",
+			"!**/.turbo/*",
+			"!.turbo/*",
+			"!**/build/*",
+			"!**/dist/*",
+			"!**/node_modules/*",
+			"!node_modules/*",
+			"!yaak/*"
+		]
 	},
 	"formatter": {
 		"enabled": true,

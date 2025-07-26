@@ -2,9 +2,9 @@
 import GalleryVerticalEndIcon from "@lucide/svelte/icons/gallery-vertical-end";
 import { createForm } from "@tanstack/svelte-form";
 import type { HTMLAttributes } from "svelte/elements";
-import z from "zod";
 import { Button } from "$lib/components/ui/button/index.ts";
 import { cn, type WithElementRef } from "$lib/utils.ts";
+import { type SignUpFormValue, signUpSchema } from "./utils/schemas";
 import TextField from "./utils/text-field.svelte";
 
 let {
@@ -12,14 +12,8 @@ let {
 	class: className,
 	handleSubmit,
 	...restProps
-}: WithElementRef<HTMLAttributes<HTMLDivElement>> & { handleSubmit?: (formValue: z.infer<typeof schema>) => void } = $props();
+}: WithElementRef<HTMLAttributes<HTMLDivElement>> & { handleSubmit?: (formValue: SignUpFormValue) => Promise<void> } = $props();
 const id = $props.id();
-
-const schema = z.object({
-	email: z.email(),
-	name: z.string().nonempty(),
-	password: z.string().min(8),
-});
 
 const DEFAULT_VALUES = {
 	email: "",
@@ -29,9 +23,9 @@ const DEFAULT_VALUES = {
 
 const form = createForm(() => ({
 	defaultValues: DEFAULT_VALUES,
-	validators: { onSubmit: schema },
+	validators: { onSubmit: signUpSchema },
 	onSubmit: async ({ value }) => {
-		handleSubmit?.(value);
+		await handleSubmit?.(value);
 	},
 }));
 </script>
@@ -106,7 +100,7 @@ const form = createForm(() => ({
               {/snippet}
             </form.Field>
         </div>
-        <Button type="submit" class="w-full">Sign Up</Button>
+        <Button type="submit" class="w-full" disabled={!form.state.isValid || form.state.isSubmitting}>Sign Up</Button>
       </div>
     </div>
   </form>
