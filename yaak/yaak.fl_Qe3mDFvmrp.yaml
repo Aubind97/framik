@@ -1,0 +1,13 @@
+type: folder
+model: folder
+id: fl_Qe3mDFvmrp
+createdAt: 2025-07-26T14:08:44.722734
+updatedAt: 2025-07-26T14:08:48.926097
+workspaceId: wk_FQnZ9kZaYb
+folderId: null
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: Daemon
+sortPriority: 1000.0

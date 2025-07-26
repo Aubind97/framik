@@ -1,10 +1,10 @@
 type: http_request
 model: http_request
-id: rq_aaYkT9vJLe
-createdAt: 2025-07-21T14:45:17.190384
-updatedAt: 2025-07-26T14:09:21.869674
+id: rq_9dMZagDwy4
+createdAt: 2025-07-26T14:09:31.810100
+updatedAt: 2025-07-26T14:18:45.926065
 workspaceId: wk_FQnZ9kZaYb
-folderId: fl_Qe3mDFvmrp
+folderId: fl_eu9yMShXhc
 authentication: {}
 authenticationType: null
 body: {}
@@ -12,7 +12,7 @@ bodyType: null
 description: ''
 headers: []
 method: GET
-name: Status
-sortPriority: 2000.0
-url: ${[ DAEMON_DOMAIN ]}/status
+name: ''
+sortPriority: 0.0
+url: ${[ APP_DOMAIN ]}/api/auth
 urlParameters: []
