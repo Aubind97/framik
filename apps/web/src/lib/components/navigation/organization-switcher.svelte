@@ -1,18 +1,22 @@
 <script lang="ts">
-import { TvMinimal } from "@lucide/svelte";
+import { UsersRound } from "@lucide/svelte";
 import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 import PlusIcon from "@lucide/svelte/icons/plus";
-import { useActiveOrganization, useListOrganizations } from "$lib/auth-client";
+import { goto } from "$app/navigation";
+import { selectActiveOrganization, useActiveOrganization, useListOrganizations } from "$lib/auth-client";
 import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
 import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
 import { useSidebar } from "$lib/components/ui/sidebar/index.ts";
 
-let { activeOrganizationId }: { activeOrganizationId: string | null } = $props();
-
 const sidebar = useSidebar();
-const organizations = useListOrganizations();
+let organizations = useListOrganizations();
+let activeOrganization = useActiveOrganization();
 
-const activeOrganization = $derived($organizations.data?.find((organization) => organization.id === activeOrganizationId));
+async function selectActive(organizationId: string) {
+	if (activeOrganization.get().data?.id !== organizationId) {
+		await selectActiveOrganization({ organizationId });
+	}
+}
 </script>
 
 <Sidebar.Menu>
@@ -28,11 +32,11 @@ const activeOrganization = $derived($organizations.data?.find((organization) => 
             <div
               class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
             >
-                <TvMinimal class="h-4 w-4" />
+                <UsersRound class="h-4 w-4" />
             </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">
-                {activeOrganization?.name ?? 'No organization selected'}
+                {$activeOrganization?.data?.name ?? 'No organization selected'}
               </span>
               <span class="truncate text-xs">Change organization</span>
             </div>
@@ -48,23 +52,19 @@ const activeOrganization = $derived($organizations.data?.find((organization) => 
       >
         <DropdownMenu.Label class="text-muted-foreground text-xs">Organization</DropdownMenu.Label>
         {#each ($organizations?.data ?? []) as organization, index (organization.id)}
-          <DropdownMenu.Item onSelect={() => {
-            console.log('TODO: implement organization switch')
-          }} class="gap-2 p-2">
+          <DropdownMenu.Item onSelect={() => { selectActive(organization.id) }} class="gap-2 p-2">
             <div class="flex size-6 items-center justify-center rounded-md border">
-              <TvMinimal />
+              <UsersRound />
             </div>
             {organization.name}
           </DropdownMenu.Item>
         {/each}
         <DropdownMenu.Separator />
-        <DropdownMenu.Item class="gap-2 p-2">
-          <div
-            class="flex size-6 items-center justify-center rounded-md border bg-transparent"
-          >
-            <PlusIcon class="size-4" />
-          </div>
-          <div class="text-muted-foreground font-medium">Create an Organization</div>
+        <DropdownMenu.Item class="gap-2 p-2" onSelect={() => goto('/app/organizations/create')}>
+            <div class="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                <PlusIcon class="size-4" />
+            </div>
+            <div class="text-muted-foreground font-medium">Create an Organization</div>
         </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>

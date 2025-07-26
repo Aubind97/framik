@@ -12,3 +12,8 @@ export const signUpSchema = z.object({
 	password: z.string().min(8),
 });
 export type SignUpFormValue = z.infer<typeof signUpSchema>;
+
+export const organizationCreationSchema = z.object({
+	name: z.string().nonempty(),
+});
+export type OrganizationCreationFormValue = z.infer<typeof organizationCreationSchema>;
