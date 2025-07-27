@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.1.1",
 		"@types/bun": "^1.2.18",
-		"turbo": "^2.5.4"
+		"turbo": "^2.5.5"
 	},
 	"packageManager": "bun@1.0.0",
 	"engines": {
