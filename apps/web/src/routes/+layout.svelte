@@ -2,8 +2,8 @@
 import { QueryClientProvider } from "@tanstack/svelte-query";
 import type { LayoutProps } from "./$types";
 import "../app.css";
+import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools";
 import { Toaster } from "$lib/components/ui/sonner/index.js";
-import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 
 let { children, data }: LayoutProps = $props();
 </script>

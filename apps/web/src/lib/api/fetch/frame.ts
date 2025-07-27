@@ -7,3 +7,7 @@ export function getAllFramesQueryOptions(params: { organizationId: string }) {
 		queryFn: async () => fetch("/api/frames", { method: "GET", query: { organizationId: params.organizationId } }),
 	} satisfies FetchQueryOptions;
 }
+
+export function createFrame(body: { organizationId: string; name: string; apiUrl: string }) {
+	return fetch("/api/frames", { method: "POST", body });
+}
