@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_ZC99czLCWC
 createdAt: 2025-07-21T14:45:24.974940
-updatedAt: 2025-07-26T14:09:17.992345
+updatedAt: 2025-07-27T14:55:46.809279
 workspaceId: wk_FQnZ9kZaYb
 folderId: fl_Qe3mDFvmrp
 authentication: {}
@@ -14,7 +14,7 @@ headers: []
 method: POST
 name: Push Image
 sortPriority: 1000.0
-url: ${[ DAEMON_DOMAIN ]}/screen/push
+url: ${[ DAEMON_DOMAIN ]}/frame/push
 urlParameters:
 - enabled: true
   name: ''

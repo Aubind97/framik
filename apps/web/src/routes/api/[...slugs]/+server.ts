@@ -1,7 +1,8 @@
 import { Elysia } from "elysia";
 import { frameRoutes } from "$lib/api/routes/frame.ts";
+import { daemonRoutes } from "$lib/api/routes/daemon";
 
-const app = new Elysia({ prefix: "/api" }).use(frameRoutes);
+const app = new Elysia({ prefix: "/api" }).use(frameRoutes).use(daemonRoutes);
 
 type RequestHandler = (v: { request: Request }) => Response | Promise<Response>;
 

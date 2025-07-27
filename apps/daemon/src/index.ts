@@ -16,7 +16,7 @@ await configure({
 
 const app = new Elysia()
 	.group(
-		"screen",
+		"frame",
 		{
 			beforeHandle: ({ error }) => {
 				// Screen updates should not be too frequent, limit the screen update rate
