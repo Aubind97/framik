@@ -11,6 +11,6 @@ export const {
 	useSession,
 	organization: { create: createOrganization, setActive: selectActiveOrganization },
 } = createAuthClient({
-	baseURL: env.PUBLIC_BETTER_AUTH_URL,
+	baseURL: env.PUBLIC_DOMAIN,
 	plugins: [organizationClient()],
 });

@@ -1,11 +1,10 @@
-export async function load({ parent, fetch }) {
+import { getAllFramesQueryOptions } from "$lib/api/fetch/frame.js";
+
+export async function load({ parent }) {
 	const { queryClient, session } = await parent();
 
 	if (session.activeOrganizationId) {
 		const organizationId = session.activeOrganizationId;
-		await queryClient.prefetchQuery({
-			queryKey: ["frames", organizationId],
-			queryFn: async () => (await fetch(`/api/frames?organizationId=${organizationId}`)).json(),
-		});
+		await queryClient.prefetchQuery(getAllFramesQueryOptions({ organizationId }));
 	}
 }
