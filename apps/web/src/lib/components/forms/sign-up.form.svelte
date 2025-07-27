@@ -41,7 +41,7 @@ const form = createForm(() => ({
     <div class="flex flex-col gap-6">
       <div class="flex flex-col items-center gap-2">
         <a href="/" class="flex flex-col items-center gap-2 font-medium">
-            <img alt="Framik log" src={"logo.svg"} class="size-12" />
+            <img alt="Framik logo" src={"logo.svg"} class="size-12" />
             <span class="sr-only">Framik</span>
         </a>
         <h1 class="text-xl font-bold">Welcome to Framik</h1>

@@ -9,6 +9,7 @@ import * as Sidebar from "$lib/components/ui/sidebar";
   <div class="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
     <Sidebar.Trigger class="-ml-1" />
     <Separator orientation="vertical" class="mx-2 data-[orientation=vertical]:h-4" />
-    <h1 class="text-base font-medium">Widgets</h1>
+    <img alt="Framik logo" src={"/logo.svg"} class="size-6" />
+    <h1 class="text-base font-medium">Framik</h1>
   </div>
 </header>

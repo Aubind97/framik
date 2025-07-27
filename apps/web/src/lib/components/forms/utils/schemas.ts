@@ -17,3 +17,9 @@ export const organizationCreationSchema = z.object({
 	name: z.string().nonempty(),
 });
 export type OrganizationCreationFormValue = z.infer<typeof organizationCreationSchema>;
+
+export const frameCreationSchema = z.object({
+	name: z.string().nonempty(),
+	apiUrl: z.url().nonempty(),
+});
+export type FrameCreationFormValue = z.infer<typeof frameCreationSchema>;
