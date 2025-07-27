@@ -6,7 +6,7 @@
 		"useIgnoreFile": false
 	},
 	"files": {
-		"ignoreUnknown": false,
+		"ignoreUnknown": true,
 		"includes": [
 			"**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,svelte}",
 			"!**/.svelte-kit/*",
