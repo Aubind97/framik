@@ -1,3 +1,5 @@
+import { ansiColorFormatter, configure, getConsoleSink } from "@logtape/logtape";
+import type { ServerInit } from "@sveltejs/kit";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/environment";
 import { auth } from "$lib/auth";
@@ -20,3 +22,16 @@ export async function handle({ event, resolve }) {
 
 	return svelteKitHandler({ event, resolve, auth, building });
 }
+
+export const init: ServerInit = async () => {
+	// Configure logger
+	await configure({
+		sinks: {
+			console: getConsoleSink({ formatter: await import("@logtape/pretty").then((module) => module.prettyFormatter).catch(() => ansiColorFormatter) }),
+		},
+		loggers: [
+			{ category: ["logtape", "meta"], lowestLevel: undefined, sinks: ["console"] },
+			{ category: ["@framik"], lowestLevel: "debug", sinks: ["console"] },
+		],
+	});
+};

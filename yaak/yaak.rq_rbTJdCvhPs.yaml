@@ -1,0 +1,28 @@
+type: http_request
+model: http_request
+id: rq_rbTJdCvhPs
+createdAt: 2025-07-27T12:07:07.711777
+updatedAt: 2025-07-27T12:07:07.711778
+workspaceId: wk_FQnZ9kZaYb
+folderId: fl_eu9yMShXhc
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "name": "${[ faker.person.firstName() ]} Home",
+      "apiUrl": "${[ faker.internet.url() ]}",
+      "organizationId": "9kI2C3k5zoFYEbj4ZkZkXQxp3XYTxatz"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: GEa7um6xGP
+method: POST
+name: Create Frame
+sortPriority: 0.001
+url: ${[ APP_DOMAIN ]}/api/frames
+urlParameters: []

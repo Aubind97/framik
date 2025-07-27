@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
-import { authRoutes } from "$lib/api/routes/auth.ts";
+import { frameRoutes } from "$lib/api/routes/frame.ts";
 
-const app = new Elysia({ prefix: "/api" }).use(authRoutes);
+const app = new Elysia({ prefix: "/api" }).use(frameRoutes);
 
 type RequestHandler = (v: { request: Request }) => Response | Promise<Response>;
 

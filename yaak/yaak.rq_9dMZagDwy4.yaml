@@ -2,17 +2,26 @@ type: http_request
 model: http_request
 id: rq_9dMZagDwy4
 createdAt: 2025-07-26T14:09:31.810100
-updatedAt: 2025-07-26T14:18:45.926065
+updatedAt: 2025-07-27T12:10:33.133745
 workspaceId: wk_FQnZ9kZaYb
 folderId: fl_eu9yMShXhc
 authentication: {}
 authenticationType: null
-body: {}
+body:
+  text: ''
 bodyType: null
 description: ''
 headers: []
 method: GET
-name: ''
+name: Get Frames (of org)
 sortPriority: 0.0
-url: ${[ APP_DOMAIN ]}/api/auth
-urlParameters: []
+url: ${[ APP_DOMAIN ]}/api/frames
+urlParameters:
+- enabled: true
+  name: organizationId
+  value: 9kI2C3k5zoFYEbj4ZkZkXQxp3XYTxatz
+  id: pPaimCHwYB
+- enabled: true
+  name: ''
+  value: ''
+  id: Ic2TWW3pw3
