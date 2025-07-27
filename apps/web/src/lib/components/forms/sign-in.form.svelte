@@ -1,5 +1,4 @@
 <script lang="ts">
-import GalleryVerticalEndIcon from "@lucide/svelte/icons/gallery-vertical-end";
 import { createForm } from "@tanstack/svelte-form";
 import type { HTMLAttributes } from "svelte/elements";
 import { Button } from "$lib/components/ui/button/index.ts";
@@ -40,11 +39,9 @@ const form = createForm(() => ({
     >
     <div class="flex flex-col gap-6">
       <div class="flex flex-col items-center gap-2">
-        <a href="##" class="flex flex-col items-center gap-2 font-medium">
-          <div class="flex size-8 items-center justify-center rounded-md">
-            <GalleryVerticalEndIcon class="size-6" />
-          </div>
-          <span class="sr-only">Framik</span>
+        <a href="/" class="flex flex-col items-center gap-2 font-medium">
+            <img alt="Framik log" src={"logo.svg"} class="size-12" />
+            <span class="sr-only">Framik</span>
         </a>
         <h1 class="text-xl font-bold">Welcome to Framik</h1>
         <div class="text-center text-sm">

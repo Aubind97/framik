@@ -1,3 +1,4 @@
+![Framik logo](./apps/web/static/logo.svg)
 # Framik
 
 ## Requirements
