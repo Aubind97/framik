@@ -1,4 +1,9 @@
+import { applyFloydSteinbergDitheringNode } from "@framik/shared/node";
+import { getLogger } from "@logtape/logtape";
 import { Elysia, t } from "elysia";
+import { getWidgetScreenshot } from "$lib/utils/images";
+
+const logger = getLogger(["@framik", "api", "daemon"]);
 
 export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 	.get(
@@ -19,15 +24,31 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 	.post(
 		"/frame/push",
 		async ({ body }) => {
-			const formattedUrl = `${body.daemonUrl}/frame/push`;
+			const orientation = body.orientation;
+			const widgetURL = body.widgetURL;
 
-			await fetch(formattedUrl, { method: "POST" })
-				.then((res) => res.json())
-				.catch(() => null);
+			const base64Img = await getWidgetScreenshot({ orientation, widgetURL });
+			const preparedImage = await applyFloydSteinbergDitheringNode(base64Img);
+
+			await fetch(`${body.daemonUrl}/frame/push`, {
+				method: "POST",
+				body: JSON.stringify({ base64Img: preparedImage }),
+				headers: { "Content-Type": "application/json" },
+			})
+				.then((res) => res.text())
+				.then((res) => {
+					logger.info`Image push response: ${res}`;
+				})
+				.catch((error) => {
+					logger.error`Image push error: ${error}`;
+					return null;
+				});
 		},
 		{
 			body: t.Object({
 				daemonUrl: t.String({ format: "uri" }),
+				orientation: t.String({ default: "landscape" }),
+				widgetURL: t.String({ default: "https://github.com/Aubind97" }),
 			}),
 		},
 	)
@@ -37,8 +58,14 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 			const formattedUrl = `${body.daemonUrl}/frame/clear`;
 
 			await fetch(formattedUrl, { method: "POST" })
-				.then((res) => res.json())
-				.catch(() => null);
+				.then((res) => res.text())
+				.then((res) => {
+					logger.info`Image push response: ${res}`;
+				})
+				.catch((error) => {
+					logger.error`Image push error: ${error}`;
+					return null;
+				});
 		},
 		{
 			body: t.Object({

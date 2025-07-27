@@ -21,7 +21,7 @@ async function getFrame() {
 	return _frame;
 }
 
-export async function showImageOnFrame(frame?: EPaperDriver | null) {
+export async function showImageOnFrame(rgbBuffer: Buffer<ArrayBufferLike>, info: { width: number; height: number }, frame?: EPaperDriver | null) {
 	const usedFrame = frame ?? (await getFrame());
 
 	if (!usedFrame) {
@@ -29,9 +29,25 @@ export async function showImageOnFrame(frame?: EPaperDriver | null) {
 		return;
 	}
 
+	// Ensure frame is properly initialized before buffer operations
+	if (!usedFrame.isInitialized) {
+		logger.info`Frame not initialized, initializing now`;
+		usedFrame.init();
+	}
+
+	// Create a proper copy of the buffer to avoid memory issues
+	const rgbBufferCopy = new Uint8Array(rgbBuffer.length);
+	rgbBufferCopy.set(new Uint8Array(rgbBuffer));
+
+	const displayBuffer = usedFrame.createBufferFromRGB(rgbBufferCopy, info.width, info.height);
+
 	await clearFrame(usedFrame);
-	usedFrame.show7Block();
 	await new Promise((resolve) => setTimeout(resolve, 3000));
+
+	logger.info`Start to show the image`;
+	usedFrame.display(displayBuffer);
+	logger.info`Image displayed`;
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	await turnOnSleepMode(usedFrame);
 }
@@ -77,7 +93,7 @@ export async function refresh() {
 
 	await clearFrame(frame);
 	// TO DO: Reload current image;
-	await showImageOnFrame(frame);
+	// await showImageOnFrame(frame);
 	await turnOnSleepMode(frame);
 
 	logger.info`Refresh DONE`;

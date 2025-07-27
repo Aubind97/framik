@@ -9,6 +9,7 @@ const url = `https://picsum.photos/${SCREENS["7.3_WAVESHARE_COLORS_E"].resolutio
 
 const formattedURL = new URL("http://localhost:5173/api/generator");
 formattedURL.searchParams.append("widgetURL", url);
+formattedURL.searchParams.append("orientation", 'landscape');
 
 onMount(() => {
 	fetch(formattedURL)

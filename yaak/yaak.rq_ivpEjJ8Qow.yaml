@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_ivpEjJ8Qow
+createdAt: 2025-07-27T19:14:12.915519
+updatedAt: 2025-07-27T19:14:23.387241
+workspaceId: wk_FQnZ9kZaYb
+folderId: fl_eu9yMShXhc
+authentication: {}
+authenticationType: null
+body:
+  text: ''
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: Get generated Image
+sortPriority: 0.001
+url: ${[ APP_DOMAIN ]}/api/generator
+urlParameters:
+- enabled: true
+  name: organizationId
+  value: 9kI2C3k5zoFYEbj4ZkZkXQxp3XYTxatz
+  id: pPaimCHwYB
+- enabled: true
+  name: ''
+  value: ''
+  id: Ic2TWW3pw3

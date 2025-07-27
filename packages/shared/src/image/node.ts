@@ -1,3 +1,4 @@
+import { ImageData } from "canvas";
 import { Jimp } from "jimp";
 import { applyFloydSteinbergDithering } from "./dithering";
 
@@ -22,5 +23,5 @@ export const applyFloydSteinbergDitheringNode = async (base64Image: string): Pro
 
 	ctx.putImageData(imageData, 0, 0);
 
-	return canvas.toDataURL();
+	return canvas.toDataURL().replace("data:image/png;base64,", "");
 };

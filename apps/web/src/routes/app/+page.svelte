@@ -8,6 +8,7 @@ import { useActiveOrganization } from "$lib/auth-client";
 import { Button } from "$lib/components/ui/button";
 import FrameSelector from "$lib/components/utils/frame-selector.svelte";
 import UnsplashImageWidget from "$lib/components/widgets/unsplash-image/widget.svelte";
+import { SCREENS } from "$lib/constants";
 import type { Frame } from "$lib/server/db/types";
 
 let activeOrganization = useActiveOrganization();
@@ -32,7 +33,12 @@ function handleChange(frame: Frame | undefined) {
 async function handlePush() {
 	if (selectedFrame) {
 		isProcessing = true;
-		const { error } = await pushDaemonFrame({ daemonUrl: selectedFrame.apiUrl });
+		const { error } = await pushDaemonFrame({
+			daemonUrl: selectedFrame.apiUrl,
+			// TMP: replace with current loaded widget
+			orientation: "landscape",
+			widgetURL: `https://picsum.photos/${SCREENS["7.3_WAVESHARE_COLORS_E"].resolution.width}/${SCREENS["7.3_WAVESHARE_COLORS_E"].resolution.height}`,
+		});
 
 		if (error?.name) {
 			toast.error(error?.name);

@@ -1,6 +1,7 @@
 import { cron, Patterns } from "@elysiajs/cron";
 import { ansiColorFormatter, configure, getConsoleSink, getLogger } from "@logtape/logtape";
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
+import sharp from "sharp";
 import packageJSON from "../package.json";
 import { clearFrame, refresh, showImageOnFrame, turnOnSleepMode } from "./frameService";
 
@@ -14,13 +15,15 @@ await configure({
 	],
 });
 
+const logger = getLogger(["@framik", "api"]);
+
 let isProcessing = false;
 let updateDate: number | null = null;
 
 // To avoid screen burning, avoid updating the screen more than 15 seconds
 export const MAXIMUM_UPDATE_RATE = 15 * 1000;
 
-const app = new Elysia()
+const app = new Elysia({ serve: { idleTimeout: 30 } })
 	.group(
 		"frame",
 		{
@@ -44,9 +47,18 @@ const app = new Elysia()
 		},
 		(app) =>
 			app
-				.post("/push", async () => {
-					await showImageOnFrame();
-				})
+				.post(
+					"/push",
+					async ({ body }) => {
+						logger.info`Image received`;
+						const imageData = Buffer.from(body.base64Img, "base64");
+
+						const { data: rgbBuffer, info } = await sharp(imageData).resize(800, 480).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+
+						await showImageOnFrame(rgbBuffer, { width: info.width, height: info.height });
+					},
+					{ body: t.Object({ base64Img: t.String() }) },
+				)
 				.post("/clear", async () => {
 					await clearFrame();
 					await turnOnSleepMode();
