@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
-import { frameRoutes } from "$lib/api/routes/frame.ts";
 import { daemonRoutes } from "$lib/api/routes/daemon";
+import { frameRoutes } from "$lib/api/routes/frame.ts";
 
 const app = new Elysia({ prefix: "/api" }).use(frameRoutes).use(daemonRoutes);
 

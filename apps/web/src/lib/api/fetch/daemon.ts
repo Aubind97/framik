@@ -7,3 +7,11 @@ export function getDaemonFrameStatusQueryOptions(params: { daemonUrl: string }) 
 		queryFn: async () => fetch("/api/daemon/status", { method: "GET", query: { daemonUrl: params.daemonUrl } }),
 	} satisfies FetchQueryOptions;
 }
+
+export function pushDaemonFrame(body: { daemonUrl: string }) {
+	return fetch("/api/daemon/frame/push", { method: "POST", body });
+}
+
+export function clearDaemonFrame(body: { daemonUrl: string }) {
+	return fetch("/api/daemon/frame/clear", { method: "POST", body });
+}

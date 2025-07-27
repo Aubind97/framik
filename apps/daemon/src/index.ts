@@ -2,7 +2,7 @@ import { cron, Patterns } from "@elysiajs/cron";
 import { ansiColorFormatter, configure, getConsoleSink, getLogger } from "@logtape/logtape";
 import { Elysia } from "elysia";
 import packageJSON from "../package.json";
-import { clearFrame, MAXIMUM_UPDATE_RATE, refresh, showImageOnFrame, turnOnSleepMode, updateDate } from "./frameService";
+import { clearFrame, refresh, showImageOnFrame, turnOnSleepMode } from "./frameService";
 
 await configure({
 	sinks: {
@@ -14,15 +14,32 @@ await configure({
 	],
 });
 
+let isProcessing = false;
+let updateDate: number | null = null;
+
+// To avoid screen burning, avoid updating the screen more than 15 seconds
+export const MAXIMUM_UPDATE_RATE = 15 * 1000;
+
 const app = new Elysia()
 	.group(
 		"frame",
 		{
 			beforeHandle: ({ error }) => {
+				// If the frame is in use reject
+				if (isProcessing) {
+					return error("Conflict");
+				}
+
 				// Screen updates should not be too frequent, limit the screen update rate
 				if (Date.now() - (updateDate ?? 0) < MAXIMUM_UPDATE_RATE) {
 					return error("Too Many Requests");
 				}
+
+				isProcessing = true;
+			},
+			afterHandle: () => {
+				isProcessing = false;
+				updateDate = Date.now();
 			},
 		},
 		(app) =>

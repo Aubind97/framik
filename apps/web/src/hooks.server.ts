@@ -20,18 +20,18 @@ export async function handle({ event, resolve }) {
 		event.locals.session = null;
 	}
 
- if (event.url.pathname.startsWith('/api')) {
-    // Required for CORS to work
-    if(event.request.method === 'OPTIONS') {
-      return new Response(null, {
-        headers: {
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': '*',
-        }
-      });
-    }
-  }
+	if (event.url.pathname.startsWith("/api")) {
+		// Required for CORS to work
+		if (event.request.method === "OPTIONS") {
+			return new Response(null, {
+				headers: {
+					"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+					"Access-Control-Allow-Origin": "*",
+					"Access-Control-Allow-Headers": "*",
+				},
+			});
+		}
+	}
 
 	return svelteKitHandler({ event, resolve, auth, building });
 }

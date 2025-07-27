@@ -1,5 +1,5 @@
 <script lang="ts">
-  let {enabled}: {enabled?: boolean | undefined} = $props();
+let { enabled }: { enabled?: boolean | undefined } = $props();
 </script>
 
 <span class="relative flex size-3">

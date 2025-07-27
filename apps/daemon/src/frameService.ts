@@ -4,14 +4,8 @@ import { getLogger } from "@logtape/logtape";
 const logger = getLogger(["@framik", "screen"]);
 
 let _frame: EPaperDriver | null = null;
-export let updateDate: number | null = null;
-
-// To avoid screen burning, avoid updating the screen more than 15 seconds
-export const MAXIMUM_UPDATE_RATE = 15 * 1000;
 
 async function getFrame() {
-	updateDate = Date.now();
-
 	if (Bun.env.SKIP_FRAME_UPDATE === "true") {
 		logger.debug`[SKIP FRAME CALLS] The frame can only be controlled from a raspberry. If you are not in a raspberry, all calls will be skipped`;
 		return _frame;

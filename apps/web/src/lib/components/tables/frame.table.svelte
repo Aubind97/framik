@@ -8,7 +8,6 @@ import Pulse from "../utils/pulse.svelte";
 import SortableHeader from "./sortable-header.svelte";
 import Table from "./table.svelte";
 
-// TODO: Request the status of each frames
 let { frames = [], framesStatus }: { frames?: Frame[]; framesStatus: Record<string, { online: boolean; version?: string }> } = $props();
 
 const columns: ColumnDef<Frame>[] = $derived([
