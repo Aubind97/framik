@@ -16,7 +16,8 @@
 			"!**/dist/*",
 			"!**/node_modules/*",
 			"!node_modules/*",
-			"!yaak/*"
+			"!yaak/*",
+			"!apps/web/src/lib/components/ui/data-table/flex-render.svelte"
 		]
 	},
 	"formatter": {

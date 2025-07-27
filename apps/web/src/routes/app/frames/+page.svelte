@@ -3,6 +3,7 @@ import { Plus } from "@lucide/svelte";
 import { createQuery } from "@tanstack/svelte-query";
 import { getAllFramesQueryOptions } from "$lib/api/fetch/frame";
 import { useActiveOrganization } from "$lib/auth-client";
+import FrameTable from "$lib/components/tables/frame.table.svelte";
 import Button from "$lib/components/ui/button/button.svelte";
 
 let activeOrganization = useActiveOrganization();
@@ -27,9 +28,5 @@ const query = $derived(
         Create a frame</Button>
     </header>
 
-    <ul>
-        {#each ($query?.data?.data ?? []) as frame}
-            <li>{frame.name}</li>
-        {/each}
-    </ul>
+    <FrameTable frames={$query?.data?.data ?? undefined} />
 </div>
