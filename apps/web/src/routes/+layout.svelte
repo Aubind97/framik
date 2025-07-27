@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/svelte-query";
 import type { LayoutProps } from "./$types";
 import "../app.css";
 import { Toaster } from "$lib/components/ui/sonner/index.js";
+import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 
 let { children, data }: LayoutProps = $props();
 </script>
@@ -10,4 +11,5 @@ let { children, data }: LayoutProps = $props();
 <QueryClientProvider client={data.queryClient}>
     <Toaster richColors closeButton />
     {@render children?.()}
+    <SvelteQueryDevtools />
 </QueryClientProvider>
