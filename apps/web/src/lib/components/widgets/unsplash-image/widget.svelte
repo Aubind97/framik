@@ -7,12 +7,9 @@ let image = $state<string | undefined>(undefined);
 
 const url = `https://picsum.photos/${SCREENS["7.3_WAVESHARE_COLORS_E"].resolution.width}/${SCREENS["7.3_WAVESHARE_COLORS_E"].resolution.height}`;
 
-const formattedURL = new URL("http://localhost:5173/api/generator");
-formattedURL.searchParams.append("widgetURL", url);
-formattedURL.searchParams.append("orientation", 'landscape');
-
 onMount(() => {
-	fetch(formattedURL)
+    // TODO: use internal fetch
+	fetch(`api/generator?widgetURL=${url}&orientation=${"landscape"}`)
 		.then((res) => res.text())
 		.then((res) => {
 			image = res;

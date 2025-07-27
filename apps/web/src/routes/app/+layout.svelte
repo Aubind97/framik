@@ -31,7 +31,7 @@ onMount(() => {
     <SidebarInset>
         <HeaderNavigation />
         <div class="flex flex-1 flex-col">
-            <div class="@container/main flex flex-1 flex-col gap-2 p-8">
+            <div class="@container/main flex flex-1 flex-col gap-2 p-4 lg:p-8">
                 {@render children()}
             </div>
         </div>

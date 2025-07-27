@@ -97,7 +97,7 @@ const form = createForm(() => ({
               {/snippet}
             </form.Field>
         </div>
-        <Button type="submit" class="w-full" disabled={!form.state.isValid || form.state.isSubmitting}>Sign Up</Button>
+        <Button type="submit" class="w-full" disabled={!form.state.isValid || form.state.isSubmitting} onclick={() => {form.handleSubmit()}}>Sign Up</Button>
       </div>
     </div>
   </form>

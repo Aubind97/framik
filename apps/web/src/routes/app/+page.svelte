@@ -79,7 +79,7 @@ async function handleClear() {
         </Button>
     </header>
     <div class="flex-1 flex flex-col items-center justify-center">
-        <div class="w-2/3">
+        <div class="w-full lg:w-2/3">
             <UnsplashImageWidget />
         </div>
     </div>

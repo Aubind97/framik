@@ -81,7 +81,7 @@ const form = createForm(() => ({
               {/snippet}
             </form.Field>
         </div>
-        <Button type="submit" class="w-full">Login</Button>
+        <Button type="submit" class="w-full" onclick={() => {form.handleSubmit()}}>Login</Button>
       </div>
     </div>
   </form>
