@@ -8,7 +8,10 @@ import Pulse from "../utils/pulse.svelte";
 import SortableHeader from "./sortable-header.svelte";
 import Table from "./table.svelte";
 
-const columns: ColumnDef<Frame>[] = [
+// TODO: Request the status of each frames
+let { frames = [], framesStatus }: { frames?: Frame[]; framesStatus: Record<string, { online: boolean; version?: string }> } = $props();
+
+const columns: ColumnDef<Frame>[] = $derived([
 	{
 		accessorKey: "name",
 		header: ({ column }) =>
@@ -28,19 +31,27 @@ const columns: ColumnDef<Frame>[] = [
 	{
 		accessorKey: "id",
 		id: "version",
-		header: "Version",
-		cell: ({ cell }) => renderComponent(Badge, { variant: "secondary", children: createRawSnippet(() => ({ render: () => framesStatus[cell.row.original.id]?.version ?? "-" })) }),
+		header: ({ column }) =>
+			renderComponent(SortableHeader, {
+				name: "Version",
+				onclick: column.getToggleSortingHandler(),
+			}),
+		cell: ({ cell }) => {
+			const version = framesStatus[cell.row.original.id]?.version;
+			return renderComponent(Badge, { variant: "secondary", children: createRawSnippet(() => ({ render: () => version ?? "-" })) });
+		},
 	},
 	{
 		accessorKey: "id",
 		id: "status",
-		header: "Status",
+		header: ({ column }) =>
+			renderComponent(SortableHeader, {
+				name: "Status",
+				onclick: column.getToggleSortingHandler(),
+			}),
 		cell: ({ cell }) => renderComponent(Pulse, { enabled: framesStatus[cell.row.original.id]?.online }),
 	},
-];
-
-// TODO: Request the status of each frames
-let { frames = [], framesStatus }: { frames?: Frame[]; framesStatus: Record<string, { online: boolean; version?: string }> } = $props();
+]);
 </script>
 
 <Table data={frames} {columns} />
