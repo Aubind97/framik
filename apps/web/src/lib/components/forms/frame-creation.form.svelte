@@ -45,7 +45,7 @@ const form = createForm(() => ({
                 <TextField
                     name={field.name}
                     type="text"
-                    label="Organization name"
+                    label="Frame name"
                     placeholder="Enter a name..."
                     value={field.state.value}
                     handleBlur={field.handleBlur}
