@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { getLogger } from "@logtape/logtape";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { db } from "$lib/server/db";
 import { frame } from "$lib/server/db/frame.schema";
@@ -11,7 +11,7 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 	.get(
 		"",
 		({ query }) => {
-			return db.select().from(frame).where(eq(frame.organizationId, query.organizationId));
+			return db.select().from(frame).where(eq(frame.organizationId, query.organizationId)).orderBy(desc(frame.updatedAt));
 		},
 		{
 			query: t.Object({
