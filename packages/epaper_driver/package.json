@@ -13,7 +13,8 @@
 	"scripts": {
 		"build": "make clean && make && bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
 		"build:native": "make",
-		"build:types": "tsc --emitDeclarationOnly",
+		"tsgo": "tsgo",
+		"build:types": "tsgo --emitDeclarationOnly",
 		"dev": "bun build src/index.ts --outdir dist --target node --format esm --watch",
 		"install": "bun run build:native",
 		"clean": "make clean",
@@ -24,6 +25,7 @@
 	},
 	"devDependencies": {
 		"typescript": "^5.0.0",
+		"@typescript/native-preview": "^7.0.0-dev.20250727.1",
 		"bun-types": "latest"
 	},
 	"engines": {
