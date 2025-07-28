@@ -4,6 +4,8 @@ import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 import * as Collapsible from "$lib/components/ui/collapsible/index.ts";
 import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
 
+const sidebar = Sidebar.useSidebar();
+
 const items = [
 	{
 		title: "Home",
@@ -64,7 +66,7 @@ const items = [
                   <Sidebar.MenuSubItem>
                     <Sidebar.MenuSubButton>
                       {#snippet child({ props })}
-                        <a href={subItem.url} {...props}>
+                        <a href={subItem.url} {...props} onclick={() => sidebar.isMobile && sidebar.toggle()}>
                           <span>{subItem.title}</span>
                         </a>
                       {/snippet}
@@ -74,7 +76,7 @@ const items = [
               </Sidebar.MenuSub>
             </Collapsible.Content>
             {:else}
-                <a href={item.url}>
+                <a href={item.url} onclick={() => sidebar.isMobile && sidebar.toggle()}>
                     <Sidebar.MenuButton {...props} tooltipContent={item.title} class="cursor-pointer">
                         {#if item.icon}
                             <item.icon />

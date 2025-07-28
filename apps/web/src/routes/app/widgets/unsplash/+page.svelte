@@ -13,7 +13,7 @@ async function handleImageLoad(image: string) {
 </script>
 
 <div class="h-full flex flex-col gap-4">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col lg:flex-row gap-4 justify-between items-center">
         <div class="flex items-center gap-4">
             <img alt="{WIDGET.name} Logo" src={WIDGET.logo} class="size-8"/>
             <div>
