@@ -13,14 +13,21 @@
 		}
 	},
 	"scripts": {
-		"build": "bun build src/browser.ts --outdir dist --target browser --format esm && bun build src/node.ts --outdir dist --target node --format esm --external canvas && bun run build:types",
+		"build": "bun build src/browser.ts --outdir dist --target browser --format esm && bun build src/node.ts --outdir dist --target node --format esm --external sharp && bun run build:types",
 		"tsgo": "tsgo",
 		"build:types": "tsgo --emitDeclarationOnly",
-		"dev": "bun build src/browser.ts --outdir dist --target browser --format esm --watch & bun build src/node.ts --outdir dist --target node --format esm --external canvas --watch"
+		"dev": "bun build src/browser.ts --outdir dist --target browser --format esm --watch & bun build src/node.ts --outdir dist --target node --format esm --external sharp --watch"
 	},
 	"dependencies": {
-		"canvas": "^3.1.2",
-		"jimp": "^1.6.0"
+		"sharp": "^0.33.0"
+	},
+	"peerDependencies": {
+		"sharp": "^0.33.0"
+	},
+	"peerDependenciesMeta": {
+		"sharp": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"@typescript/native-preview": "^7.0.0-dev.20250727.1",
