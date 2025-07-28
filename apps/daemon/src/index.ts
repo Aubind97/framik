@@ -40,7 +40,7 @@ const app = new Elysia({ serve: { idleTimeout: 30 } })
 
 				isProcessing = true;
 			},
-			afterHandle: () => {
+			afterResponse: () => {
 				isProcessing = false;
 				updateDate = Date.now();
 			},
