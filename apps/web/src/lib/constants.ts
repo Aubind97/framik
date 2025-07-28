@@ -23,7 +23,7 @@ export const WIDGETS = {
 		description: "Get random images from your personal Immich gallery",
 	},
 	image_upload: {
-		disabled: true,
+		disabled: false,
 		name: "Image upload",
 		logoLight: undefined,
 		logoDark: undefined,

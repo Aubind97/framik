@@ -55,6 +55,7 @@
 		"@tanstack/svelte-query-devtools": "^5.83.0",
 		"better-auth": "^1.3.4",
 		"drizzle-orm": "^0.40.0",
+		"jimp": "^1.6.0",
 		"puppeteer": "^24.12.0",
 		"zod": "^4.0.10"
 	}
