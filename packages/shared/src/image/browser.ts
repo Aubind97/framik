@@ -3,7 +3,7 @@ import { applyFloydSteinbergDithering } from "./dithering";
 
 export const applyFloydSteinbergDitheringBrowser = async (base64Image: string): Promise<string> => {
 	const image = new Image();
-	image.src = `data:image/png;base64,${base64Image}`;
+	image.src = base64Image;
 
 	await new Promise((resolve, reject) => {
 		image.onload = resolve;

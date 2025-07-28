@@ -15,7 +15,7 @@ export async function getWidgetScreenshot({ orientation, widgetURL }: { orientat
 
 	await page.goto(widgetURL, { waitUntil: "networkidle0" });
 
-	const base64Img = await page.screenshot({ encoding: "base64", type: "png" });
+	const base64Img = await page.screenshot({ encoding: "base64", type: "jpeg" });
 	await browser.close();
 
 	return base64Img;

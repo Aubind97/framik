@@ -17,7 +17,7 @@ $effect(() => {
 });
 </script>
 
-<div class="bg-muted rounded overflow-hidden flex items-center justify-center h-full" style={`aspect-ratio: ${ratio}`}>
+<div class="bg-muted rounded overflow-hidden flex items-center justify-center h-full select-none" style={`aspect-ratio: ${ratio}`}>
     {#if image === undefined}
         <div class="p-2">
             <span

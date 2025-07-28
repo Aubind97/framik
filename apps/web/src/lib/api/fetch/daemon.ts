@@ -8,7 +8,7 @@ export function getDaemonFrameStatusQueryOptions(params: { daemonUrl: string }, 
 	} satisfies FetchQueryOptions;
 }
 
-export function pushDaemonFrame(body: { daemonUrl: string; orientation: string; widgetURL: string }, fetch?:  typeof globalThis.fetch) {
+export function pushDaemonFrame(body: { daemonUrl: string; image: string }, fetch?:  typeof globalThis.fetch) {
 	return getFetcher(fetch)("/api/daemon/frame/push", { method: "POST", body });
 }
 

@@ -1,7 +1,6 @@
 import { applyFloydSteinbergDitheringNode } from "@framik/shared/node";
 import { getLogger } from "@logtape/logtape";
 import { Elysia, t } from "elysia";
-import { getWidgetScreenshot } from "$lib/utils/images";
 
 const logger = getLogger(["@framik", "api", "daemon"]);
 
@@ -24,10 +23,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 	.post(
 		"/frame/push",
 		async ({ body }) => {
-			const orientation = body.orientation;
-			const widgetURL = body.widgetURL;
-
-			const base64Img = await getWidgetScreenshot({ orientation, widgetURL });
+      const base64Img = body.image;
 			const preparedImage = await applyFloydSteinbergDitheringNode(base64Img);
 
 			await fetch(`${body.daemonUrl}/frame/push`, {
@@ -47,8 +43,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 		{
 			body: t.Object({
 				daemonUrl: t.String({ format: "uri" }),
-				orientation: t.String({ default: "landscape" }),
-				widgetURL: t.String({ default: "https://github.com/Aubind97" }),
+				image: t.String(),
 			}),
 		},
 	)
