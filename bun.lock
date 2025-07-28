@@ -55,7 +55,7 @@
         "clsx": "^2.1.1",
         "drizzle-kit": "^0.30.2",
         "lefthook": "^1.11.16",
-        "mode-watcher": "^1.0.8",
+        "mode-watcher": "^1.1.0",
         "svelte": "^5.0.0",
         "svelte-adapter-bun": "^0.5.2",
         "svelte-check": "^4.0.0",
