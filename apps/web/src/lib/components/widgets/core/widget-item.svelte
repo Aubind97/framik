@@ -1,13 +1,12 @@
 <script lang="ts">
 import { ArrowRight, Frame } from "@lucide/svelte";
-import { Button } from "$lib/components/ui/button";
 
-const { id, name, description, logo }: { id: string; name: string; description: string; logo?: string } = $props();
+const { id, name, description, logo, disabled }: { id: string; name: string; description: string; logo?: string; disabled?: boolean } = $props();
 </script>
 
-<a href="/app/widgets/{id}">
+<a href="/app/widgets/{id}" class="{disabled ? 'pointer-events-none opacity-30 bg-muted': ''}">
     <article class="flex gap-4 border p-4 rounded items-center hover:bg-muted">
-        {#if logo}
+        {#if typeof logo === "string"}
             <img alt="{name} Logo" src={logo} class="size-8"/>
         {:else}
             <Frame size={32} />

@@ -1,6 +1,8 @@
 <script>
 import WidgetItem from "$lib/components/widgets/core/widget-item.svelte";
+import { WIDGETS } from "$lib/constants";
 </script>
 
-<WidgetItem id="unsplash" logo="/logos/unsplash.svg" name="Unsplash" description="Get random images from an excellent photo gallery" />
-<WidgetItem id="immich" logo="/logos/immich.svg" name="Immich" description="Get random images from your personal Immich gallery" />
+{#each Object.entries(WIDGETS) as [id, widget] (id) }
+    <WidgetItem id={id} logo={widget.logo} name={widget.name} description={widget.description} disabled={widget.disabled} />
+{/each}
