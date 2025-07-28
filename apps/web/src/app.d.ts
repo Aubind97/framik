@@ -3,6 +3,8 @@
 import type { AuthSession, AuthUser } from "$lib/server/db/types";
 import type { QueryClient } from "@tanstack/svelte-query";
 
+/// <reference types="@vite-pwa/sveltekit" />
+
 // for information about these interfaces
 declare global {
 	namespace App {
