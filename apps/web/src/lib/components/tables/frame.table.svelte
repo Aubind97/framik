@@ -37,7 +37,7 @@ const columns: ColumnDef<Frame>[] = $derived([
 			}),
 		cell: ({ cell }) => {
 			const version = framesStatus[cell.row.original.id]?.version;
-			return renderComponent(Badge, { variant: "secondary", children: createRawSnippet(() => ({ render: () => version ?? "-" })) });
+			return renderComponent(Badge, { variant: "secondary", children: createRawSnippet(() => ({ render: () => `<span>${version ?? "-"}</span>` })) });
 		},
 	},
 	{
