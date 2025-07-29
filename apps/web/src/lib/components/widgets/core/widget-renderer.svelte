@@ -33,6 +33,5 @@ $effect(() => {
             alt="widget renderer"
             src={formattedImage}
             class="w-full"
-            style="image-rendering: pixelated"
         />{/if}
 </div>

@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_ivpEjJ8Qow
 createdAt: 2025-07-27T19:14:12.915519
-updatedAt: 2025-07-27T19:14:23.387241
+updatedAt: 2025-07-29T15:02:43.209988
 workspaceId: wk_FQnZ9kZaYb
 folderId: fl_eu9yMShXhc
 authentication: {}
@@ -18,10 +18,14 @@ sortPriority: 0.001
 url: ${[ APP_DOMAIN ]}/api/generator
 urlParameters:
 - enabled: true
-  name: organizationId
-  value: 9kI2C3k5zoFYEbj4ZkZkXQxp3XYTxatz
+  name: orientation
+  value: landscape
   id: pPaimCHwYB
+- enabled: true
+  name: widgetURL
+  value: https://fastly.picsum.photos/id/1037/800/480.jpg?hmac=m3rb3WRzyqkzH3o-9vsDiTJUD3GEQ82nobPJB_P_UdE
+  id: EKjaE0rfB8
 - enabled: true
   name: ''
   value: ''
-  id: Ic2TWW3pw3
+  id: 8pTThhZM5y
