@@ -94,7 +94,7 @@ function testColorMapping() {
 		{ r: 0, g: 0, b: 0, name: "Black" },
 		{ r: 255, g: 255, b: 255, name: "White" },
 		{ r: 255, g: 0, b: 0, name: "Red" },
-		{ r: 0, g: 255, b: 0, name: "Green" },
+		{ r: 0, g: 128, b: 0, name: "Green" },
 		{ r: 0, g: 0, b: 255, name: "Blue" },
 		{ r: 255, g: 255, b: 0, name: "Yellow" },
 	];
