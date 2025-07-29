@@ -19,6 +19,7 @@
 		"dev": "bun build src/browser.ts --outdir dist --target browser --format esm --watch & bun build src/node.ts --outdir dist --target node --format esm --external sharp --watch"
 	},
 	"dependencies": {
+		"rgbquant": "^1.1.2",
 		"sharp": "^0.33.0"
 	},
 	"peerDependencies": {

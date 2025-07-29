@@ -1,3 +1,5 @@
+import RgbQuant from "rgbquant";
+
 type Color = { r: number; g: number; b: number };
 
 interface ImageData {
@@ -8,75 +10,44 @@ interface ImageData {
 
 const COLOR_PALETTE_6: readonly Color[] = [
 	{ r: 255, g: 0, b: 0 }, // Red
-	{ r: 0, g: 128, b: 0 }, // Green
+	{ r: 0, g: 255, b: 0 }, // Green
 	{ r: 0, g: 0, b: 255 }, // Blue
 	{ r: 255, g: 255, b: 0 }, // Yellow
 	{ r: 0, g: 0, b: 0 }, // Black
 	{ r: 255, g: 255, b: 255 }, // White
 ];
 
-function findClosestPaletteColor(color: Color): Color {
-	let closestColor = COLOR_PALETTE_6[0];
-	let minDistance = Infinity;
-
-	for (const paletteColor of COLOR_PALETTE_6) {
-		const dr = color.r - paletteColor.r;
-		const dg = color.g - paletteColor.g;
-		const db = color.b - paletteColor.b;
-		const distance = dr * dr + dg * dg + db * db; // Skip sqrt for performance
-
-		if (distance < minDistance) {
-			closestColor = paletteColor;
-			minDistance = distance;
-		}
-	}
-
-	return closestColor;
-}
-
-function distributeError(data: Uint8ClampedArray, x: number, y: number, width: number, height: number, errR: number, errG: number, errB: number, factor: number): void {
-	if (x >= 0 && x < width && y >= 0 && y < height) {
-		const index = (y * width + x) * 4;
-		data[index] = Math.max(0, Math.min(255, data[index] + errR * factor));
-		data[index + 1] = Math.max(0, Math.min(255, data[index + 1] + errG * factor));
-		data[index + 2] = Math.max(0, Math.min(255, data[index + 2] + errB * factor));
-	}
-}
-
 export function applyFloydSteinbergDithering(imageData: ImageData): ImageData {
 	const { data, width, height } = imageData;
 
-	// Create a copy to avoid modifying the original
-	const result = new Uint8ClampedArray(data);
+	// Convert palette to RgbQuant format
+	const palette = COLOR_PALETTE_6.map((c) => [c.r, c.g, c.b]);
 
-	for (let y = 0; y < height; y++) {
-		for (let x = 0; x < width; x++) {
-			const index = (y * width + x) * 4;
+	const q = new RgbQuant({
+		colors: 6,
+		method: 2, // Floyd-Steinberg dithering
+		palette: palette,
+		boxSize: [64, 64], // subregion dims (if method = 2)
+		boxPxls: 2, // min-population threshold (if method = 2)
+		minHueCols: 0, // # of colors per hue group to evaluate regardless of counts, to retain low-count hues
+		dithKern: "TwoSierra", // FloydSteinberg | FalseFloydSteinberg | Stucki | Atkinson | Jarvis | Burkes | TwoSierra | TwoSierra
+		dithDelta: 0.02, // dithering threshhold (0-1) e.g: 0.05 will not dither colors with <= 5% difference
+		dithSerp: true, // enable serpentine pattern dithering
+		reIndex: false, // affects predefined palettes only. if true, allows compacting of sparsed palette once target palette size is reached. also enables palette sorting.
+		useCache: true, // enables caching for perf usually, but can reduce perf in some cases, like pre-def palettes
+		cacheFreq: 10, // min color occurance count needed to qualify for caching
+		colorDist: "euclidean", // manhattan | euclidean
+	});
 
-			const oldColor: Color = {
-				r: result[index],
-				g: result[index + 1],
-				b: result[index + 2],
-			};
+	// Convert Uint8ClampedArray to regular array for RgbQuant
+	const rgbArray = Array.from(data);
 
-			const newColor = findClosestPaletteColor(oldColor);
+	// Apply quantization with dithering
+	const quantized = q.reduce(rgbArray); // 2 = return as array
 
-			result[index] = newColor.r;
-			result[index + 1] = newColor.g;
-			result[index + 2] = newColor.b;
-			// Alpha channel remains unchanged
-
-			const errR = oldColor.r - newColor.r;
-			const errG = oldColor.g - newColor.g;
-			const errB = oldColor.b - newColor.b;
-
-			// Floyd-Steinberg error distribution
-			distributeError(result, x + 1, y, width, height, errR, errG, errB, 7 / 16);
-			distributeError(result, x - 1, y + 1, width, height, errR, errG, errB, 3 / 16);
-			distributeError(result, x, y + 1, width, height, errR, errG, errB, 5 / 16);
-			distributeError(result, x + 1, y + 1, width, height, errR, errG, errB, 1 / 16);
-		}
-	}
-
-	return { data: result, width, height };
+	return {
+		data: new Uint8ClampedArray(quantized),
+		width,
+		height,
+	};
 }

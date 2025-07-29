@@ -9,6 +9,8 @@
     "logtape",
     "epaper",
     "tsgo",
-    "immich"
+    "immich",
+    "'rgbquant'",
+    "\"rgbquant\""
   ]
 }
