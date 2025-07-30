@@ -1,4 +1,4 @@
-import { applyDithering, type Color } from "./dithering";
+import { applyDithering, type Color, type DitherOptions } from "./dithering";
 
 // For node implementation use the real RGB color palette to better match the real render
 const COLOR_PALETTE_6_NODE = [
@@ -11,7 +11,7 @@ const COLOR_PALETTE_6_NODE = [
 ] satisfies Color[];
 
 // Node.js-compatible function (requires sharp package)
-export async function applyDitheringNode(base64Image: string): Promise<string> {
+export async function applyDitheringNode(base64Image: string, options?: Partial<Pick<DitherOptions, "algorithm" | "gamma">>): Promise<string> {
 	try {
 		// Dynamic import to avoid issues when sharp is not available
 		const sharp = (await import("sharp")).default;
@@ -35,7 +35,7 @@ export async function applyDitheringNode(base64Image: string): Promise<string> {
 		}
 
 		const imageData = { data: rgba, width: info.width, height: info.height };
-		const dithered = applyDithering(imageData, COLOR_PALETTE_6_NODE);
+		const dithered = applyDithering(imageData, COLOR_PALETTE_6_NODE, options);
 
 		// Convert back to RGB and create PNG
 		const rgbData = Buffer.alloc(info.width * info.height * 3);

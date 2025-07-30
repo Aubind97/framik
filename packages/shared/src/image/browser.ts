@@ -1,4 +1,4 @@
-import { applyDithering, type Color } from "./dithering";
+import { applyDithering, type Color, type DitherOptions } from "./dithering";
 
 // For the browser implementation use a slightly dimmed color palette to better match the real render
 const COLOR_PALETTE_6_BROWSER = [
@@ -11,7 +11,7 @@ const COLOR_PALETTE_6_BROWSER = [
 ] satisfies Color[];
 
 // Browser-compatible function
-export async function applyDitheringBrowser(base64Image: string): Promise<string> {
+export async function applyDitheringBrowser(base64Image: string, options?: Partial<Pick<DitherOptions, "algorithm" | "gamma">>): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.onload = () => {
@@ -28,7 +28,7 @@ export async function applyDitheringBrowser(base64Image: string): Promise<string
 			ctx.drawImage(img, 0, 0);
 			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-			const dithered = applyDithering(imageData, COLOR_PALETTE_6_BROWSER);
+			const dithered = applyDithering(imageData, COLOR_PALETTE_6_BROWSER, options);
 			ctx.putImageData(new ImageData(dithered.data, dithered.width, dithered.height), 0, 0);
 
 			resolve(canvas.toDataURL());

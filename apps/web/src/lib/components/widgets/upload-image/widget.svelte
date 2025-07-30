@@ -4,6 +4,7 @@ import { Jimp } from "jimp";
 import { toast } from "svelte-sonner";
 import { Input } from "$lib/components/ui/input";
 import Label from "$lib/components/ui/label/label.svelte";
+import * as Select from "$lib/components/ui/select";
 import { Toggle } from "$lib/components/ui/toggle";
 import Widget from "$lib/components/widgets/core/widget.svelte";
 import { SCREENS } from "$lib/constants";

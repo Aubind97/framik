@@ -23,7 +23,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 	.post(
 		"/frame/push",
 		async ({ body }) => {
-      const base64Img = body.image;
+			const base64Img = body.image;
 			const preparedImage = await applyDitheringNode(base64Img);
 
 			await fetch(`${body.daemonUrl}/frame/push`, {
@@ -44,6 +44,12 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 			body: t.Object({
 				daemonUrl: t.String({ format: "uri" }),
 				image: t.String(),
+				options: t.Optional(
+					t.Object({
+						gamma: t.Number({ default: 1 }),
+						algorithm: t.Enum({ atkinson: "atkinson", "floyd-steinberg": "floyd-steinberg", sierra: "sierra", "sierra-two-row": "sierra-two-row" }, { default: "sierra" }),
+					}),
+				),
 			}),
 		},
 	)

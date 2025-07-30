@@ -8,7 +8,7 @@ type ImageData = {
 
 type ColorArray = [number, number, number];
 
-interface DitherOptions {
+export interface DitherOptions {
 	colorDistance: (color1: ColorArray, color2: Color) => number;
 	algorithm?: "atkinson" | "floyd-steinberg" | "sierra" | "sierra-two-row";
 	serpentine?: boolean; // Zigzag scanning for better distribution
@@ -20,7 +20,7 @@ export function applyDithering(imageData: ImageData, colors: Color[], options?: 
 
 	const opts = {
 		colorDistance: manhattanColorDistance,
-		algorithm: "atkinson", // Better for e-ink than Atkinson
+		algorithm: "sierra", // Better for e-ink than Atkinson
 		serpentine: true,
 		gamma: 1,
 		...options,
