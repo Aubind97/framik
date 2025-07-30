@@ -184,34 +184,28 @@ int epd_get_pixel(unsigned char* buffer, int x, int y) {
 
 // Map RGB color to display color (simplified implementation)
 int epd_map_rgb_to_display_color(int r, int g, int b) {
-    // Simple color mapping based on dominant color
-    // This is a basic implementation - you may want to improve this
-
-    if (r < 64 && g < 64 && b < 64) {
+    // Exact color mapping for the 6-color palette
+    if (r == 255 && g == 0 && b == 0) {
+        return EPD_7IN3E_RED;
+    }
+    if (r == 0 && g == 255 && b == 0) {
+        return EPD_7IN3E_GREEN;
+    }
+    if (r == 0 && g == 0 && b == 255) {
+        return EPD_7IN3E_BLUE;
+    }
+    if (r == 255 && g == 255 && b == 0) {
+        return EPD_7IN3E_YELLOW;
+    }
+    if (r == 0 && g == 0 && b == 0) {
         return EPD_7IN3E_BLACK;
     }
-
-    if (r > 192 && g > 192 && b > 192) {
+    if (r == 255 && g == 255 && b == 255) {
         return EPD_7IN3E_WHITE;
     }
 
-    if (r > g && r > b) {
-        return EPD_7IN3E_RED;
-    }
-
-    if (g > r && g > b) {
-        return EPD_7IN3E_GREEN;
-    }
-
-    if (b > r && b > g) {
-        return EPD_7IN3E_BLUE;
-    }
-
-    if (r > 128 && g > 128 && b < 64) {
-        return EPD_7IN3E_YELLOW;
-    }
-
-    return EPD_7IN3E_WHITE; // Default fallback
+    // Fallback to white if color doesn't match exactly
+    return EPD_7IN3E_WHITE;
 }
 
 // Check if module is initialized
