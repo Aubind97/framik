@@ -1,5 +1,5 @@
 <script lang="ts">
-import { applyFloydSteinbergDitheringBrowser } from "@framik/shared/browser";
+import { applyDitheringBrowser } from "@framik/shared/browser";
 import { SCREENS } from "$lib/constants";
 
 const { image, showProcessedPreview }: { image: string | undefined; showProcessedPreview: boolean } = $props();
@@ -11,7 +11,7 @@ const ratio = `${SCREENS["7.3_WAVESHARE_COLORS_E"].resolution.width}/${SCREENS["
 $effect(() => {
 	if (image) {
 		if (showProcessedPreview) {
-			applyFloydSteinbergDitheringBrowser(image).then((img) => {
+			applyDitheringBrowser(image).then((img) => {
 				formattedImage = img;
 			});
 		} else {
@@ -33,5 +33,6 @@ $effect(() => {
             alt="widget renderer"
             src={formattedImage}
             class="w-full"
+            style={'filter: brightness(1) saturate(.8)'}
         />{/if}
 </div>

@@ -13,13 +13,12 @@
 		}
 	},
 	"scripts": {
-		"build": "bun build src/browser.ts --outdir dist --target browser --format esm && bun build src/node.ts --outdir dist --target node --format esm --external sharp && bun run build:types",
+		"build": "bun build src/browser.ts --minify --outdir dist --target browser --format esm && bun build src/node.ts --minify --outdir dist --target node --format esm --external sharp && bun run build:types",
 		"tsgo": "tsgo",
 		"build:types": "tsgo --emitDeclarationOnly",
 		"dev": "bun build src/browser.ts --outdir dist --target browser --format esm --watch & bun build src/node.ts --outdir dist --target node --format esm --external sharp --watch"
 	},
 	"dependencies": {
-		"rgbquant": "^1.1.2",
 		"sharp": "^0.33.0"
 	},
 	"peerDependencies": {

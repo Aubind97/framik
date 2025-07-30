@@ -1,4 +1,4 @@
-import { applyFloydSteinbergDitheringNode } from "@framik/shared/node";
+import { applyDitheringNode } from "@framik/shared/node";
 import { getLogger } from "@logtape/logtape";
 import { Elysia, t } from "elysia";
 
@@ -24,7 +24,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 		"/frame/push",
 		async ({ body }) => {
       const base64Img = body.image;
-			const preparedImage = await applyFloydSteinbergDitheringNode(base64Img);
+			const preparedImage = await applyDitheringNode(base64Img);
 
 			await fetch(`${body.daemonUrl}/frame/push`, {
 				method: "POST",

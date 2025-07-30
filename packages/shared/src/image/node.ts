@@ -1,7 +1,17 @@
-import { applyFloydSteinbergDithering } from "./dithering";
+import { applyDithering, type Color } from "./dithering";
+
+// For node implementation use the real RGB color palette to better match the real render
+const COLOR_PALETTE_6_NODE = [
+	{ r: 255, g: 0, b: 0 }, // Red
+	{ r: 0, g: 255, b: 0 }, // Green
+	{ r: 0, g: 0, b: 255 }, // Blue
+	{ r: 255, g: 255, b: 0 }, // Yellow
+	{ r: 0, g: 0, b: 0 }, // Black
+	{ r: 255, g: 255, b: 255 }, // White
+] satisfies Color[];
 
 // Node.js-compatible function (requires sharp package)
-export async function applyFloydSteinbergDitheringNode(base64Image: string): Promise<string> {
+export async function applyDitheringNode(base64Image: string): Promise<string> {
 	try {
 		// Dynamic import to avoid issues when sharp is not available
 		const sharp = (await import("sharp")).default;
@@ -25,7 +35,7 @@ export async function applyFloydSteinbergDitheringNode(base64Image: string): Pro
 		}
 
 		const imageData = { data: rgba, width: info.width, height: info.height };
-		const dithered = applyFloydSteinbergDithering(imageData);
+		const dithered = applyDithering(imageData, COLOR_PALETTE_6_NODE);
 
 		// Convert back to RGB and create PNG
 		const rgbData = Buffer.alloc(info.width * info.height * 3);

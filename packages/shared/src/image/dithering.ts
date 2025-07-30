@@ -1,53 +1,135 @@
-import RgbQuant from "rgbquant";
+export type Color = { r: number; g: number; b: number };
 
-type Color = { r: number; g: number; b: number };
-
-interface ImageData {
+type ImageData = {
 	data: Uint8ClampedArray;
 	width: number;
 	height: number;
+};
+
+type ColorArray = [number, number, number];
+
+interface DitherOptions {
+	colorDistance: (color1: ColorArray, color2: Color) => number;
 }
 
-const COLOR_PALETTE_6: readonly Color[] = [
-	{ r: 255, g: 0, b: 0 }, // Red
-	{ r: 0, g: 255, b: 0 }, // Green
-	{ r: 0, g: 0, b: 255 }, // Blue
-	{ r: 255, g: 255, b: 0 }, // Yellow
-	{ r: 0, g: 0, b: 0 }, // Black
-	{ r: 255, g: 255, b: 255 }, // White
-];
-
-export function applyFloydSteinbergDithering(imageData: ImageData): ImageData {
+export function applyDithering(imageData: ImageData, colors: Color[]): ImageData {
 	const { data, width, height } = imageData;
 
-	// Convert palette to RgbQuant format
-	const palette = COLOR_PALETTE_6.map((c) => [c.r, c.g, c.b]);
-
-	const q = new RgbQuant({
-		colors: 6,
-		method: 2, // Floyd-Steinberg dithering
-		palette: palette,
-		boxSize: [64, 64], // subregion dims (if method = 2)
-		boxPxls: 2, // min-population threshold (if method = 2)
-		minHueCols: 0, // # of colors per hue group to evaluate regardless of counts, to retain low-count hues
-		dithKern: "TwoSierra", // FloydSteinberg | FalseFloydSteinberg | Stucki | Atkinson | Jarvis | Burkes | TwoSierra | TwoSierra
-		dithDelta: 0.02, // dithering threshhold (0-1) e.g: 0.05 will not dither colors with <= 5% difference
-		dithSerp: true, // enable serpentine pattern dithering
-		reIndex: false, // affects predefined palettes only. if true, allows compacting of sparsed palette once target palette size is reached. also enables palette sorting.
-		useCache: true, // enables caching for perf usually, but can reduce perf in some cases, like pre-def palettes
-		cacheFreq: 10, // min color occurance count needed to qualify for caching
-		colorDist: "euclidean", // manhattan | euclidean
-	});
-
-	// Convert Uint8ClampedArray to regular array for RgbQuant
-	const rgbArray = Array.from(data);
-
-	// Apply quantization with dithering
-	const quantized = q.reduce(rgbArray); // 2 = return as array
+	const quantize = atkinsonDither(new Uint8ClampedArray(data), colors, 1, height, width, { colorDistance: euclideanColorDistance });
 
 	return {
-		data: new Uint8ClampedArray(quantized),
+		data: quantize,
 		width,
 		height,
 	};
+}
+
+/**
+ * Finds the color in the palette that has the minimum distance to the target color
+ */
+function approximateColor(color: ColorArray, palette: Color[], colorDistance: (color1: ColorArray, color2: Color) => number): ColorArray {
+	const findIndex = (distanceFn: typeof colorDistance, targetColor: ColorArray, remainingColors: Color[], currentBest: Color): Color => {
+		if (remainingColors.length === 2) {
+			const distance1 = distanceFn(targetColor, currentBest);
+			const distance2 = distanceFn(targetColor, remainingColors[1]);
+			return distance1 <= distance2 ? currentBest : remainingColors[1];
+		}
+
+		const tail = remainingColors.slice(1);
+		const nextBest = distanceFn(targetColor, currentBest) <= distanceFn(targetColor, remainingColors[1]) ? currentBest : remainingColors[1];
+
+		return findIndex(distanceFn, targetColor, tail, nextBest);
+	};
+
+	const foundColor = findIndex(colorDistance, color, palette, palette[0]);
+	return [foundColor.r, foundColor.g, foundColor.b];
+}
+
+/**
+ * Applies Atkinson dithering algorithm to image data
+ */
+function atkinsonDither(uint8data: Uint8ClampedArray, palette: Color[], step: number, height: number, width: number, options: DitherOptions): Uint8ClampedArray {
+	const imageData = new Uint8ClampedArray(uint8data);
+	const output = new Uint8ClampedArray(uint8data);
+	const errorRatio = 1 / 8;
+
+	// Helper function to calculate pixel index
+	const getPixelIndex = (x: number, y: number): number => {
+		return 4 * x + 4 * y * width;
+	};
+
+	// Helper function to safely apply error diffusion
+	const applyError = (x: number, y: number, channelOffset: number, error: number): void => {
+		if (x >= 0 && x < width && y >= 0 && y < height) {
+			const index = getPixelIndex(x, y) + channelOffset;
+			imageData[index] = Math.max(0, Math.min(255, imageData[index] + errorRatio * error));
+		}
+	};
+
+	for (let y = 0; y < height; y += step) {
+		for (let x = 0; x < width; x += step) {
+			const pixelIndex = getPixelIndex(x, y);
+
+			// Extract RGB values
+			const currentColor: ColorArray = [
+				imageData[pixelIndex], // R
+				imageData[pixelIndex + 1], // G
+				imageData[pixelIndex + 2], // B
+			];
+
+			// Find the closest color in the palette using the pure function
+			const approximatedColor = approximateColor(currentColor, palette, options.colorDistance);
+
+			// Calculate quantization error for each channel
+			const error: Color = {
+				r: currentColor[0] - approximatedColor[0],
+				g: currentColor[1] - approximatedColor[1],
+				b: currentColor[2] - approximatedColor[2],
+			};
+
+			// Define Atkinson dithering pattern offsets
+			const errorOffsets = [
+				{ x: step, y: 0 }, // Right
+				{ x: 2 * step, y: 0 }, // Right + 1
+				{ x: -step, y: step }, // Bottom left
+				{ x: 0, y: step }, // Bottom
+				{ x: step, y: step }, // Bottom right
+				{ x: 0, y: 2 * step }, // Bottom + 1
+			];
+
+			// Distribute quantization error to neighboring pixels
+			for (const offset of errorOffsets) {
+				const newX = x + offset.x;
+				const newY = y + offset.y;
+
+				applyError(newX, newY, 0, error.r); // Red channel
+				applyError(newX, newY, 1, error.g); // Green channel
+				applyError(newX, newY, 2, error.b); // Blue channel
+			}
+
+			// Fill the current block with the approximated color
+			for (let dx = 0; dx < step; dx++) {
+				for (let dy = 0; dy < step; dy++) {
+					if (x + dx < width && y + dy < height) {
+						const blockPixelIndex = pixelIndex + 4 * dx + 4 * width * dy;
+
+						output[blockPixelIndex] = approximatedColor[0]; // R
+						output[blockPixelIndex + 1] = approximatedColor[1]; // G
+						output[blockPixelIndex + 2] = approximatedColor[2]; // B
+						// Alpha channel remains unchanged
+					}
+				}
+			}
+		}
+	}
+
+	return output;
+}
+
+// Example usage with a typical Euclidean color distance function
+function euclideanColorDistance(color1: ColorArray, color2: Color): number {
+	const dr = color1[0] - color2.r;
+	const dg = color1[1] - color2.g;
+	const db = color1[2] - color2.b;
+	return Math.sqrt(dr * dr + dg * dg + db * db);
 }

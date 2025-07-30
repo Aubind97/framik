@@ -1,2 +1,2 @@
 export { getInitials } from "./format/utils";
-export { applyFloydSteinbergDithering } from "./image/dithering";
+export { applyDithering } from "./image/dithering";
