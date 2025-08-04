@@ -3,7 +3,7 @@ import { ansiColorFormatter, configure, getConsoleSink, getLogger } from "@logta
 import { Elysia, t } from "elysia";
 import sharp from "sharp";
 import packageJSON from "../package.json";
-import { clearFrame, refresh, showImageOnFrame, turnOnSleepMode } from "./frameService";
+import { clearFrame, CURRENT_IMAGE, refresh, showImageOnFrame, turnOnSleepMode } from "./frameService";
 
 await configure({
 	sinks: {
@@ -53,7 +53,12 @@ const app = new Elysia({ serve: { idleTimeout: 30 } })
 						logger.info`Image received`;
 						const imageData = Buffer.from(body.base64Img, "base64");
 
-						const { data: rgbBuffer, info } = await sharp(imageData).resize(800, 480).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+						const transformedImage = sharp(imageData).resize(800, 480).removeAlpha();
+
+						const [{ data: rgbBuffer, info }] = await Promise.all([
+							transformedImage.raw().toBuffer({ resolveWithObject: true }),
+							transformedImage.jpeg().toFile(CURRENT_IMAGE), // Save image to be reloaded later
+						]);
 
 						await showImageOnFrame(rgbBuffer, { width: info.width, height: info.height });
 					},

@@ -1,5 +1,8 @@
 import type { EPaperDriver } from "@framik/epaper_driver";
 import { getLogger } from "@logtape/logtape";
+import sharp from "sharp";
+
+export const CURRENT_IMAGE = "./current_img.jpeg";
 
 const logger = getLogger(["@framik", "screen"]);
 
@@ -92,8 +95,17 @@ export async function refresh() {
 	const frame = await getFrame();
 
 	await clearFrame(frame);
-	// TO DO: Reload current image;
-	// await showImageOnFrame(frame);
+
+	// Try to load currentImg
+	try {
+		const { data: rgbBuffer, info } = await sharp(CURRENT_IMAGE).toBuffer({ resolveWithObject: true });
+		if (rgbBuffer) {
+			await showImageOnFrame(rgbBuffer, info, frame);
+		}
+	} catch (_) {
+		logger.info`Fail to reload image or there is no image to reload`;
+	}
+
 	await turnOnSleepMode(frame);
 
 	logger.info`Refresh DONE`;

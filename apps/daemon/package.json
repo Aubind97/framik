@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
-		"build": "bun build src/index.ts --target bun --outdir ./dist",
+		"build": "bun build src/index.ts --target bun --outdir ./dist --minify --external sharp --external @framik/epaper_driver",
 		"start": "NODE_ENV=production bun dist/index.js",
 		"test": "bun test"
 	},

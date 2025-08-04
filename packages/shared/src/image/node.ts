@@ -53,7 +53,7 @@ export async function applyDitheringNode(base64Image: string, options?: Partial<
 			.png()
 			.toBuffer();
 
-		return `${outputBuffer.toString("base64")}`;
+		return outputBuffer.toString("base64");
 	} catch (error) {
 		throw new Error(`Sharp processing failed: ${error instanceof Error ? error.message : "Unknown error"}`);
 	}
