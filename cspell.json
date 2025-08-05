@@ -1,16 +1,16 @@
 {
-  "words": [
-    "WAVESHARE",
-    "Steinberg",
-    "framik",
-    "elysia",
-    "elysiajs",
-    "framik",
-    "logtape",
-    "epaper",
-    "tsgo",
-    "immich",
-    "'rgbquant'",
-    "\"rgbquant\""
-  ]
+	"words": [
+		"'rgbquant'",
+		"\"rgbquant\"",
+		"ansi",
+		"elysia",
+		"elysiajs",
+		"epaper",
+		"framik",
+		"immich",
+		"logtape",
+		"Steinberg",
+		"tsgo",
+		"WAVESHARE"
+	]
 }

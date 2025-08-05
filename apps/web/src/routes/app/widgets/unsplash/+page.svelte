@@ -1,8 +1,8 @@
 <script lang="ts">
+import { mode } from "mode-watcher";
 import FrameControls from "$lib/components/utils/frame-controls.svelte";
 import UnsplashImageWidget from "$lib/components/widgets/unsplash-image/widget.svelte";
 import { WIDGETS } from "$lib/constants";
-import { mode } from "mode-watcher";
 
 let loadedImage = $state<string | undefined>(undefined);
 

@@ -3,7 +3,7 @@ import { ansiColorFormatter, configure, getConsoleSink, getLogger } from "@logta
 import { Elysia, t } from "elysia";
 import sharp from "sharp";
 import packageJSON from "../package.json";
-import { clearFrame, CURRENT_IMAGE, refresh, showImageOnFrame, turnOnSleepMode } from "./frameService";
+import { CURRENT_IMAGE, clearFrame, refresh, showImageOnFrame, turnOnSleepMode } from "./frameService";
 
 await configure({
 	sinks: {
@@ -27,15 +27,15 @@ const app = new Elysia({ serve: { idleTimeout: 30 } })
 	.group(
 		"frame",
 		{
-			beforeHandle: ({ error }) => {
+			beforeHandle: ({ status }) => {
 				// If the frame is in use reject
 				if (isProcessing) {
-					return error("Conflict");
+					return status("Conflict");
 				}
 
 				// Screen updates should not be too frequent, limit the screen update rate
 				if (Date.now() - (updateDate ?? 0) < MAXIMUM_UPDATE_RATE) {
-					return error("Too Many Requests");
+					return status("Too Many Requests");
 				}
 
 				isProcessing = true;
@@ -57,7 +57,9 @@ const app = new Elysia({ serve: { idleTimeout: 30 } })
 
 						const [{ data: rgbBuffer, info }] = await Promise.all([
 							transformedImage.raw().toBuffer({ resolveWithObject: true }),
-							transformedImage.jpeg().toFile(CURRENT_IMAGE), // Save image to be reloaded later
+							transformedImage
+								.jpeg()
+								.toFile(CURRENT_IMAGE), // Save image to be reloaded later
 						]);
 
 						await showImageOnFrame(rgbBuffer, { width: info.width, height: info.height });

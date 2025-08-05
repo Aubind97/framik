@@ -1,7 +1,7 @@
 <script lang="ts">
 import { toast } from "svelte-sonner";
 import { goto } from "$app/navigation";
-import { page } from "$app/stores";
+import { page } from "$app/state";
 import { signIn } from "$lib/auth-client";
 import SignInForm from "$lib/components/forms/sign-in.form.svelte";
 import type { SignInFormValue } from "$lib/components/forms/utils/schemas";
@@ -18,7 +18,7 @@ async function handleSubmit(formValue: SignInFormValue) {
 	}
 
 	// Get redirect URL from query parameters, default to /app
-	const redirectTo = $page.url.searchParams.get("redirect") || "/app";
+	const redirectTo = page.url.searchParams.get("redirect") || "/app";
 	goto(redirectTo);
 }
 </script>
