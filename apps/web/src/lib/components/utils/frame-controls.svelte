@@ -1,8 +1,8 @@
 <script lang="ts">
-import { BrushCleaning, SendHorizontal } from "@lucide/svelte";
+import { BrushCleaning, RotateCw, SendHorizontal } from "@lucide/svelte";
 import { createQuery } from "@tanstack/svelte-query";
 import { toast } from "svelte-sonner";
-import { clearDaemonFrame, pushDaemonFrame } from "$lib/api/fetch/daemon";
+import { clearDaemonFrame, pushDaemonFrame, refreshDaemonFrame } from "$lib/api/fetch/daemon";
 import { getAllFramesQueryOptions } from "$lib/api/fetch/frame";
 import { useActiveOrganization } from "$lib/auth-client";
 import { Button } from "$lib/components/ui/button";
@@ -64,12 +64,31 @@ async function handleClear() {
 		toast.success(`Frame "${selectedFrame.name}" cleared`);
 	}
 }
+
+async function handleRefresh() {
+	if (selectedFrame) {
+		isProcessing = true;
+		const { error } = await refreshDaemonFrame({ daemonUrl: selectedFrame.apiUrl });
+
+		if (error?.name) {
+			toast.error(error?.name);
+			isProcessing = false;
+			return;
+		}
+
+		isProcessing = false;
+		toast.success(`Frame "${selectedFrame.name}" refreshed`);
+	}
+}
 </script>
 
 <header class="flex justify-end items-center gap-2">
     <FrameSelector frames={$framesQuery?.data ?? undefined} {handleChange} />
     <Button variant="outline" disabled={selectedFrame === undefined || isProcessing} onclick={handleClear}>
         <BrushCleaning/>
+    </Button>
+    <Button variant="outline" disabled={selectedFrame === undefined || isProcessing} onclick={handleRefresh}>
+        <RotateCw/>
     </Button>
     <Button variant="default" disabled={selectedFrame === undefined || isProcessing || !loadedImage} onclick={handlePush}>
         <SendHorizontal />

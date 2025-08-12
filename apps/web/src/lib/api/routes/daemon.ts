@@ -54,6 +54,27 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 		},
 	)
 	.post(
+		"/frame/refresh",
+		async ({ body }) => {
+			const formattedUrl = `${body.daemonUrl}/frame/refresh`;
+
+			await fetch(formattedUrl, { method: "POST" })
+				.then((res) => res.text())
+				.then((res) => {
+					logger.info`Frame refresh response: ${res}`;
+				})
+				.catch((error) => {
+					logger.error`Frame refresh error: ${error}`;
+					return null;
+				});
+		},
+		{
+			body: t.Object({
+				daemonUrl: t.String({ format: "uri" }),
+			}),
+		},
+	)
+	.post(
 		"/frame/clear",
 		async ({ body }) => {
 			const formattedUrl = `${body.daemonUrl}/frame/clear`;

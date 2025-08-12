@@ -24,6 +24,10 @@ export function pushDaemonFrame(
 	return getFetcher(fetch)("/api/daemon/frame/push", { method: "POST", body });
 }
 
+export function refreshDaemonFrame(body: { daemonUrl: string }, fetch?: typeof globalThis.fetch) {
+	return getFetcher(fetch)("/api/daemon/frame/refresh", { method: "POST", body });
+}
+
 export function clearDaemonFrame(body: { daemonUrl: string }, fetch?: typeof globalThis.fetch) {
 	return getFetcher(fetch)("/api/daemon/frame/clear", { method: "POST", body });
 }

@@ -94,16 +94,14 @@ export async function refresh() {
 
 	const frame = await getFrame();
 
-	await clearFrame(frame);
-
 	// Try to load currentImg
 	try {
-		const { data: rgbBuffer, info } = await sharp(CURRENT_IMAGE).toBuffer({ resolveWithObject: true });
+		const { data: rgbBuffer, info } = await sharp(CURRENT_IMAGE).resize(800, 480).removeAlpha().raw().toBuffer({ resolveWithObject: true });
 		if (rgbBuffer) {
 			await showImageOnFrame(rgbBuffer, info, frame);
 		}
-	} catch (_) {
-		logger.info`Fail to reload image or there is no image to reload`;
+	} catch (err) {
+		logger.info`Fail to reload image or there is no image to reload: ${err}`;
 	}
 
 	await turnOnSleepMode(frame);
