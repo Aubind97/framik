@@ -9,14 +9,14 @@
 		"ignoreUnknown": true,
 		"includes": [
 			"**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,svelte}",
-			"!**/.svelte-kit/**",
-			"!**/.turbo/**",
-			"!.turbo/**",
-			"!**/build/**",
-			"!**/dist/**",
-			"!**/node_modules/**",
-			"!node_modules/**",
-			"!yaak/**",
+			"!**/.svelte-kit",
+			"!**/.turbo",
+			"!.turbo",
+			"!**/build",
+			"!**/dist",
+			"!**/node_modules",
+			"!node_modules",
+			"!yaak",
 			"!apps/web/src/lib/components/ui/data-table/flex-render.svelte"
 		]
 	},

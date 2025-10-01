@@ -17,14 +17,12 @@ let organizationId = $derived($activeOrganization.data?.id);
 let selectedFrame = $state<Frame | undefined>(undefined);
 let isProcessing = $state(false);
 
-const framesQuery = $derived(
-	createQuery({
-		// biome-ignore lint/style/noNonNullAssertion: can't be null since the query will be disabled
-		...getAllFramesQueryOptions({ organizationId: organizationId! }),
-		select: (frames) => frames.data,
-		enabled: !!organizationId,
-	}),
-);
+const framesQuery = createQuery(() => ({
+	// biome-ignore lint/style/noNonNullAssertion: can't be null since the query will be disabled
+	...getAllFramesQueryOptions({ organizationId: organizationId! }),
+	select: (frames) => frames.data,
+	enabled: !!organizationId,
+}));
 
 function handleChange(frame: Frame | undefined) {
 	selectedFrame = frame;
@@ -83,7 +81,7 @@ async function handleRefresh() {
 </script>
 
 <header class="flex justify-end items-center gap-2">
-    <FrameSelector frames={$framesQuery?.data ?? undefined} {handleChange} />
+    <FrameSelector frames={framesQuery?.data ?? undefined} {handleChange} />
     <Button variant="outline" disabled={selectedFrame === undefined || isProcessing} onclick={handleClear}>
         <BrushCleaning/>
     </Button>

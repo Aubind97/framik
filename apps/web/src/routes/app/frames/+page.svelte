@@ -13,33 +13,26 @@ let organizationId = $derived($activeOrganization.data?.id);
 
 let framesStatus = $state<Record<string, { online: boolean; version?: string }>>({});
 
-const framesQuery = $derived(
-	createQuery({
-		// biome-ignore lint/style/noNonNullAssertion: can't be null since the query will be disabled
-		...getAllFramesQueryOptions({ organizationId: organizationId! }),
-		select: (frames) => frames.data,
-		enabled: !!organizationId,
-	}),
-);
+const framesQuery = createQuery(() => ({
+	...getAllFramesQueryOptions({ organizationId: organizationId! }),
+	select: (frames) => frames.data,
+	enabled: !!organizationId,
+}));
 
-const frameStatus = $derived(
-	createQueries({
-		queries: ($framesQuery.data ?? []).map((frame) => {
-			const queryOption = getDaemonFrameStatusQueryOptions({ daemonUrl: frame.apiUrl });
-			return { ...queryOption, select: (status: Awaited<ReturnType<(typeof queryOption)["queryFn"]>>) => ({ status: status.data, frame }) };
-		}),
+const frameStatus = createQueries(() => ({
+	queries: (framesQuery.data ?? []).map((frame) => {
+		const queryOption = getDaemonFrameStatusQueryOptions({ daemonUrl: frame.apiUrl });
+		return { ...queryOption, select: (status: Awaited<ReturnType<(typeof queryOption)["queryFn"]>>) => ({ status: status.data, frame }) };
 	}),
-);
+}));
 
 $effect(() => {
-	frameStatus.subscribe((allStatus) => {
-		for (const status of allStatus) {
-			const frameId = status.data?.frame.id;
-			if (frameId) {
-				framesStatus[frameId] = { online: status.data?.status?.online ?? false, version: status.data?.status?.version ?? undefined };
-			}
+	for (const status of frameStatus) {
+		const frameId = status.data?.frame.id;
+		if (frameId) {
+			framesStatus[frameId] = { online: status.data?.status?.online ?? false, version: status.data?.status?.version ?? undefined };
 		}
-	});
+	}
 });
 </script>
 
@@ -52,5 +45,5 @@ $effect(() => {
         Create a frame</Button>
     </header>
 
-    <FrameTable frames={$framesQuery?.data ?? undefined} {framesStatus} />
+    <FrameTable frames={framesQuery?.data ?? undefined} {framesStatus} />
 </div>

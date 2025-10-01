@@ -1,16 +1,3 @@
 {
-	"words": [
-		"'rgbquant'",
-		"\"rgbquant\"",
-		"ansi",
-		"elysia",
-		"elysiajs",
-		"epaper",
-		"framik",
-		"immich",
-		"logtape",
-		"Steinberg",
-		"tsgo",
-		"WAVESHARE"
-	]
+	"words": ["'rgbquant'", "\"rgbquant\"", "ansi", "elysia", "elysiajs", "epaper", "framik", "immich", "logtape", "Steinberg", "tsgo", "WAVESHARE"]
 }
