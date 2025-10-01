@@ -54,7 +54,7 @@ const app = new Elysia({ serve: { idleTimeout: 30 } })
 						const imageData = Buffer.from(body.base64Img, "base64");
 
 						const { data: rgbBuffer, info } = await sharp(imageData).resize(800, 480).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-						await sharp(imageData).resize(800, 480).removeAlpha().jpeg().toFile(CURRENT_IMAGE); // Save image to be reloaded later
+						await sharp(imageData).resize(800, 480).removeAlpha().png().toFile(CURRENT_IMAGE);
 
 						await showImageOnFrame(rgbBuffer, { width: info.width, height: info.height });
 					},

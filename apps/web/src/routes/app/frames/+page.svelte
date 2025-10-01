@@ -14,6 +14,7 @@ let organizationId = $derived($activeOrganization.data?.id);
 let framesStatus = $state<Record<string, { online: boolean; version?: string }>>({});
 
 const framesQuery = createQuery(() => ({
+	// biome-ignore lint/style/noNonNullAssertion: Here it's defined
 	...getAllFramesQueryOptions({ organizationId: organizationId! }),
 	select: (frames) => frames.data,
 	enabled: !!organizationId,

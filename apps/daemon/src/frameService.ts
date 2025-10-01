@@ -96,7 +96,7 @@ export async function refresh() {
 
 	// Try to load currentImg
 	try {
-		const { data: rgbBuffer, info } = await sharp(CURRENT_IMAGE).resize(800, 480).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+		const { data: rgbBuffer, info } = await sharp(CURRENT_IMAGE).removeAlpha().raw().toBuffer({ resolveWithObject: true });
 		if (rgbBuffer) {
 			await showImageOnFrame(rgbBuffer, info, frame);
 		}
