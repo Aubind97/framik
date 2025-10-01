@@ -99,6 +99,8 @@ export async function refresh() {
 		const { data: rgbBuffer, info } = await sharp(CURRENT_IMAGE).resize(800, 480).removeAlpha().raw().toBuffer({ resolveWithObject: true });
 		if (rgbBuffer) {
 			await showImageOnFrame(rgbBuffer, info, frame);
+		} else {
+		  throw new Error("Fait to load the buffer")
 		}
 	} catch (err) {
 		logger.info`Fail to reload image or there is no image to reload: ${err}`;

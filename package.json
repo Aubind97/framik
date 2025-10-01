@@ -15,9 +15,9 @@
 		"clean": "bunx turbo clean"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.1.3",
-		"@types/bun": "^1.2.19",
-		"turbo": "^2.5.5"
+		"@biomejs/biome": "2.2.4",
+		"@types/bun": "^1.2.23",
+		"turbo": "^2.5.8"
 	},
 	"packageManager": "bun@1.0.0",
 	"engines": {
