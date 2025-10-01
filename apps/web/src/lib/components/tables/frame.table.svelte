@@ -2,7 +2,7 @@
 import { type ColumnDef } from "@tanstack/table-core";
 import { createRawSnippet } from "svelte";
 import Badge from "$lib/components/ui/badge/badge.svelte";
-import { renderComponent } from "$lib/components/ui/data-table";
+import { renderComponent, renderSnippet } from "$lib/components/ui/data-table";
 import type { Frame } from "$lib/server/db/types";
 import Pulse from "../utils/pulse.svelte";
 import SortableHeader from "./sortable-header.svelte";
