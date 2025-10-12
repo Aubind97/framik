@@ -79,6 +79,13 @@ const app = new Elysia({ serve: { idleTimeout: 30 } })
 			},
 		}),
 	)
+	.get("/frame/current", async () => {
+		const buffer = await sharp(CURRENT_IMAGE).removeAlpha().png().toBuffer();
+		console.log(buffer);
+		const base64 = buffer.toString("base64");
+
+		return `data:image/png;base64,${base64}`;
+	})
 	.get("/status", () => ({
 		online: true,
 		version: packageJSON.version,

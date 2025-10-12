@@ -17,6 +17,8 @@ $effect(() => {
 		} else {
 			formattedImage = image;
 		}
+	} else {
+		formattedImage = undefined;
 	}
 });
 </script>

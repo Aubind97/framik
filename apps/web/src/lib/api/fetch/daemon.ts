@@ -8,6 +8,13 @@ export function getDaemonFrameStatusQueryOptions(params: { daemonUrl: string }, 
 	} satisfies FetchQueryOptions;
 }
 
+export function getOnFrameImageQueryOption(params: { daemonUrl: string }, fetch?: typeof globalThis.fetch) {
+	return {
+		queryKey: ["daemon", params.daemonUrl, "current"],
+		queryFn: async () => getFetcher(fetch)("/api/daemon/frame/current", { method: "GET", query: { daemonUrl: params.daemonUrl } }),
+	} satisfies FetchQueryOptions;
+}
+
 export function pushDaemonFrame(
 	body: {
 		daemonUrl: string;

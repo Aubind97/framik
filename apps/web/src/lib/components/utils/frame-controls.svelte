@@ -11,7 +11,7 @@ import FrameRefreshControl from "$lib/components/utils/frame-refresh-control.sve
 import FrameSelector from "$lib/components/utils/frame-selector.svelte";
 import type { Frame } from "$lib/server/db/types";
 
-let { loadedImage }: { loadedImage?: string | undefined } = $props();
+let { loadedImage, onSelectedFrame }: { loadedImage?: string | undefined; onSelectedFrame?: (frame: Frame | undefined) => void } = $props();
 
 let activeOrganization = useActiveOrganization();
 
@@ -48,6 +48,10 @@ async function handlePush() {
 		toast.success(`Image pushed to "${selectedFrame.name}"`);
 	}
 }
+
+$effect(() => {
+	onSelectedFrame?.(selectedFrame);
+});
 </script>
 
 <header class="flex justify-end items-center gap-2">

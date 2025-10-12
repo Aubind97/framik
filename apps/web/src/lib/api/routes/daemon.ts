@@ -20,6 +20,22 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 			}),
 		},
 	)
+	.get(
+		"/frame/current",
+		async ({ query }) => {
+			const formattedUrl = `${query.daemonUrl}/frame/current`;
+			const base64Img = await fetch(formattedUrl, { method: "GET" })
+				.then((res) => res.text())
+				.catch(() => null);
+
+			return base64Img as string | null;
+		},
+		{
+			query: t.Object({
+				daemonUrl: t.String({ format: "uri" }),
+			}),
+		},
+	)
 	.post(
 		"/frame/push",
 		async ({ body }) => {
