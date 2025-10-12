@@ -58,7 +58,7 @@ export async function showImageOnFrame(rgbBuffer: Buffer<ArrayBufferLike>, info:
 export async function clearFrame(frame?: EPaperDriver | null) {
 	const usedFrame = frame ?? (await getFrame());
 
-	if (!usedFrame) {
+	if (!usedFrame?.isInitialized) {
 		logger.info`No frame instance available`;
 		return;
 	}
@@ -79,8 +79,8 @@ export async function clearFrame(frame?: EPaperDriver | null) {
 export async function turnOnSleepMode(frame?: EPaperDriver | null) {
 	const usedFrame = frame ?? (await getFrame());
 
-	if (!usedFrame) {
-		logger.info`No frame instance available`;
+	if (!usedFrame?.isInitialized) {
+		logger.info`Fail to turn on sleep mode. No frame instance available`;
 		return;
 	}
 
