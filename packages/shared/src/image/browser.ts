@@ -11,7 +11,7 @@ const COLOR_PALETTE_6_BROWSER = [
 ] satisfies Color[];
 
 // Browser-compatible function
-export async function applyDitheringBrowser(base64Image: string, options?: Partial<Pick<DitherOptions, "algorithm" | "gamma">>): Promise<string> {
+export async function applyDitheringBrowser(base64Image: string, options?: Partial<DitherOptions>): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.onload = () => {

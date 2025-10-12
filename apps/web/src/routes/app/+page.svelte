@@ -24,6 +24,6 @@ function handleSelectedFrame(frame: Frame | undefined) {
     <FrameControls onSelectedFrame={handleSelectedFrame} />
 
     <div class="w-full grid lg:grid-cols-[1fr] gap-4">
-    <Widget image={currentImageQuery.data ?? undefined} showProcessedPreview={false} />
+        <Widget image={currentImageQuery.data ?? undefined} showProcessedPreview={false} />
     </div>
 </div>
