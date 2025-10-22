@@ -2,6 +2,7 @@
 import { UsersRound } from "@lucide/svelte";
 import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 import PlusIcon from "@lucide/svelte/icons/plus";
+import { onMount } from "svelte";
 import { goto } from "$app/navigation";
 import { selectActiveOrganization, useActiveOrganization, useListOrganizations } from "$lib/auth-client";
 import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
@@ -12,11 +13,23 @@ const sidebar = useSidebar();
 let organizations = useListOrganizations();
 let activeOrganization = useActiveOrganization();
 
+const storedActiveOrganizationKey = "FRAMIK_ACTIVE_ORGANIZATION";
+
 async function selectActive(organizationId: string) {
 	if (activeOrganization.get().data?.id !== organizationId) {
 		await selectActiveOrganization({ organizationId });
+
+		localStorage.setItem(storedActiveOrganizationKey, organizationId);
 	}
 }
+
+onMount(() => {
+	const savedActiveOrganization = localStorage.getItem(storedActiveOrganizationKey);
+
+	if (savedActiveOrganization) {
+		selectActiveOrganization({ organizationId: savedActiveOrganization });
+	}
+});
 </script>
 
 <Sidebar.Menu>
