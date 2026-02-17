@@ -13,7 +13,7 @@
 > ```sh
 > alias framik_stop='pid=$(lsof -ti tcp:4173); [ "$pid" ] && kill -9 "$pid" || echo "Nothing to kill on port 4173"'
 > alias framik_start="cd $HOME/framik/apps/web && nohup bun start > "logs/log_$(date +%Y%m%d_%H%M%S).log" 2>&1 &"
-> alias framik_build="cd $HOME/framik && bun i --ignore-scripts && bunx turbo build --filter@framik/web --force"
+> alias framik_build="cd $HOME/framik && bun i --ignore-scripts --filter ./apps/web && bunx turbo build --filter@framik/web --force"
 > ```
 
 **Daemon machine**
