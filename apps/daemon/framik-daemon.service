@@ -1,0 +1,13 @@
+[Unit]
+Description=Framik e-paper daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/framik-daemon
+StateDirectory=framik
+WorkingDirectory=/var/lib/framik
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
