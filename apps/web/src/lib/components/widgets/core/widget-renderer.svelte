@@ -1,8 +1,10 @@
 <script lang="ts">
 import { applyDitheringBrowser } from "@framik/shared/browser";
+import { ImageOff } from "@lucide/svelte";
 import { SCREENS } from "#lib/constants.ts";
 
-const { image, showProcessedPreview }: { image: string | undefined; showProcessedPreview: boolean } = $props();
+// undefined = loading, null = no image
+const { image, showProcessedPreview }: { image: string | null | undefined; showProcessedPreview: boolean } = $props();
 
 let formattedImage = $state<undefined | string>(undefined);
 
@@ -29,6 +31,11 @@ $effect(() => {
             <span
                 class="block animate-spin w-8 h-8 border-4 rounded-full border-l-transparent"
             ></span>
+        </div>
+    {:else if image === null}
+        <div class="flex flex-col items-center gap-2 text-muted-foreground">
+            <ImageOff class="size-8" />
+            <span>No image on frame</span>
         </div>
     {:else}
         <img

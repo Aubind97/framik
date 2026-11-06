@@ -25,7 +25,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 		async ({ query }) => {
 			const formattedUrl = `${query.daemonUrl}/frame/current`;
 			const base64Img = await fetch(formattedUrl, { method: "GET" })
-				.then((res) => res.text())
+				.then((res) => (res.ok ? res.text() : null))
 				.catch(() => null);
 
 			return base64Img as string | null;

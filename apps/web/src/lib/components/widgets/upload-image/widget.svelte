@@ -9,7 +9,7 @@ import { Toggle } from "#lib/components/ui/toggle/index.ts";
 import Widget from "#lib/components/widgets/core/widget.svelte";
 import { SCREENS } from "#lib/constants.ts";
 
-const { handleImageLoad }: { handleImageLoad?: (image: string) => void } = $props();
+const { handleImageLoad, currentImage }: { handleImageLoad?: (image: string) => void; currentImage?: string | null } = $props();
 
 let image = $state<string | undefined>(undefined);
 let showProcessedPreview = $state(true);
@@ -34,7 +34,8 @@ async function loadImage(event: Event) {
 </script>
 
 <div class="w-full grid lg:grid-cols-[1fr_auto] gap-4">
-    <Widget {image} {showProcessedPreview} />
+    <!-- the frame image is already dithered -->
+    <Widget image={image ?? currentImage} showProcessedPreview={image ? showProcessedPreview : false} />
 
     <aside class="p-4 border rounded min-w-64 flex flex-col gap-4">
         <h1 class="font-bold">Settings</h1>
