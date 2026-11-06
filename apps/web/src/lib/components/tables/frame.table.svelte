@@ -3,6 +3,7 @@ import { type ColumnDef, renderComponent } from "@tanstack/svelte-table";
 import { createRawSnippet } from "svelte";
 import Badge from "#lib/components/ui/badge/badge.svelte";
 import type { Frame } from "#lib/server/db/types.ts";
+import FrameDeleteControl from "../utils/frame-delete-control.svelte";
 import Pulse from "../utils/pulse.svelte";
 import SortableHeader from "./sortable-header.svelte";
 import Table, { features } from "./table.svelte";
@@ -48,6 +49,11 @@ const columns: ColumnDef<typeof features, Frame>[] = $derived([
 				onclick: column.getToggleSortingHandler(),
 			}),
 		cell: ({ cell }) => renderComponent(Pulse, { enabled: framesStatus[cell.row.original.id]?.online }),
+	},
+	{
+		id: "actions",
+		header: "",
+		cell: ({ row }) => renderComponent(FrameDeleteControl, { frame: row.original }),
 	},
 ]);
 </script>

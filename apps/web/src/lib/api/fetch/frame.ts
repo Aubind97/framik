@@ -11,3 +11,7 @@ export function getAllFramesQueryOptions(params: { organizationId: string }, fet
 export function createFrame(body: { organizationId: string; name: string; apiUrl: string }, fetch?: typeof globalThis.fetch) {
 	return getFetcher(fetch)("/api/frames", { method: "POST", body });
 }
+
+export function deleteFrame(id: string, fetch?: typeof globalThis.fetch) {
+	return getFetcher(fetch)("/api/frames/:id", { method: "DELETE", params: { id } });
+}

@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { getLogger } from "@logtape/logtape";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
+import { auth } from "#lib/auth.ts";
 import { frame } from "#lib/server/db/frame.schema.ts";
 import { db } from "#lib/server/db/index.ts";
 
@@ -35,4 +36,25 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 				organizationId: t.String(),
 			}),
 		},
+	)
+	.delete(
+		"/:id",
+		async ({ params, request, status }) => {
+			const session = await auth.api.getSession({ headers: request.headers });
+			const organizationId = session?.session.activeOrganizationId;
+			if (!organizationId) {
+				return status("Unauthorized");
+			}
+
+			const deleted = await db
+				.delete(frame)
+				.where(and(eq(frame.id, params.id), eq(frame.organizationId, organizationId)))
+				.returning({ id: frame.id });
+			if (deleted.length === 0) {
+				return status("Not Found");
+			}
+
+			logger.info`Frame deleted ${params.id}`;
+		},
+		{ params: t.Object({ id: t.String() }) },
 	);
