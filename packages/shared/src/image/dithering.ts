@@ -24,8 +24,20 @@ type ImageData = {
 
 type ColorArray = [number, number, number];
 
+// `measured` = panel colours from Waveshare's converterTo6color.cpp; `pure` = what the driver's exact-match mapping accepts.
+export const EPAPER_PALETTE = [
+	{ measured: { r: 0, g: 0, b: 0 }, pure: { r: 0, g: 0, b: 0 } },
+	{ measured: { r: 255, g: 255, b: 255 }, pure: { r: 255, g: 255, b: 255 } },
+	{ measured: { r: 255, g: 243, b: 56 }, pure: { r: 255, g: 255, b: 0 } },
+	{ measured: { r: 191, g: 0, b: 0 }, pure: { r: 255, g: 0, b: 0 } },
+	{ measured: { r: 100, g: 64, b: 255 }, pure: { r: 0, g: 0, b: 255 } },
+	{ measured: { r: 67, g: 138, b: 28 }, pure: { r: 0, g: 255, b: 0 } },
+] satisfies { measured: Color; pure: Color }[];
+
+export const EPAPER_MEASURED_COLORS = EPAPER_PALETTE.map((c) => c.measured);
+
 export interface DitherOptions {
-	/** Color distance function - perceptualColorDistance recommended for best quality */
+	/** Color distance function - Euclidean by default, matching Waveshare's converter */
 	colorDistance: (color1: ColorArray, color2: Color) => number;
 	/** Dithering algorithm - 'stucki' recommended for e-ink displays */
 	algorithm?: "atkinson" | "floyd-steinberg" | "sierra" | "sierra-two-row" | "stucki";
@@ -168,14 +180,15 @@ export function optimizePalette(imageData: ImageData, targetColors: number = 4, 
 export function applyDithering(imageData: ImageData, colors: Color[], options?: Partial<DitherOptions>): ImageData {
 	const { data, width, height } = imageData;
 
+	// Defaults mirror Waveshare's reference (PIL quantize): raster Floyd-Steinberg, Euclidean RGB, no pre-processing.
 	const opts = {
-		colorDistance: perceptualColorDistance,
-		algorithm: "stucki", // Excellent for e-ink displays
-		serpentine: true,
-		gamma: .9,
+		colorDistance: euclideanColorDistance,
+		algorithm: "floyd-steinberg",
+		serpentine: false,
+		gamma: 1,
 		usePerceptualSpace: false,
 		errorClamping: true,
-		contrastEnhancement: .1,
+		contrastEnhancement: 0,
 		optimizePalette: false,
 		...options,
 	} satisfies DitherOptions;
@@ -332,29 +345,6 @@ function deltaE2000ColorDistance(color1: ColorArray, color2: Color): number {
 		(deltaA / kC) ** 2 +
 		(deltaB / kH) ** 2
 	);
-}
-
-/**
- * Perceptually weighted color distance calculation
- *
- * Uses adaptive weighting based on the red channel average to better
- * match human color perception. More accurate than simple Euclidean
- * distance while being much faster than full Delta E calculations.
- *
- * Recommended as the default color distance function.
- */
-function perceptualColorDistance(color1: ColorArray, color2: Color): number {
-	const dr = color1[0] - color2.r;
-	const dg = color1[1] - color2.g;
-	const db = color1[2] - color2.b;
-
-	// Weight channels based on human eye sensitivity
-	const avgR = (color1[0] + color2.r) / 2;
-	const weightR = 2 + avgR / 256;
-	const weightG = 4;
-	const weightB = 2 + (255 - avgR) / 256;
-
-	return Math.sqrt(weightR * dr * dr + weightG * dg * dg + weightB * db * db);
 }
 
 /**

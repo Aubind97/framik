@@ -42,6 +42,5 @@ $effect(() => {
             alt="widget renderer"
             src={formattedImage}
             class="w-full"
-            style={'filter: brightness(1) saturate(.8)'}
         />{/if}
 </div>

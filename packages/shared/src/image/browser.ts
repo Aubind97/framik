@@ -1,14 +1,4 @@
-import { applyDithering, type Color, type DitherOptions } from "./dithering";
-
-// For the browser implementation use a slightly dimmed color palette to better match the real render
-const COLOR_PALETTE_6_BROWSER = [
-	{ r: 255, g: 0, b: 0 }, // Red
-	{ r: 0, g: 128, b: 0 }, // Green
-	{ r: 0, g: 0, b: 255 }, // Blue
-	{ r: 255, g: 255, b: 0 }, // Yellow
-	{ r: 0, g: 0, b: 0 }, // Black
-	{ r: 255, g: 255, b: 255 }, // White
-] satisfies Color[];
+import { applyDithering, type DitherOptions, EPAPER_MEASURED_COLORS } from "./dithering";
 
 // Browser-compatible function
 export async function applyDitheringBrowser(base64Image: string, options?: Partial<DitherOptions>): Promise<string> {
@@ -28,7 +18,7 @@ export async function applyDitheringBrowser(base64Image: string, options?: Parti
 			ctx.drawImage(img, 0, 0);
 			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-			const dithered = applyDithering(imageData, COLOR_PALETTE_6_BROWSER, options);
+			const dithered = applyDithering(imageData, EPAPER_MEASURED_COLORS, options);
 			ctx.putImageData(new ImageData(dithered.data, dithered.width, dithered.height), 0, 0);
 
 			resolve(canvas.toDataURL());

@@ -1,14 +1,7 @@
-import { applyDithering, type Color, type DitherOptions } from "./dithering";
+import { applyDithering, type DitherOptions, EPAPER_MEASURED_COLORS, EPAPER_PALETTE } from "./dithering";
 
-// For node implementation use the real RGB color palette to better match the real render
-const COLOR_PALETTE_6_NODE = [
-	{ r: 255, g: 0, b: 0 }, // Red
-	{ r: 0, g: 255, b: 0 }, // Green
-	{ r: 0, g: 0, b: 255 }, // Blue
-	{ r: 255, g: 255, b: 0 }, // Yellow
-	{ r: 0, g: 0, b: 0 }, // Black
-	{ r: 255, g: 255, b: 255 }, // White
-] satisfies Color[];
+const key = (r: number, g: number, b: number) => (r << 16) | (g << 8) | b;
+const MEASURED_TO_PURE = new Map(EPAPER_PALETTE.map(({ measured: m, pure }) => [key(m.r, m.g, m.b), pure]));
 
 // Node.js-compatible function (requires sharp package)
 export async function applyDitheringNode(base64Image: string, options?: Partial<Pick<DitherOptions, "algorithm" | "gamma">>): Promise<string> {
@@ -35,16 +28,18 @@ export async function applyDitheringNode(base64Image: string, options?: Partial<
 		}
 
 		const imageData = { data: rgba, width: info.width, height: info.height };
-		const dithered = applyDithering(imageData, COLOR_PALETTE_6_NODE, options);
+		const dithered = applyDithering(imageData, EPAPER_MEASURED_COLORS, options);
 
 		// Convert back to RGB and create PNG
 		const rgbData = Buffer.alloc(info.width * info.height * 3);
 		for (let i = 0; i < info.width * info.height; i++) {
 			const srcIdx = i * 4;
 			const dstIdx = i * 3;
-			rgbData[dstIdx] = dithered.data[srcIdx]; // R
-			rgbData[dstIdx + 1] = dithered.data[srcIdx + 1]; // G
-			rgbData[dstIdx + 2] = dithered.data[srcIdx + 2]; // B
+			// biome-ignore lint/style/noNonNullAssertion: dithered pixels are always palette colours
+			const pure = MEASURED_TO_PURE.get(key(dithered.data[srcIdx], dithered.data[srcIdx + 1], dithered.data[srcIdx + 2]))!;
+			rgbData[dstIdx] = pure.r;
+			rgbData[dstIdx + 1] = pure.g;
+			rgbData[dstIdx + 2] = pure.b;
 		}
 
 		const outputBuffer = await sharp(rgbData, {

@@ -87,11 +87,11 @@ const result = applyDithering(imageData, roughPalette, options);
 ### Custom Color Distance
 
 ```typescript
-import { perceptualColorDistance, manhattanColorDistance } from './dithering';
+import { euclideanColorDistance, manhattanColorDistance } from './dithering';
 
-// Use built-in perceptual distance (recommended)
+// Use built-in Euclidean distance (default)
 const options1 = {
-  colorDistance: perceptualColorDistance
+  colorDistance: euclideanColorDistance
 };
 
 // Use faster but less accurate Manhattan distance
@@ -156,7 +156,7 @@ const cgaPalette = [
 
 ### Colors Look Wrong
 - Use `usePerceptualSpace: true` for better color matching
-- Try `perceptualColorDistance` instead of `manhattanColorDistance`
+- Try `euclideanColorDistance` instead of `manhattanColorDistance`
 - Consider palette optimization with `optimizePalette: true`
 
 ### Too Slow
