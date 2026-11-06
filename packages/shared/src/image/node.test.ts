@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import sharp from "sharp";
 import { EPAPER_PALETTE } from "./dithering";
-import { applyDitheringNode } from "./node";
+import { applyDitheringNode, toMeasuredColorsNode } from "./node";
 
 test("node dithering only emits colours the driver maps exactly", async () => {
 	const width = 64;
@@ -25,4 +25,17 @@ test("node dithering only emits colours the driver maps exactly", async () => {
 	for (let i = 0; i < data.length; i += info.channels) {
 		expect(pure.has(`${data[i]},${data[i + 1]},${data[i + 2]}`)).toBe(true);
 	}
+});
+
+test("frame image is mapped back to measured colours, unknown colours kept", async () => {
+	const input = (
+		await sharp(Buffer.from([0, 255, 0, 12, 34, 56]), { raw: { width: 2, height: 1, channels: 3 } })
+			.png()
+			.toBuffer()
+	).toString("base64");
+
+	const output = Buffer.from(await toMeasuredColorsNode(`data:image/png;base64,${input}`), "base64");
+	const { data } = await sharp(output).raw().toBuffer({ resolveWithObject: true });
+
+	expect([...data]).toEqual([67, 138, 28, 12, 34, 56]);
 });

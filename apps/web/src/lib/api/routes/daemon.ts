@@ -1,4 +1,4 @@
-import { applyDitheringNode } from "@framik/shared/node";
+import { applyDitheringNode, toMeasuredColorsNode } from "@framik/shared/node";
 import { getLogger } from "@logtape/logtape";
 import { Elysia, t } from "elysia";
 
@@ -28,7 +28,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 				.then((res) => (res.ok ? res.text() : null))
 				.catch(() => null);
 
-			return base64Img as string | null;
+			return base64Img ? `data:image/png;base64,${await toMeasuredColorsNode(base64Img)}` : null;
 		},
 		{
 			query: t.Object({
