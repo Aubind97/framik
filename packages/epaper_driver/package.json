@@ -11,8 +11,8 @@
 		}
 	},
 	"scripts": {
-		"build": "make clean && make && bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
-		"build:native": "make",
+		"build": "bun run build:native && bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
+		"build:native": "if pkg-config --exists libgpiod; then make clean && make; else echo '[epaper_driver] libgpiod not found, skipping native build'; fi",
 		"tsgo": "tsgo",
 		"build:types": "tsgo --emitDeclarationOnly",
 		"dev": "bun build src/index.ts --outdir dist --target node --format esm --watch",
