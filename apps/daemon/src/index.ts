@@ -23,47 +23,60 @@ let updateDate: number | null = null;
 // To avoid screen burning, avoid updating the screen more than 15 seconds
 export const MAXIMUM_UPDATE_RATE = 15 * 1000;
 
+// The lock lives with the work, not in request hooks: afterResponse also fires for rejected requests
+async function withFrameLock(task: () => Promise<unknown>) {
+	if (isProcessing) {
+		return false;
+	}
+
+	isProcessing = true;
+	try {
+		await task();
+	} finally {
+		isProcessing = false;
+		updateDate = Date.now();
+	}
+	return true;
+}
+
 const app = new Elysia({ serve: { idleTimeout: 30 } })
 	.group(
 		"frame",
 		{
 			beforeHandle: ({ status }) => {
-				// If the frame is in use reject
-				if (isProcessing) {
-					return status("Conflict");
-				}
-
 				// Screen updates should not be too frequent, limit the screen update rate
 				if (Date.now() - (updateDate ?? 0) < MAXIMUM_UPDATE_RATE) {
 					return status("Too Many Requests");
 				}
-
-				isProcessing = true;
-			},
-			afterResponse: () => {
-				isProcessing = false;
-				updateDate = Date.now();
 			},
 		},
 		(app) =>
 			app
 				.post(
 					"/push",
-					async ({ body }) => {
+					async ({ body, status }) => {
 						logger.info`Image received`;
 						const imageData = Buffer.from(body.base64Img, "base64");
 
 						const { data: rgbBuffer, info } = await sharp(imageData).resize(800, 480).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-						await sharp(imageData).resize(800, 480).removeAlpha().png().toFile(CURRENT_IMAGE);
 
-						await showImageOnFrame(rgbBuffer, { width: info.width, height: info.height });
+						const done = await withFrameLock(async () => {
+							await sharp(rgbBuffer, { raw: info }).png().toFile(CURRENT_IMAGE);
+							await showImageOnFrame(rgbBuffer, { width: info.width, height: info.height });
+						});
+						if (!done) return status("Conflict");
 					},
 					{ body: t.Object({ base64Img: t.String() }) },
 				)
-				.post("/refresh", refresh)
-				.post("/clear", async () => {
-					await clearFrame();
-					await turnOnSleepMode();
+				.post("/refresh", async ({ status }) => {
+					if (!(await withFrameLock(refresh))) return status("Conflict");
+				})
+				.post("/clear", async ({ status }) => {
+					const done = await withFrameLock(async () => {
+						await clearFrame();
+						await turnOnSleepMode();
+					});
+					if (!done) return status("Conflict");
 				}),
 	)
 	.use(
@@ -74,15 +87,13 @@ const app = new Elysia({ serve: { idleTimeout: 30 } })
 				// To preserve a good integrity, the display should be refreshed at least every 24h
 				const HOURS_12 = 12 * 60 * 60 * 1000;
 				if (Date.now() - (updateDate ?? 0) > HOURS_12) {
-					await refresh();
+					await withFrameLock(refresh);
 				}
 			},
 		}),
 	)
 	.get("/frame/current", async () => {
-		const buffer = await sharp(CURRENT_IMAGE).removeAlpha().png().toBuffer();
-		console.log(buffer);
-		const base64 = buffer.toString("base64");
+		const base64 = Buffer.from(await Bun.file(CURRENT_IMAGE).arrayBuffer()).toString("base64");
 
 		return `data:image/png;base64,${base64}`;
 	})
