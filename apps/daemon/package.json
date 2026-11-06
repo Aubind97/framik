@@ -1,24 +1,9 @@
 {
 	"name": "@framik/daemon",
 	"private": true,
-	"version": "0.0.1",
-	"type": "module",
 	"scripts": {
-		"dev": "bun --watch src/index.ts",
-		"build": "bun build src/index.ts --target bun --outdir ./dist --minify --external sharp --external @framik/epaper_driver",
-		"start": "NODE_ENV=production bun dist/index.js",
-		"test": "bun test"
-	},
-	"dependencies": {
-		"@elysiajs/cron": "^1.4.2",
-		"@framik/epaper_driver": "workspace:*",
-		"@framik/shared": "workspace:*",
-		"@logtape/logtape": "^2.4.2",
-		"elysia": "^1.4.31",
-		"sharp": "^0.35.5"
-	},
-	"devDependencies": {
-		"@logtape/pretty": "^2.4.2",
-		"bun-types": "^1.4.4"
+		"dev": "SKIP_FRAME_UPDATE=true go run .",
+		"build": "GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o dist/framik-daemon .",
+		"test": "go test ./..."
 	}
 }

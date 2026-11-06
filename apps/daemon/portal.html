@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Framik Wi-Fi setup</title>
+<style>
+body { font-family: system-ui, sans-serif; max-width: 24rem; margin: 2rem auto; padding: 0 1rem; }
+label { display: block; margin-top: 1rem; }
+input, button { width: 100%; box-sizing: border-box; padding: .6rem; font-size: 1rem; margin-top: .3rem; }
+button { margin-top: 1.5rem; }
+.error { color: #b00020; }
+</style>
+</head>
+<body>
+<h1>Connect your frame</h1>
+{{if .Connecting}}
+<p>Connecting to <b>{{.Connecting}}</b>… The frame leaves setup mode once it is online.</p>
+<p>If it does not, join <b>{{.Hotspot}}</b> again and retry.</p>
+{{else}}
+{{with .Error}}<p class="error" role="alert">{{.}}</p>{{end}}
+<form method="post" action="/connect">
+<label>Network <input name="ssid" list="ssids" required maxlength="32" autocomplete="off"></label>
+<datalist id="ssids">{{range .SSIDs}}<option value="{{.}}">{{end}}</datalist>
+<label>Password <input name="password" type="password" minlength="8" maxlength="63"></label>
+<button>Connect</button>
+</form>
+{{end}}
+</body>
+</html>
