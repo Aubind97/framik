@@ -39,6 +39,7 @@ export async function handle({ event, resolve }) {
 export const init: ServerInit = async () => {
 	// Configure logger
 	await configure({
+		reset: true,
 		sinks: {
 			console: getConsoleSink({ formatter: await import("@logtape/pretty").then((module) => module.prettyFormatter).catch(() => ansiColorFormatter) }),
 		},
