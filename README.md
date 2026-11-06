@@ -26,17 +26,20 @@
 ```sh
 # On your machine
 cd apps/daemon && bun run build
-scp dist/framik-daemon framik-daemon.service pi@<frame>:
+scp dist/framik-daemon framik-daemon.service framik-captive.conf pi@<frame>:
 
 # On the Pi
 sudo install -m755 framik-daemon /usr/local/bin/
 sudo cp framik-daemon.service /etc/systemd/system/
+sudo cp framik-captive.conf /etc/NetworkManager/dnsmasq-shared.d/
 sudo systemctl daemon-reload && sudo systemctl enable --now framik-daemon
 journalctl -u framik-daemon -f
 ```
 
 Update: rebuild, `scp` the binary, `sudo install …` again, then `sudo systemctl restart framik-daemon`.
 The current image lives in `/var/lib/framik/current.png`.
+
+**Wi-Fi setup**: after 3 minutes without network the frame starts a `Framik-XXXX` hotspot and shows a QR code to join it (a small banner over the photo if there is one). Joining opens a page at `http://10.42.0.1` to pick the Wi-Fi network. Every 10 minutes it also retries saved networks.
 
 ## Setup project
 ```bash

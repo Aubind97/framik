@@ -77,6 +77,9 @@ func refresh() error {
 		slog.Info("no image to reload", "err", err)
 		return nil
 	}
+	if setupOn.Load() {
+		img = withBanner(img)
+	}
 	return updatePanel(true, pack(img))
 }
 
@@ -135,6 +138,8 @@ func main() {
 			slog.Info("skipped panel update", "clear", clearFirst, "image", buf != nil)
 			return nil
 		}
+	} else {
+		go watchNetwork()
 	}
 
 	go func() {
