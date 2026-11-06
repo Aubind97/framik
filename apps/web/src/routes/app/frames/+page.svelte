@@ -1,11 +1,11 @@
 <script lang="ts">
 import { Plus } from "@lucide/svelte";
 import { createQueries, createQuery } from "@tanstack/svelte-query";
-import { getDaemonFrameStatusQueryOptions } from "$lib/api/fetch/daemon";
-import { getAllFramesQueryOptions } from "$lib/api/fetch/frame";
-import { useActiveOrganization } from "$lib/auth-client";
-import FrameTable from "$lib/components/tables/frame.table.svelte";
-import Button from "$lib/components/ui/button/button.svelte";
+import { getDaemonFrameStatusQueryOptions } from "#lib/api/fetch/daemon.ts";
+import { getAllFramesQueryOptions } from "#lib/api/fetch/frame.ts";
+import { useActiveOrganization } from "#lib/auth-client.ts";
+import FrameTable from "#lib/components/tables/frame.table.svelte";
+import Button from "#lib/components/ui/button/button.svelte";
 
 let activeOrganization = useActiveOrganization();
 

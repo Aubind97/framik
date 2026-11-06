@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { HTMLAttributes } from "svelte/elements";
-import { cn, type WithElementRef } from "$lib/utils.ts";
+import { cn, type WithElementRef } from "#lib/utils.ts";
 import { useSidebar } from "./context.svelte.ts";
 
 let { ref = $bindable(null), class: className, children, ...restProps }: WithElementRef<HTMLAttributes<HTMLButtonElement>, HTMLButtonElement> = $props();

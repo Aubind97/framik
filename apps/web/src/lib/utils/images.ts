@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer";
-import { SCREENS } from "$lib/constants";
+import { SCREENS } from "#lib/constants.ts";
 
 export async function getWidgetScreenshot({ orientation, widgetURL }: { orientation: string; widgetURL: string }) {
 	const screenInfo = SCREENS["7.3_WAVESHARE_COLORS_E"];

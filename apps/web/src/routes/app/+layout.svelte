@@ -1,11 +1,11 @@
 <script lang="ts">
 import { onMount } from "svelte";
+import { useSession } from "#lib/auth-client.ts";
+import HeaderNavigation from "#lib/components/navigation/header-navigation.svelte";
+import Sidebar from "#lib/components/navigation/sidebar.svelte";
+import SidebarInset from "#lib/components/ui/sidebar/sidebar-inset.svelte";
+import SidebarProvider from "#lib/components/ui/sidebar/sidebar-provider.svelte";
 import { goto } from "$app/navigation";
-import { useSession } from "$lib/auth-client";
-import HeaderNavigation from "$lib/components/navigation/header-navigation.svelte";
-import Sidebar from "$lib/components/navigation/sidebar.svelte";
-import SidebarInset from "$lib/components/ui/sidebar/sidebar-inset.svelte";
-import SidebarProvider from "$lib/components/ui/sidebar/sidebar-provider.svelte";
 import type { LayoutProps } from "./$types";
 
 const { children, data }: LayoutProps = $props();

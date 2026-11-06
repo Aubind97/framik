@@ -1,5 +1,5 @@
 import { edenFetch } from "@elysiajs/eden";
-import { PUBLIC_DOMAIN } from "$env/static/public";
+import { PUBLIC_DOMAIN } from "$app/env/public";
 
 import type { InternalAPI } from "../../../routes/api/[...slugs]/+server";
 

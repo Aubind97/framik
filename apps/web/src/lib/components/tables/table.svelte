@@ -1,35 +1,31 @@
-<script lang="ts" generics="TData, TValue">
-import { type ColumnDef, getCoreRowModel, getSortedRowModel, type SortingState } from "@tanstack/table-core";
-import { createSvelteTable, FlexRender } from "$lib/components/ui/data-table";
-import * as Table from "$lib/components/ui/table";
+<script lang="ts" module>
+import { createSortedRowModel, rowSortingFeature, sortFns, tableFeatures } from "@tanstack/svelte-table";
 
-type DataTableProps<TData, TValue> = {
-	columns: ColumnDef<TData, TValue>[];
+export const features = tableFeatures({
+	rowSortingFeature,
+	sortedRowModel: createSortedRowModel(),
+	sortFns,
+});
+</script>
+
+<script lang="ts" generics="TData extends RowData">
+import { type ColumnDef, createTable, FlexRender, type RowData } from "@tanstack/svelte-table";
+import * as Table from "#lib/components/ui/table/index.ts";
+
+type DataTableProps<TData extends RowData> = {
+	columns: ColumnDef<typeof features, TData>[];
 	data: TData[];
 };
 
-let { data, columns }: DataTableProps<TData, TValue> = $props();
+let { data, columns }: DataTableProps<TData> = $props();
 
-let sorting = $state<SortingState>([]);
-
-const table = createSvelteTable({
+const table = createTable({
+	features,
 	get data() {
 		return data;
 	},
-	columns,
-	getCoreRowModel: getCoreRowModel(),
-	getSortedRowModel: getSortedRowModel(),
-	onSortingChange: (updater) => {
-		if (typeof updater === "function") {
-			sorting = updater(sorting);
-		} else {
-			sorting = updater;
-		}
-	},
-	state: {
-		get sorting() {
-			return sorting;
-		},
+	get columns() {
+		return columns;
 	},
 });
 </script>
@@ -42,10 +38,7 @@ const table = createSvelteTable({
           {#each headerGroup.headers as header (header.id)}
             <Table.Head colspan={header.colSpan}>
               {#if !header.isPlaceholder}
-                <FlexRender
-                  content={header.column.columnDef.header}
-                  context={header.getContext()}
-                />
+                <FlexRender {header} />
               {/if}
             </Table.Head>
           {/each}
@@ -54,13 +47,10 @@ const table = createSvelteTable({
     </Table.Header>
     <Table.Body>
       {#each table.getRowModel().rows as row (row.id)}
-        <Table.Row data-state={row.getIsSelected() && "selected"}>
-          {#each row.getVisibleCells() as cell (cell.id)}
+        <Table.Row>
+          {#each row.getAllCells() as cell (cell.id)}
             <Table.Cell>
-              <FlexRender
-                content={cell.column.columnDef.cell}
-                context={cell.getContext()}
-              />
+              <FlexRender {cell} />
             </Table.Cell>
           {/each}
         </Table.Row>

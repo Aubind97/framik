@@ -3,13 +3,13 @@ import { getInitials } from "@framik/shared/browser";
 import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 import LogOutIcon from "@lucide/svelte/icons/log-out";
 import { toast } from "svelte-sonner";
+import { signOut, useSession } from "#lib/auth-client.ts";
+import * as Avatar from "#lib/components/ui/avatar/index.ts";
+import * as DropdownMenu from "#lib/components/ui/dropdown-menu/index.ts";
+import * as Sidebar from "#lib/components/ui/sidebar/index.ts";
+import { useSidebar } from "#lib/components/ui/sidebar/index.ts";
+import type { AuthUser } from "#lib/server/db/types.ts";
 import { goto } from "$app/navigation";
-import { signOut, useSession } from "$lib/auth-client";
-import * as Avatar from "$lib/components/ui/avatar/index.ts";
-import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
-import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
-import { useSidebar } from "$lib/components/ui/sidebar/index.ts";
-import type { AuthUser } from "$lib/server/db/types";
 
 const { user }: { user: AuthUser } = $props();
 

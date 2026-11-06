@@ -1,8 +1,8 @@
 <script lang="ts">
 import { GalleryVerticalEnd, LayoutDashboard, Settings2, TvMinimal } from "@lucide/svelte";
 import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-import * as Collapsible from "$lib/components/ui/collapsible/index.ts";
-import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
+import * as Collapsible from "#lib/components/ui/collapsible/index.ts";
+import * as Sidebar from "#lib/components/ui/sidebar/index.ts";
 
 const sidebar = Sidebar.useSidebar();
 

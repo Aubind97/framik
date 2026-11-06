@@ -1,11 +1,11 @@
 <script lang="ts">
 import { createMutation } from "@tanstack/svelte-query";
 import { toast } from "svelte-sonner";
+import { createFrame } from "#lib/api/fetch/frame.ts";
+import { useActiveOrganization } from "#lib/auth-client.ts";
+import FrameCreation from "#lib/components/forms/frame-creation.form.svelte";
+import type { FrameCreationFormValue } from "#lib/components/forms/utils/schemas.ts";
 import { goto } from "$app/navigation";
-import { createFrame } from "$lib/api/fetch/frame";
-import { useActiveOrganization } from "$lib/auth-client";
-import FrameCreation from "$lib/components/forms/frame-creation.form.svelte";
-import type { FrameCreationFormValue } from "$lib/components/forms/utils/schemas";
 
 let activeOrganization = useActiveOrganization();
 

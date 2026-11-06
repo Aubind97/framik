@@ -1,7 +1,7 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import * as Select from "$lib/components/ui/select/index";
-import type { Frame } from "$lib/server/db/types";
+import * as Select from "#lib/components/ui/select/index.ts";
+import type { Frame } from "#lib/server/db/types.ts";
 
 let { frames = [], handleChange }: { frames?: Frame[]; handleChange?: (frame: Frame | undefined) => void } = $props();
 let selectedId = $state<string | undefined>(undefined);

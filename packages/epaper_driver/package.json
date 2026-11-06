@@ -21,12 +21,12 @@
 		"lint": "echo 'lint epaper_driver'"
 	},
 	"dependencies": {
-		"sharp": "^0.34.3"
+		"sharp": "^0.35.5"
 	},
 	"devDependencies": {
-		"typescript": "^5.0.0",
-		"@typescript/native-preview": "^7.0.0-dev.20250727.1",
-		"bun-types": "latest"
+		"typescript": "^7.0.2",
+		"@typescript/native-preview": "^7.0.0-dev.20260707.2",
+		"bun-types": "^1.4.4"
 	},
 	"engines": {
 		"node": ">=14.0.0",

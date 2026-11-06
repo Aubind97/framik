@@ -180,7 +180,7 @@ export class EPaperDriver {
 	}
 
 	get version(): string {
-		return lib.symbols.epd_get_version().toString(); // FIXME: no need to call toString()
+		return lib.symbols.epd_get_version()?.toString() ?? "";
 	}
 
 	get isInitialized(): boolean {

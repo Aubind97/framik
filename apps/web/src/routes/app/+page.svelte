@@ -1,10 +1,10 @@
 <script lang="ts">
 import { Construction } from "@lucide/svelte";
 import { createQuery } from "@tanstack/svelte-query";
-import { getOnFrameImageQueryOption } from "$lib/api/fetch/daemon";
-import FrameControls from "$lib/components/utils/frame-controls.svelte";
-import Widget from "$lib/components/widgets/core/widget.svelte";
-import { type Frame } from "$lib/server/db/types";
+import { getOnFrameImageQueryOption } from "#lib/api/fetch/daemon.ts";
+import FrameControls from "#lib/components/utils/frame-controls.svelte";
+import Widget from "#lib/components/widgets/core/widget.svelte";
+import { type Frame } from "#lib/server/db/types.ts";
 
 let selectedFrame = $state<Frame | undefined>(undefined);
 

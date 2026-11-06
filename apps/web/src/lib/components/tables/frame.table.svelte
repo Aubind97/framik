@@ -1,16 +1,15 @@
 <script lang="ts">
-import { type ColumnDef } from "@tanstack/table-core";
+import { type ColumnDef, renderComponent } from "@tanstack/svelte-table";
 import { createRawSnippet } from "svelte";
-import Badge from "$lib/components/ui/badge/badge.svelte";
-import { renderComponent, renderSnippet } from "$lib/components/ui/data-table";
-import type { Frame } from "$lib/server/db/types";
+import Badge from "#lib/components/ui/badge/badge.svelte";
+import type { Frame } from "#lib/server/db/types.ts";
 import Pulse from "../utils/pulse.svelte";
 import SortableHeader from "./sortable-header.svelte";
-import Table from "./table.svelte";
+import Table, { features } from "./table.svelte";
 
 let { frames = [], framesStatus }: { frames?: Frame[]; framesStatus: Record<string, { online: boolean; version?: string }> } = $props();
 
-const columns: ColumnDef<Frame>[] = $derived([
+const columns: ColumnDef<typeof features, Frame>[] = $derived([
 	{
 		accessorKey: "name",
 		header: ({ column }) =>

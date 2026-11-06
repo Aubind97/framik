@@ -1,7 +1,7 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
-import type { AuthSession, AuthUser } from "$lib/server/db/types";
 import type { QueryClient } from "@tanstack/svelte-query";
+import type { AuthSession, AuthUser } from "#lib/server/db/types.ts";
 
 /// <reference types="@vite-pwa/sveltekit" />
 

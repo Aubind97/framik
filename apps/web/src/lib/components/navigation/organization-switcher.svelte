@@ -3,11 +3,11 @@ import { UsersRound } from "@lucide/svelte";
 import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 import PlusIcon from "@lucide/svelte/icons/plus";
 import { onMount } from "svelte";
+import { selectActiveOrganization, useActiveOrganization, useListOrganizations } from "#lib/auth-client.ts";
+import * as DropdownMenu from "#lib/components/ui/dropdown-menu/index.ts";
+import * as Sidebar from "#lib/components/ui/sidebar/index.ts";
+import { useSidebar } from "#lib/components/ui/sidebar/index.ts";
 import { goto } from "$app/navigation";
-import { selectActiveOrganization, useActiveOrganization, useListOrganizations } from "$lib/auth-client";
-import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.ts";
-import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
-import { useSidebar } from "$lib/components/ui/sidebar/index.ts";
 
 const sidebar = useSidebar();
 let organizations = useListOrganizations();

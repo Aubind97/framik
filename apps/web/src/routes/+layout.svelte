@@ -4,7 +4,7 @@ import type { LayoutProps } from "./$types";
 import "../app.css";
 import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools";
 import { ModeWatcher } from "mode-watcher";
-import { Toaster } from "$lib/components/ui/sonner/index.js";
+import { Toaster } from "#lib/components/ui/sonner/index.js";
 
 let { children, data }: LayoutProps = $props();
 </script>

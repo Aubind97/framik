@@ -1,9 +1,9 @@
 <script lang="ts">
 import { toast } from "svelte-sonner";
+import { createOrganization, selectActiveOrganization, useActiveOrganization } from "#lib/auth-client.ts";
+import OrganizationCreationForm from "#lib/components/forms/organization-creation.form.svelte";
+import type { OrganizationCreationFormValue } from "#lib/components/forms/utils/schemas.ts";
 import { goto } from "$app/navigation";
-import { createOrganization, selectActiveOrganization, useActiveOrganization } from "$lib/auth-client";
-import OrganizationCreationForm from "$lib/components/forms/organization-creation.form.svelte";
-import type { OrganizationCreationFormValue } from "$lib/components/forms/utils/schemas";
 
 async function handleSubmit(formValue: OrganizationCreationFormValue) {
 	const { data, error } = await createOrganization({

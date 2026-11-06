@@ -1,4 +1,4 @@
-import { getAllFramesQueryOptions } from "$lib/api/fetch/frame.js";
+import { getAllFramesQueryOptions } from "#lib/api/fetch/frame.js";
 
 export async function load({ parent, fetch }) {
 	const { queryClient, session } = await parent();

@@ -1,9 +1,9 @@
 <script lang="ts">
 import { Frame } from "@lucide/svelte";
 import { mode } from "mode-watcher";
-import FrameControls from "$lib/components/utils/frame-controls.svelte";
-import UploadImageWidget from "$lib/components/widgets/upload-image/widget.svelte";
-import { WIDGETS } from "$lib/constants";
+import FrameControls from "#lib/components/utils/frame-controls.svelte";
+import UploadImageWidget from "#lib/components/widgets/upload-image/widget.svelte";
+import { WIDGETS } from "#lib/constants.ts";
 
 let loadedImage = $state<string | undefined>(undefined);
 

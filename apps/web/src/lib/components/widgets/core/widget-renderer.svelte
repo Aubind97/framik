@@ -1,6 +1,6 @@
 <script lang="ts">
 import { applyDitheringBrowser } from "@framik/shared/browser";
-import { SCREENS } from "$lib/constants";
+import { SCREENS } from "#lib/constants.ts";
 
 const { image, showProcessedPreview }: { image: string | undefined; showProcessedPreview: boolean } = $props();
 

@@ -2,12 +2,12 @@
 import { LayoutGrid } from "@lucide/svelte";
 import { Jimp } from "jimp";
 import { toast } from "svelte-sonner";
-import { Input } from "$lib/components/ui/input";
-import Label from "$lib/components/ui/label/label.svelte";
-import * as Select from "$lib/components/ui/select";
-import { Toggle } from "$lib/components/ui/toggle";
-import Widget from "$lib/components/widgets/core/widget.svelte";
-import { SCREENS } from "$lib/constants";
+import { Input } from "#lib/components/ui/input/index.ts";
+import Label from "#lib/components/ui/label/label.svelte";
+import * as Select from "#lib/components/ui/select/index.ts";
+import { Toggle } from "#lib/components/ui/toggle/index.ts";
+import Widget from "#lib/components/widgets/core/widget.svelte";
+import { SCREENS } from "#lib/constants.ts";
 
 const { handleImageLoad }: { handleImageLoad?: (image: string) => void } = $props();
 

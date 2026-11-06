@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
-import { daemonRoutes } from "$lib/api/routes/daemon";
-import { frameRoutes } from "$lib/api/routes/frame.ts";
-import { generatorRouter } from "$lib/api/routes/generator";
+import { daemonRoutes } from "#lib/api/routes/daemon.ts";
+import { frameRoutes } from "#lib/api/routes/frame.ts";
+import { generatorRouter } from "#lib/api/routes/generator.ts";
 
 const app = new Elysia({ prefix: "/api" }).use(frameRoutes).use(daemonRoutes).use(generatorRouter);
 

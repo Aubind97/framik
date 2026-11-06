@@ -10,15 +10,15 @@
 		"test": "bun test"
 	},
 	"dependencies": {
-		"@elysiajs/cron": "^1.4.1",
+		"@elysiajs/cron": "^1.4.2",
 		"@framik/epaper_driver": "workspace:*",
 		"@framik/shared": "workspace:*",
-		"@logtape/logtape": "^1.1.1",
-		"elysia": "^1.4.9",
-		"sharp": "^0.34.4"
+		"@logtape/logtape": "^2.4.2",
+		"elysia": "^1.4.31",
+		"sharp": "^0.35.5"
 	},
 	"devDependencies": {
-		"@logtape/pretty": "^1.1.1",
-		"bun-types": "latest"
+		"@logtape/pretty": "^2.4.2",
+		"bun-types": "^1.4.4"
 	}
 }

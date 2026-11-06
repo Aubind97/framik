@@ -1,8 +1,8 @@
 <script lang="ts">
 import { createForm } from "@tanstack/svelte-form";
 import type { HTMLAttributes } from "svelte/elements";
-import { Button } from "$lib/components/ui/button/index.ts";
-import { cn, type WithElementRef } from "$lib/utils.ts";
+import { Button } from "#lib/components/ui/button/index.ts";
+import { cn, type WithElementRef } from "#lib/utils.ts";
 import { type SignUpFormValue, signUpSchema } from "./utils/schemas";
 import TextField from "./utils/text-field.svelte";
 

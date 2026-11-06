@@ -25,8 +25,8 @@ export type SidebarMenuButtonSize = VariantProps<typeof sidebarMenuButtonVariant
 </script>
 
 <script lang="ts">
-	import * as Tooltip from "$lib/components/ui/tooltip/index.ts";
-	import { cn, type WithElementRef, type WithoutChildrenOrChild } from "$lib/utils.ts";
+	import * as Tooltip from "#lib/components/ui/tooltip/index.ts";
+	import { cn, type WithElementRef, type WithoutChildrenOrChild } from "#lib/utils.ts";
 	import { mergeProps } from "bits-ui";
 	import type { ComponentProps, Snippet } from "svelte";
 	import type { HTMLAttributes } from "svelte/elements";

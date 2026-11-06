@@ -91,6 +91,9 @@ export const invitation = sqliteTable("invitation", {
 	role: text("role"),
 	status: text("status").default("pending").notNull(),
 	expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+	createdAt: integer("created_at", { mode: "timestamp" })
+		.$defaultFn(() => /* @__PURE__ */ new Date())
+		.notNull(),
 	inviterId: text("inviter_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),

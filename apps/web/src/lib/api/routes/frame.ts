@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { getLogger } from "@logtape/logtape";
 import { desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
-import { db } from "$lib/server/db";
-import { frame } from "$lib/server/db/frame.schema";
+import { frame } from "#lib/server/db/frame.schema.ts";
+import { db } from "#lib/server/db/index.ts";
 
 const logger = getLogger(["@framik", "api", "frames"]);
 

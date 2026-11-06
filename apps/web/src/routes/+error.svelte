@@ -1,7 +1,7 @@
 <script>
 import { Binoculars } from "@lucide/svelte";
+import { Button } from "#lib/components/ui/button/index.ts";
 import { page } from "$app/state";
-import { Button } from "$lib/components/ui/button";
 </script>
 
 <div class="h-screen flex flex-col gap-4 items-center justify-center">

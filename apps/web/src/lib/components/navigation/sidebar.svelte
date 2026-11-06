@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { ComponentProps } from "svelte";
-import * as Sidebar from "$lib/components/ui/sidebar/index.ts";
-import type { AuthUser } from "$lib/server/db/types";
+import * as Sidebar from "#lib/components/ui/sidebar/index.ts";
+import type { AuthUser } from "#lib/server/db/types.ts";
 import MainNavigation from "./main-navigation.svelte";
 import OrganizationSwitcher from "./organization-switcher.svelte";
 import UserSwitcher from "./user-switcher.svelte";

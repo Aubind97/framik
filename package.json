@@ -15,11 +15,11 @@
 		"clean": "bunx turbo clean"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.2.4",
-		"@types/bun": "^1.2.23",
-		"turbo": "^2.5.8"
+		"@biomejs/biome": "2.6.6",
+		"@types/bun": "^1.4.4",
+		"turbo": "^2.11.10"
 	},
-	"packageManager": "bun@1.0.0",
+	"packageManager": "bun@1.4.4",
 	"engines": {
 		"node": ">=18"
 	}

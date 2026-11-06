@@ -2,14 +2,14 @@
 import { SendHorizontal } from "@lucide/svelte";
 import { createQuery } from "@tanstack/svelte-query";
 import { toast } from "svelte-sonner";
-import { pushDaemonFrame } from "$lib/api/fetch/daemon";
-import { getAllFramesQueryOptions } from "$lib/api/fetch/frame";
-import { useActiveOrganization } from "$lib/auth-client";
-import { Button } from "$lib/components/ui/button";
-import FrameClearControl from "$lib/components/utils/frame-clear-control.svelte";
-import FrameRefreshControl from "$lib/components/utils/frame-refresh-control.svelte";
-import FrameSelector from "$lib/components/utils/frame-selector.svelte";
-import type { Frame } from "$lib/server/db/types";
+import { pushDaemonFrame } from "#lib/api/fetch/daemon.ts";
+import { getAllFramesQueryOptions } from "#lib/api/fetch/frame.ts";
+import { useActiveOrganization } from "#lib/auth-client.ts";
+import { Button } from "#lib/components/ui/button/index.ts";
+import FrameClearControl from "#lib/components/utils/frame-clear-control.svelte";
+import FrameRefreshControl from "#lib/components/utils/frame-refresh-control.svelte";
+import FrameSelector from "#lib/components/utils/frame-selector.svelte";
+import type { Frame } from "#lib/server/db/types.ts";
 
 let { loadedImage, onSelectedFrame }: { loadedImage?: string | undefined; onSelectedFrame?: (frame: Frame | undefined) => void } = $props();
 

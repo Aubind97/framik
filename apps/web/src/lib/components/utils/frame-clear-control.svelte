@@ -1,9 +1,9 @@
 <script lang="ts">
 import { BrushCleaning } from "@lucide/svelte";
 import { toast } from "svelte-sonner";
-import { clearDaemonFrame } from "$lib/api/fetch/daemon";
-import { Button } from "$lib/components/ui/button";
-import type { Frame } from "$lib/server/db/types";
+import { clearDaemonFrame } from "#lib/api/fetch/daemon.ts";
+import { Button } from "#lib/components/ui/button/index.ts";
+import type { Frame } from "#lib/server/db/types.ts";
 
 let { frame }: { frame: Frame | undefined } = $props();
 

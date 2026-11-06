@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { getWidgetScreenshot } from "$lib/utils/images";
+import { getWidgetScreenshot } from "#lib/utils/images.ts";
 
 export const generatorRouter = new Elysia({ prefix: "/generator" }).get(
 	"",

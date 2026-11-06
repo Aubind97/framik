@@ -17,7 +17,7 @@
 export type Color = { r: number; g: number; b: number };
 
 type ImageData = {
-	data: Uint8ClampedArray;
+	data: Uint8ClampedArray<ArrayBuffer>;
 	width: number;
 	height: number;
 };
@@ -194,7 +194,7 @@ export function applyDithering(imageData: ImageData, colors: Color[], options?: 
 		processedData = enhanceLocalContrast(processedData, width, height, opts.contrastEnhancement);
 	}
 
-	let quantizedData: Uint8ClampedArray;
+	let quantizedData: Uint8ClampedArray<ArrayBuffer>;
 
 	switch (opts.algorithm) {
 		case "floyd-steinberg":
@@ -224,7 +224,7 @@ export function applyDithering(imageData: ImageData, colors: Color[], options?: 
 /**
  * Enhance local contrast using adaptive histogram equalization
  */
-function enhanceLocalContrast(data: Uint8ClampedArray, width: number, height: number, strength: number): Uint8ClampedArray {
+function enhanceLocalContrast(data: Uint8ClampedArray<ArrayBuffer>, width: number, height: number, strength: number): Uint8ClampedArray<ArrayBuffer> {
 	const enhanced = new Uint8ClampedArray(data);
 	const windowSize = Math.max(8, Math.min(32, Math.floor(Math.min(width, height) / 16)));
 
@@ -366,7 +366,7 @@ function perceptualColorDistance(color1: ColorArray, color2: Color): number {
  * Error distribution pattern spreads errors across 16 neighboring pixels
  * in a 5x2 pattern, providing smooth gradients with minimal artifacts.
  */
-function sierraTwoRowDither(uint8data: Uint8ClampedArray, palette: Color[], width: number, height: number, options: DitherOptions): Uint8ClampedArray {
+function sierraTwoRowDither(uint8data: Uint8ClampedArray<ArrayBuffer>, palette: Color[], width: number, height: number, options: DitherOptions): Uint8ClampedArray<ArrayBuffer> {
 	const imageData = new Float32Array(uint8data.length);
 	const output = new Uint8ClampedArray(uint8data);
 	const { findClosestColor } = createColorLookup(palette, options.usePerceptualSpace);
@@ -447,7 +447,7 @@ function sierraTwoRowDither(uint8data: Uint8ClampedArray, palette: Color[], widt
 /**
  * Apply gamma correction optimized for e-ink displays
  */
-function applyGammaCorrection(data: Uint8ClampedArray, gamma: number): Uint8ClampedArray {
+function applyGammaCorrection(data: Uint8ClampedArray<ArrayBuffer>, gamma: number): Uint8ClampedArray<ArrayBuffer> {
 	const corrected = new Uint8ClampedArray(data);
 	const invGamma = 1 / gamma;
 
@@ -501,7 +501,7 @@ function createColorLookup(palette: Color[], usePerceptualSpace = false): {
  * Often produces better results than Atkinson for e-ink displays due to
  * more even error distribution. Good for images with fine details.
  */
-function floydSteinbergDither(uint8data: Uint8ClampedArray, palette: Color[], width: number, height: number, options: DitherOptions): Uint8ClampedArray {
+function floydSteinbergDither(uint8data: Uint8ClampedArray<ArrayBuffer>, palette: Color[], width: number, height: number, options: DitherOptions): Uint8ClampedArray<ArrayBuffer> {
 	const imageData = new Float32Array(uint8data.length);
 	const output = new Uint8ClampedArray(uint8data);
 	const { findClosestColor } = createColorLookup(palette, options.usePerceptualSpace);
@@ -582,7 +582,7 @@ function floydSteinbergDither(uint8data: Uint8ClampedArray, palette: Color[], wi
  * Provides excellent quality with smooth gradients and minimal artifacts.
  * Good balance between the lighter Sierra Two-Row and heavier Stucki algorithms.
  */
-function sierraDither(uint8data: Uint8ClampedArray, palette: Color[], width: number, height: number, options: DitherOptions): Uint8ClampedArray {
+function sierraDither(uint8data: Uint8ClampedArray<ArrayBuffer>, palette: Color[], width: number, height: number, options: DitherOptions): Uint8ClampedArray<ArrayBuffer> {
 	const imageData = new Float32Array(uint8data.length);
 	const output = new Uint8ClampedArray(uint8data);
 	const { findClosestColor } = createColorLookup(palette, options.usePerceptualSpace);
@@ -668,7 +668,7 @@ function sierraDither(uint8data: Uint8ClampedArray, palette: Color[], width: num
 /**
  * Improved Atkinson dithering with better error distribution
  */
-function atkinsonDither(uint8data: Uint8ClampedArray, palette: Color[], step: number, height: number, width: number, options: DitherOptions): Uint8ClampedArray {
+function atkinsonDither(uint8data: Uint8ClampedArray<ArrayBuffer>, palette: Color[], step: number, height: number, width: number, options: DitherOptions): Uint8ClampedArray<ArrayBuffer> {
 	const imageData = new Float32Array(uint8data.length);
 	const output = new Uint8ClampedArray(uint8data);
 	const { findClosestColor } = createColorLookup(palette, options.usePerceptualSpace);
@@ -754,7 +754,7 @@ function atkinsonDither(uint8data: Uint8ClampedArray, palette: Color[], step: nu
  * Produces the most natural-looking results with minimal visible patterns,
  * making it ideal for photographs and images with subtle tonal variations.
  */
-function stuckiDither(uint8data: Uint8ClampedArray, palette: Color[], width: number, height: number, options: DitherOptions): Uint8ClampedArray {
+function stuckiDither(uint8data: Uint8ClampedArray<ArrayBuffer>, palette: Color[], width: number, height: number, options: DitherOptions): Uint8ClampedArray<ArrayBuffer> {
 	const imageData = new Float32Array(uint8data.length);
 	const output = new Uint8ClampedArray(uint8data);
 	const { findClosestColor } = createColorLookup(palette, options.usePerceptualSpace);

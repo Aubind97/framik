@@ -19,10 +19,10 @@
 		"dev": "bun build src/browser.ts --outdir dist --target browser --format esm --watch & bun build src/node.ts --outdir dist --target node --format esm --external sharp --watch"
 	},
 	"dependencies": {
-		"sharp": "^0.33.0"
+		"sharp": "^0.35.5"
 	},
 	"peerDependencies": {
-		"sharp": "^0.33.0"
+		"sharp": "^0.35.5"
 	},
 	"peerDependenciesMeta": {
 		"sharp": {
@@ -30,7 +30,7 @@
 		}
 	},
 	"devDependencies": {
-		"@typescript/native-preview": "^7.0.0-dev.20250727.1",
-		"typescript": "^5.0.0"
+		"@typescript/native-preview": "^7.0.0-dev.20260707.2",
+		"typescript": "^7.0.2"
 	}
 }

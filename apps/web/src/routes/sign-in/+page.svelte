@@ -1,10 +1,10 @@
 <script lang="ts">
 import { toast } from "svelte-sonner";
+import { signIn } from "#lib/auth-client.ts";
+import SignInForm from "#lib/components/forms/sign-in.form.svelte";
+import type { SignInFormValue } from "#lib/components/forms/utils/schemas.ts";
 import { goto } from "$app/navigation";
 import { page } from "$app/state";
-import { signIn } from "$lib/auth-client";
-import SignInForm from "$lib/components/forms/sign-in.form.svelte";
-import type { SignInFormValue } from "$lib/components/forms/utils/schemas";
 
 async function handleSubmit(formValue: SignInFormValue) {
 	const { error } = await signIn.email({

@@ -1,11 +1,11 @@
 <script lang="ts">
 import { LayoutGrid, RefreshCw } from "@lucide/svelte";
 import { onMount } from "svelte";
-import { Button } from "$lib/components/ui/button";
-import Label from "$lib/components/ui/label/label.svelte";
-import { Toggle } from "$lib/components/ui/toggle";
-import Widget from "$lib/components/widgets/core/widget.svelte";
-import { SCREENS } from "$lib/constants";
+import { Button } from "#lib/components/ui/button/index.ts";
+import Label from "#lib/components/ui/label/label.svelte";
+import { Toggle } from "#lib/components/ui/toggle/index.ts";
+import Widget from "#lib/components/widgets/core/widget.svelte";
+import { SCREENS } from "#lib/constants.ts";
 
 const { handleImageLoad }: { handleImageLoad?: (image: string) => void } = $props();
 
