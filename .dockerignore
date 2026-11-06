@@ -1,0 +1,11 @@
+**/node_modules
+.git
+**/.env*
+**/*.db
+**/build
+**/dist
+**/.svelte-kit
+**/.turbo
+**/logs
+apps/daemon/*
+!apps/daemon/package.json
