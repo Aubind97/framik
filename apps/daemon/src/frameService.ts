@@ -44,13 +44,9 @@ export async function showImageOnFrame(rgbBuffer: Buffer<ArrayBufferLike>, info:
 
 	const displayBuffer = usedFrame.createBufferFromRGB(rgbBufferCopy, info.width, info.height);
 
-	await clearFrame(usedFrame);
-	await new Promise((resolve) => setTimeout(resolve, 3000));
-
 	logger.info`Start to show the image`;
 	usedFrame.display(displayBuffer);
 	logger.info`Image displayed`;
-	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	await turnOnSleepMode(usedFrame);
 }
@@ -58,7 +54,7 @@ export async function showImageOnFrame(rgbBuffer: Buffer<ArrayBufferLike>, info:
 export async function clearFrame(frame?: EPaperDriver | null) {
 	const usedFrame = frame ?? (await getFrame());
 
-	if (!usedFrame?.isInitialized) {
+	if (!usedFrame) {
 		logger.info`No frame instance available`;
 		return;
 	}
@@ -98,6 +94,8 @@ export async function refresh() {
 	try {
 		const { data: rgbBuffer, info } = await sharp(CURRENT_IMAGE).removeAlpha().raw().toBuffer({ resolveWithObject: true });
 		if (rgbBuffer) {
+			// Waveshare asks for a clear after waking from deep sleep; pushes skip it for speed, so do it here
+			await clearFrame(frame);
 			await showImageOnFrame(rgbBuffer, info, frame);
 		}
 	} catch (err) {
