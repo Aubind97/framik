@@ -151,9 +151,14 @@ export const immichRoutes = new Elysia({ prefix: "/immich" })
 			const response = await requestImmich(credentials, `/assets/${params.id}/thumbnail?size=${query.size}`);
 			if ("error" in response) return status("Bad Gateway", response.error);
 
+			// Served from our origin, so anything else (HTML, SVG) could run scripts here.
+			const contentType = response.headers.get("content-type");
+			if (contentType !== "image/jpeg" && contentType !== "image/webp") return status("Bad Gateway", "Immich did not return a JPEG or WebP image");
+
 			return new Response(response.body, {
 				headers: {
-					"content-type": response.headers.get("content-type") ?? "image/jpeg",
+					"content-type": contentType,
+					"x-content-type-options": "nosniff",
 					"cache-control": "private, max-age=86400",
 				},
 			});
