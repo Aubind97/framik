@@ -46,7 +46,8 @@ export function immichFetch(credentials: ImmichCredentials, path: string, init: 
 	for (const { name, value } of credentials.headers) headers.set(name, value);
 	headers.set("x-api-key", credentials.apiKey);
 
-	return fetch(`${normalizeImmichUrl(credentials.url)}/api${path}`, { ...init, headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+	// Following redirects would let any server send us to an arbitrary internal URL.
+	return fetch(`${normalizeImmichUrl(credentials.url)}/api${path}`, { ...init, headers, redirect: "manual", signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
 }
 
 /** Resolves to the successful response, or to a user-facing error message. */
