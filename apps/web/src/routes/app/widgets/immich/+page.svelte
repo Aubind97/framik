@@ -18,7 +18,7 @@ const integrationQuery = createQuery(() => getImmichIntegrationQueryOptions());
     <title>Immich · Framik</title>
 </svelte:head>
 
-<div class="h-full flex flex-col gap-4">
+<div class="flex flex-col gap-4 lg:h-[calc(100svh-var(--header-height)-4rem)]">
     <div class="flex flex-col lg:flex-row gap-4 justify-between items-center">
         <div class="flex items-center gap-4">
             <img alt="{WIDGET.name} Logo" src={WIDGET.logoLight} class="size-8"/>

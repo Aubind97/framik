@@ -26,17 +26,22 @@ function handleSelect(asset: ImmichAsset) {
 	handleImageLoad?.(undefined);
 }
 
+// From lg up the page fits the viewport: the preview is capped so the photo grid always keeps two rows.
+// --photos-min: two rows of square tiles (6 columns at lg, 8 at xl, sized from @container/main) plus headings.
+// --immich-chrome: header, page padding, title, gaps and frame padding above and below the preview.
+const PREVIEW_FIT = "lg:h-auto lg:mx-auto lg:w-[min(100%,calc((100svh-var(--immich-chrome)-var(--photos-min))*var(--frame-aspect)))]";
+
 function handleEdit(edited: string) {
 	image = edited;
 	handleImageLoad?.(edited);
 }
 </script>
 
-<div class="w-full flex flex-col gap-6">
-    <div class="w-full grid lg:grid-cols-[1fr_auto] gap-4">
+<div class="w-full flex flex-col gap-6 lg:flex-1 lg:min-h-0 [--immich-chrome:15rem] lg:[--photos-min:calc(33.4cqw+6.5rem)] xl:[--photos-min:calc(25cqw+6.5rem)]">
+    <div class="w-full grid lg:grid-cols-[1fr_auto] gap-4 lg:shrink-0">
         <div bind:this={preview}>
             <!-- null renders the placeholder, undefined the loading spinner -->
-            <Widget image={selected ? image : null} showProcessedPreview={showProcessedPreview && !dragging} emptyLabel="Select a photo below" />
+            <Widget image={selected ? image : null} showProcessedPreview={showProcessedPreview && !dragging} emptyLabel="Select a photo below" frameClass="lg:p-6" rendererClass={PREVIEW_FIT} />
         </div>
 
         <aside class="p-4 border rounded min-w-64 lg:max-w-72 flex flex-col gap-4">
@@ -64,13 +69,13 @@ function handleEdit(edited: string) {
         </aside>
     </div>
 
-    <section class="flex flex-col gap-3">
+    <section class="flex flex-col gap-3 lg:flex-1 lg:min-h-(--photos-min)">
         <div class="flex flex-wrap items-center justify-between gap-2">
             <h2 class="font-bold">Your photos</h2>
             <AlbumPicker onChange={(next) => (filter = next)} />
         </div>
         {#key filter.albumId}
-            <PhotoGrid {filter} selectedId={selected?.id} onSelect={handleSelect} class="max-h-[60vh] rounded-md border" />
+            <PhotoGrid {filter} selectedId={selected?.id} onSelect={handleSelect} class="max-h-[60vh] rounded-md border lg:max-h-none lg:flex-1 lg:min-h-0" />
         {/key}
     </section>
 </div>

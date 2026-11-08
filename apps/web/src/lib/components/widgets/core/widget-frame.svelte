@@ -1,9 +1,10 @@
 <script lang="ts">
 import { type Snippet } from "svelte";
+import { cn } from "#lib/utils.ts";
 
-let { children }: { children?: Snippet } = $props();
+let { children, class: className }: { children?: Snippet; class?: string } = $props();
 </script>
 
-<div class="border p-8 lg:p-16 rounded h-full">
+<div class={cn("border p-8 lg:p-16 rounded h-full", className)}>
     {@render children?.()}
 </div>
