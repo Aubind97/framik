@@ -20,6 +20,7 @@ const timelineQuery = {
 };
 
 type ImmichTimelineBucket = { id: string[]; isImage: boolean[]; fileCreatedAt: string[] };
+type ImmichAlbum = { id: string; albumName: string; assetCount: number; order?: "asc" | "desc" };
 
 /** The whole library is limited to the timeline (no archived or locked photos); an album shows everything it contains. */
 function toTimelineParams(query: { albumId?: string; order: "asc" | "desc" }) {
@@ -94,6 +95,21 @@ export const immichRoutes = new Elysia({ prefix: "/immich" })
 		},
 		{ body: integrationBody },
 	)
+	.get("/albums", async ({ userId, status }) => {
+		const credentials = await getImmichCredentials(userId);
+		if (!credentials) return status("Precondition Failed", NOT_CONNECTED);
+
+		const [owned, shared] = await Promise.all([requestImmich(credentials, "/albums?isOwned=true"), requestImmich(credentials, "/albums?isOwned=false")]);
+		if ("error" in owned) return status("Bad Gateway", owned.error);
+		if ("error" in shared) return status("Bad Gateway", shared.error);
+
+		const toAlbum = (album: ImmichAlbum) => ({ id: album.id, name: album.albumName, assetCount: album.assetCount, order: album.order ?? "desc" });
+		const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name);
+		return {
+			owned: ((await owned.json()) as ImmichAlbum[]).map(toAlbum).sort(byName),
+			shared: ((await shared.json()) as ImmichAlbum[]).map(toAlbum).sort(byName),
+		};
+	})
 	.get(
 		"/timeline/buckets",
 		async ({ userId, query, status }) => {

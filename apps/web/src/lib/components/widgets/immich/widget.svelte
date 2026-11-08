@@ -5,6 +5,7 @@ import Label from "#lib/components/ui/label/label.svelte";
 import { Toggle } from "#lib/components/ui/toggle/index.ts";
 import ImageEditor from "#lib/components/widgets/core/image-editor.svelte";
 import Widget from "#lib/components/widgets/core/widget.svelte";
+import AlbumPicker from "./album-picker.svelte";
 import PhotoGrid from "./photo-grid.svelte";
 
 const { handleImageLoad }: { handleImageLoad?: (image: string | undefined) => void } = $props();
@@ -64,7 +65,12 @@ function handleEdit(edited: string) {
     {/if}
 
     <section class="flex flex-col gap-3">
-        <h2 class="font-bold">Your photos</h2>
-        <PhotoGrid {filter} selectedId={selected?.id} onSelect={handleSelect} class="max-h-[60vh] rounded-md border" />
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="font-bold">Your photos</h2>
+            <AlbumPicker onChange={(next) => (filter = next)} />
+        </div>
+        {#key filter.albumId}
+            <PhotoGrid {filter} selectedId={selected?.id} onSelect={handleSelect} class="max-h-[60vh] rounded-md border" />
+        {/key}
     </section>
 </div>

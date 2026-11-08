@@ -64,3 +64,16 @@ export function deleteImmichIntegration(fetch?: typeof globalThis.fetch) {
 export function testImmichIntegration(body: ImmichIntegrationBody, fetch?: typeof globalThis.fetch) {
 	return getFetcher(fetch)("/api/immich/integration/test", { method: "POST", body });
 }
+
+export function getImmichAlbumsQueryOptions(fetch?: typeof globalThis.fetch) {
+	return {
+		queryKey: ["immich", "albums"],
+		queryFn: async () => {
+			const { data, error } = await getFetcher(fetch)("/api/immich/albums", { method: "GET" });
+			if (error) throw new Error(getErrorMessage(error));
+			return data;
+		},
+		// Failures are usually a missing `album.read` permission, which a retry won't fix.
+		retry: false,
+	} satisfies FetchQueryOptions;
+}
