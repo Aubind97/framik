@@ -4,7 +4,7 @@ import { ImageOff } from "@lucide/svelte";
 import { SCREENS } from "#lib/constants.ts";
 
 // undefined = loading, null = no image
-const { image, showProcessedPreview }: { image: string | null | undefined; showProcessedPreview: boolean } = $props();
+const { image, showProcessedPreview, emptyLabel = "No image on frame" }: { image: string | null | undefined; showProcessedPreview: boolean; emptyLabel?: string } = $props();
 
 let formattedImage = $state<undefined | string>(undefined);
 
@@ -35,7 +35,7 @@ $effect(() => {
     {:else if image === null}
         <div class="flex flex-col items-center gap-2 text-muted-foreground">
             <ImageOff class="size-8" />
-            <span>No image on frame</span>
+            <span>{emptyLabel}</span>
         </div>
     {:else}
         <img

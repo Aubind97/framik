@@ -2,9 +2,9 @@
 import WidgetFrame from "#lib/components/widgets/core/widget-frame.svelte";
 import WidgetRenderer from "#lib/components/widgets/core/widget-renderer.svelte";
 
-const { image, showProcessedPreview }: { image: string | null | undefined; showProcessedPreview: boolean } = $props();
+const { image, showProcessedPreview, emptyLabel }: { image: string | null | undefined; showProcessedPreview: boolean; emptyLabel?: string } = $props();
 </script>
 
 <WidgetFrame>
-    <WidgetRenderer {image} {showProcessedPreview}/>
+    <WidgetRenderer {image} {showProcessedPreview} {emptyLabel}/>
 </WidgetFrame>
