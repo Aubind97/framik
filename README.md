@@ -36,9 +36,20 @@ docker run -d --name framik -p 3000:3000 -v framik-data:/data \
 **Daemon machine** (Raspberry Pi, 64-bit Pi OS Bookworm)
 
 - SPI enabled: `sudo raspi-config nonint do_spi 0`
-- Nothing else: the daemon is a single static Go binary, built on your machine.
+- Nothing else: the daemon is a single static Go binary, built by CI.
 
-**Deploy the daemon** (needs [Go](https://go.dev/dl/) on your machine)
+**Install or update the daemon** (on the Pi)
+
+```sh
+curl -fsSL https://github.com/Aubind97/framik/releases/download/daemon-latest/install.sh | sudo sh
+journalctl -u framik-daemon -f
+```
+
+- `daemon-latest` is rebuilt by CI on every push to `main` touching `apps/daemon`. Pin a tagged release with `| sudo FRAMIK_RELEASE=v1.2.3 sh`.
+- `curl localhost:3000/status` shows the running version.
+- The current image lives in `/var/lib/framik/current.png`.
+
+<details><summary>Build and deploy from your machine instead (needs <a href="https://go.dev/dl/">Go</a>)</summary>
 
 ```sh
 # On your machine
@@ -50,11 +61,9 @@ sudo install -m755 framik-daemon /usr/local/bin/
 sudo cp framik-daemon.service /etc/systemd/system/
 sudo cp framik-captive.conf /etc/NetworkManager/dnsmasq-shared.d/
 sudo systemctl daemon-reload && sudo systemctl enable --now framik-daemon
-journalctl -u framik-daemon -f
 ```
 
-Update: rebuild, `scp` the binary, `sudo install …` again, then `sudo systemctl restart framik-daemon`.
-The current image lives in `/var/lib/framik/current.png`.
+</details>
 
 **Wi-Fi setup**: after 3 minutes without network the frame starts a `Framik-XXXX` hotspot and shows a QR code to join it (a small banner over the photo if there is one). Joining opens a page at `http://10.42.0.1` to pick the Wi-Fi network. Every 10 minutes it also retries saved networks.
 

@@ -16,7 +16,6 @@ import (
 )
 
 const (
-	version      = "0.1.0"
 	currentImage = "current.png"
 	// Updating the panel more often risks burn-in
 	minUpdateInterval = 15 * time.Second
@@ -25,6 +24,8 @@ const (
 )
 
 var (
+	// Set at build time with -ldflags "-X main.version=..."
+	version     = "dev"
 	updatePanel = epdUpdate
 	frameMu     sync.Mutex
 	lastUpdate  atomic.Int64
