@@ -34,6 +34,10 @@ const items = [
 				title: "Organization",
 				url: "/app/organizations/settings",
 			},
+			{
+				title: "Account",
+				url: "/app/account/settings",
+			},
 		],
 	},
 ] as const;

@@ -1,8 +1,9 @@
 import { Elysia } from "elysia";
 import { daemonRoutes } from "#lib/api/routes/daemon.ts";
 import { frameRoutes } from "#lib/api/routes/frame.ts";
+import { immichRoutes } from "#lib/api/routes/immich.ts";
 
-const app = new Elysia({ prefix: "/api" }).use(frameRoutes).use(daemonRoutes);
+const app = new Elysia({ prefix: "/api" }).use(frameRoutes).use(daemonRoutes).use(immichRoutes);
 
 type RequestHandler = (v: { request: Request }) => Response | Promise<Response>;
 

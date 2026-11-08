@@ -2,6 +2,7 @@
 import { getInitials } from "@framik/shared/browser";
 import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 import LogOutIcon from "@lucide/svelte/icons/log-out";
+import UserCogIcon from "@lucide/svelte/icons/user-cog";
 import { toast } from "svelte-sonner";
 import { signOut, useSession } from "#lib/auth-client.ts";
 import * as Avatar from "#lib/components/ui/avatar/index.ts";
@@ -23,6 +24,11 @@ async function handleLogout() {
 	}
 
 	goto("/sign-in");
+}
+
+function handleAccountSettings() {
+	if (sidebar.isMobile) sidebar.toggle();
+	goto("/app/account/settings");
 }
 </script>
 
@@ -64,6 +70,11 @@ async function handleLogout() {
             </div>
           </div>
         </DropdownMenu.Label>
+        <DropdownMenu.Separator />
+        <DropdownMenu.Item onclick={handleAccountSettings}>
+          <UserCogIcon />
+          Account settings
+        </DropdownMenu.Item>
         <DropdownMenu.Separator />
         <DropdownMenu.Item onclick={handleLogout}>
           <LogOutIcon />
