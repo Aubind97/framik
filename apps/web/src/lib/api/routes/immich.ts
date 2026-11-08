@@ -9,7 +9,8 @@ const logger = getLogger(["@framik", "api", "immich"]);
 const NOT_CONNECTED = "Immich is not connected";
 
 const integrationBody = t.Object({
-	url: t.String({ format: "uri" }),
+	// A query or fragment would let the URL override the Immich API path appended to it.
+	url: t.String({ pattern: "^https?://[^?#\\s]+$" }),
 	apiKey: t.String(),
 	headers: t.Array(t.Object({ name: t.String(), value: t.String() })),
 });
