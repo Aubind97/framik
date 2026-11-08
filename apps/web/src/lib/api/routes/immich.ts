@@ -43,6 +43,9 @@ function mergeCredentials(body: typeof integrationBody.static, stored: ImmichCre
 }
 
 export const immichRoutes = new Elysia({ prefix: "/immich" })
+	.onError(({ code, error, path }) => {
+		if (code === "UNKNOWN" || code === "INTERNAL_SERVER_ERROR") logger.error`${path} failed: ${error}`;
+	})
 	.resolve(async ({ request, status }) => {
 		const session = await auth.api.getSession({ headers: request.headers });
 		if (!session) return status("Unauthorized");

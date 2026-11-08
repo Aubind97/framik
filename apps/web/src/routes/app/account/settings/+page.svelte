@@ -73,7 +73,7 @@ async function handleDisconnect() {
                         <ImmichIntegrationForm stored={integrationQuery.data.connected ? integrationQuery.data : null} {handleSave} {handleTest} {handleDisconnect} />
                     {/key}
                 {:else if integrationQuery.isError}
-                    <p class="text-destructive text-sm">Could not load the Immich integration.</p>
+                    <p class="text-destructive text-sm">Could not load the Immich integration: {integrationQuery.error.message}</p>
                 {:else}
                     <Skeleton class="h-48 w-full" />
                 {/if}
