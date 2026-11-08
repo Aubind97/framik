@@ -4,7 +4,7 @@ import { getImmichIntegrationQueryOptions } from "#lib/api/fetch/immich.ts";
 import { Skeleton } from "#lib/components/ui/skeleton/index.ts";
 import FrameControls from "#lib/components/utils/frame-controls.svelte";
 import WidgetLocked from "#lib/components/widgets/core/widget-locked.svelte";
-import PhotoGrid from "#lib/components/widgets/immich/photo-grid.svelte";
+import ImmichWidget from "#lib/components/widgets/immich/widget.svelte";
 import { WIDGETS } from "#lib/constants.ts";
 
 let loadedImage = $state<string | undefined>(undefined);
@@ -36,6 +36,6 @@ const integrationQuery = createQuery(() => getImmichIntegrationQueryOptions());
     {:else if !integrationQuery.data.connected}
         <WidgetLocked integration="immich" />
     {:else}
-        <PhotoGrid />
+        <ImmichWidget handleImageLoad={(image) => (loadedImage = image)} />
     {/if}
 </div>
