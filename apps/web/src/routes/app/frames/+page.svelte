@@ -37,6 +37,10 @@ $effect(() => {
 });
 </script>
 
+<svelte:head>
+    <title>Frames · Framik</title>
+</svelte:head>
+
 <div class="h-full flex flex-col gap-2">
     <header class="flex justify-between items-center">
     <h1 class="text-2xl font-bold">Frames</h1>

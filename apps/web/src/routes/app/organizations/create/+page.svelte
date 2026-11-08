@@ -29,6 +29,10 @@ async function handleSubmit(formValue: OrganizationCreationFormValue) {
 }
 </script>
 
+<svelte:head>
+    <title>Create an organization · Framik</title>
+</svelte:head>
+
 <div class="max-w-prose w-full mx-auto">
     <OrganizationCreationForm {handleSubmit} />
 </div>

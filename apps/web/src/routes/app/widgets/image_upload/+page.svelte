@@ -24,6 +24,10 @@ async function handleImageLoad(image: string) {
 }
 </script>
 
+<svelte:head>
+    <title>Image upload · Framik</title>
+</svelte:head>
+
 <div class="h-full flex flex-col gap-4">
     <div class="flex flex-col lg:flex-row gap-4 justify-between items-center">
         <div class="flex items-center gap-4">

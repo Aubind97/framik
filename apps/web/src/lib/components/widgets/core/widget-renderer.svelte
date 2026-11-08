@@ -2,9 +2,15 @@
 import { applyDitheringBrowser } from "@framik/shared/browser";
 import { ImageOff } from "@lucide/svelte";
 import { SCREENS } from "#lib/constants.ts";
+import { cn } from "#lib/utils.ts";
 
 // undefined = loading, null = no image
-const { image, showProcessedPreview }: { image: string | null | undefined; showProcessedPreview: boolean } = $props();
+const {
+	image,
+	showProcessedPreview,
+	emptyLabel = "No image on frame",
+	class: className,
+}: { image: string | null | undefined; showProcessedPreview: boolean; emptyLabel?: string; class?: string } = $props();
 
 let formattedImage = $state<undefined | string>(undefined);
 
@@ -25,7 +31,7 @@ $effect(() => {
 });
 </script>
 
-<div class="bg-muted rounded overflow-hidden flex items-center justify-center h-full select-none" style={`aspect-ratio: ${ratio}`}>
+<div class={cn("bg-muted rounded overflow-hidden flex items-center justify-center h-full select-none", className)} style={`aspect-ratio: ${ratio}; --frame-aspect: calc(${ratio});`}>
     {#if image === undefined}
         <div class="p-2">
             <span
@@ -35,7 +41,7 @@ $effect(() => {
     {:else if image === null}
         <div class="flex flex-col items-center gap-2 text-muted-foreground">
             <ImageOff class="size-8" />
-            <span>No image on frame</span>
+            <span>{emptyLabel}</span>
         </div>
     {:else}
         <img

@@ -26,6 +26,10 @@ async function handleSubmit(formValue: FrameCreationFormValue) {
 }
 </script>
 
+<svelte:head>
+    <title>Create a frame · Framik</title>
+</svelte:head>
+
 <div class="max-w-prose w-full mx-auto">
     <FrameCreation {handleSubmit} />
 </div>

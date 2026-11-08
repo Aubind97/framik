@@ -8,6 +8,13 @@
       "when": 1793987449469,
       "tag": "0000_dear_wallow",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1794155892685,
+      "tag": "0001_immich_integration",
+      "breakpoints": true
     }
   ]
 }

@@ -20,10 +20,17 @@ function handleSelectedFrame(frame: Frame | undefined) {
 }
 </script>
 
-<div class="h-full flex flex-col gap-4">
+<svelte:head>
+    <title>Home · Framik</title>
+</svelte:head>
+
+<div class="flex-1 flex flex-col gap-4">
     <FrameControls onSelectedFrame={handleSelectedFrame} />
 
-    <div class="w-full grid lg:grid-cols-[1fr] gap-4">
-        <Widget image={currentImageQuery.data ?? undefined} showProcessedPreview={false} />
+    <div class="flex-1 flex flex-col justify-center lg:justify-start">
+        <!-- auto height so the frame keeps its aspect ratio instead of stretching -->
+        <div>
+            <Widget image={currentImageQuery.data ?? undefined} showProcessedPreview={false} />
+        </div>
     </div>
 </div>
