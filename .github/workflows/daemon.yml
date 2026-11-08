@@ -1,0 +1,62 @@
+name: Daemon release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths:
+      - apps/daemon/**
+      - .github/workflows/daemon.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daemon-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: apps/daemon
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: apps/daemon/go.mod
+          cache-dependency-path: apps/daemon/go.sum
+
+      - run: go test ./...
+
+      - name: Build linux/arm64
+        env:
+          GOOS: linux
+          GOARCH: arm64
+          CGO_ENABLED: "0"
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then version="$GITHUB_REF_NAME"; else version="main-${GITHUB_SHA::7}"; fi
+          go build -trimpath -ldflags="-s -w -X main.version=$version" -o dist/framik-daemon-linux-arm64 .
+          cp framik-daemon.service framik-captive.conf install.sh dist/
+
+      - name: Publish rolling daemon-latest release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete daemon-latest --cleanup-tag --yes || true
+          gh release create daemon-latest dist/* \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "Daemon (latest main)" \
+            --notes "Built from ${GITHUB_SHA}. Install or update on the frame: \`curl -fsSL https://github.com/${GITHUB_REPOSITORY}/releases/download/daemon-latest/install.sh | sudo sh\`"
+
+      - name: Publish tag release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --title "$GITHUB_REF_NAME" --generate-notes \
+            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
