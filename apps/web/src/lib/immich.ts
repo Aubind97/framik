@@ -7,6 +7,12 @@ export function isAllowedHeaderName(name: string) {
 	return HEADER_NAME.test(name) && !RESERVED_HEADERS.has(name.toLowerCase());
 }
 
+/** `timeBucket` is the first day of the month, e.g. `2024-03-01` or `2024-03-01T00:00:00.000Z`. */
+export function formatTimeBucket(timeBucket: string, locale?: string) {
+	const [year, month] = timeBucket.split("-").map(Number);
+	return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString(locale, { month: "long", year: "numeric", timeZone: "UTC" });
+}
+
 /** Accepts the server URL the way the Immich app does, with or without a trailing `/api`. */
 export function normalizeImmichUrl(url: string) {
 	return url

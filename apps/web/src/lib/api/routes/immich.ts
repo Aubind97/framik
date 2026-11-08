@@ -6,7 +6,6 @@ import { deleteImmichCredentials, getImmichCredentials, type ImmichCredentials, 
 
 const logger = getLogger(["@framik", "api", "immich"]);
 
-const ASSETS_PAGE_SIZE = 100;
 const NOT_CONNECTED = "Immich is not connected";
 
 const integrationBody = t.Object({
@@ -15,13 +14,20 @@ const integrationBody = t.Object({
 	headers: t.Array(t.Object({ name: t.String(), value: t.String() })),
 });
 
-type ImmichSearchResponse = {
-	assets: {
-		items: { id: string; originalFileName: string; localDateTime: string }[];
-		nextPage?: string | null;
-		nextCursor?: string | null;
-	};
+const timelineQuery = {
+	albumId: t.Optional(t.String({ format: "uuid" })),
+	order: t.Union([t.Literal("asc"), t.Literal("desc")], { default: "desc" }),
 };
+
+type ImmichTimelineBucket = { id: string[]; isImage: boolean[]; fileCreatedAt: string[] };
+
+/** The whole library is limited to the timeline (no archived or locked photos); an album shows everything it contains. */
+function toTimelineParams(query: { albumId?: string; order: "asc" | "desc" }) {
+	const params = new URLSearchParams({ order: query.order });
+	if (query.albumId) params.set("albumId", query.albumId);
+	else params.set("visibility", "timeline");
+	return params;
+}
 
 /** Blank secrets in the body keep the stored value, so they never need to be sent back to the client. */
 function mergeCredentials(body: typeof integrationBody.static, stored: ImmichCredentials | null): ImmichCredentials | { error: string } {
@@ -89,29 +95,35 @@ export const immichRoutes = new Elysia({ prefix: "/immich" })
 		{ body: integrationBody },
 	)
 	.get(
-		"/assets",
+		"/timeline/buckets",
 		async ({ userId, query, status }) => {
 			const credentials = await getImmichCredentials(userId);
 			if (!credentials) return status("Precondition Failed", NOT_CONNECTED);
 
-			// Legacy filters and `page` are deprecated since Immich 3.2 but still accepted; `cursor` is used once the server returns one.
-			const search = { type: "IMAGE", order: "desc", visibility: "timeline", size: ASSETS_PAGE_SIZE, ...(query.cursor ? { cursor: query.cursor } : { page: query.page ?? 1 }) };
-			const response = await requestImmich(credentials, "/search/metadata", {
-				method: "POST",
-				body: JSON.stringify(search),
-				headers: { "content-type": "application/json" },
-			});
+			const response = await requestImmich(credentials, `/timeline/buckets?${toTimelineParams(query)}`);
 			if ("error" in response) return status("Bad Gateway", response.error);
 
-			const { assets } = (await response.json()) as ImmichSearchResponse;
-			const next = assets.nextCursor ? { cursor: assets.nextCursor } : assets.nextPage ? { page: Number(assets.nextPage) } : null;
+			return (await response.json()) as { timeBucket: string; count: number }[];
+		},
+		{ query: t.Object(timelineQuery) },
+	)
+	.get(
+		"/timeline/bucket",
+		async ({ userId, query, status }) => {
+			const credentials = await getImmichCredentials(userId);
+			if (!credentials) return status("Precondition Failed", NOT_CONNECTED);
 
+			const params = toTimelineParams(query);
+			params.set("timeBucket", query.timeBucket);
+			const response = await requestImmich(credentials, `/timeline/bucket?${params}`);
+			if ("error" in response) return status("Bad Gateway", response.error);
+
+			const bucket = (await response.json()) as ImmichTimelineBucket;
 			return {
-				items: assets.items.map((asset) => ({ id: asset.id, name: asset.originalFileName, takenAt: asset.localDateTime })),
-				next,
+				items: bucket.id.flatMap((id, index) => (bucket.isImage[index] ? [{ id, takenAt: bucket.fileCreatedAt[index] }] : [])),
 			};
 		},
-		{ query: t.Object({ cursor: t.Optional(t.String({ minLength: 1 })), page: t.Optional(t.Numeric({ minimum: 1 })) }) },
+		{ query: t.Object({ ...timelineQuery, timeBucket: t.String({ minLength: 1 }) }) },
 	)
 	.get(
 		"/assets/:id/thumbnail",
