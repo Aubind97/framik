@@ -1,5 +1,18 @@
 import { describe, expect, test } from "bun:test";
-import { formatTimeBucket, isAllowedHeaderName, normalizeImmichUrl } from "./immich.ts";
+import { formatTimeBucket, isAllowedHeaderName, matchesSearch, normalizeImmichUrl } from "./immich.ts";
+
+describe("matchesSearch", () => {
+	test("ignores case, accents and surrounding spaces", () => {
+		expect(matchesSearch("Anniversaire de mariage", "MARIAGE")).toBe(true);
+		expect(matchesSearch("Été 2025", "ete")).toBe(true);
+		expect(matchesSearch("Noël", " noel ")).toBe(true);
+		expect(matchesSearch("Holidays", "")).toBe(true);
+	});
+
+	test("rejects non-matching text", () => {
+		expect(matchesSearch("Holidays", "family")).toBe(false);
+	});
+});
 
 describe("formatTimeBucket", () => {
 	test("formats the month and year regardless of the local time zone", () => {

@@ -14,6 +14,18 @@ export function isAllowedHeaderName(name: string) {
 	return HEADER_NAME.test(name) && !RESERVED_HEADERS.has(name.toLowerCase());
 }
 
+const normalizeForSearch = (text: string) =>
+	text
+		.normalize("NFD")
+		.replace(/\p{Diacritic}/gu, "")
+		.toLowerCase()
+		.trim();
+
+/** Case- and accent-insensitive substring match, so "anniv" finds "Anniversaire de mariage". */
+export function matchesSearch(text: string, search: string) {
+	return normalizeForSearch(text).includes(normalizeForSearch(search));
+}
+
 /** `timeBucket` is the first day of the month, e.g. `2024-03-01` or `2024-03-01T00:00:00.000Z`. */
 export function formatTimeBucket(timeBucket: string, locale?: string) {
 	const [year, month] = timeBucket.split("-").map(Number);
