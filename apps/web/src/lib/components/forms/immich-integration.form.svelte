@@ -4,6 +4,7 @@ import { createForm } from "@tanstack/svelte-form";
 import { Button } from "#lib/components/ui/button/index.ts";
 import { Input } from "#lib/components/ui/input/index.ts";
 import Label from "#lib/components/ui/label/label.svelte";
+import { IMMICH_API_KEY_PERMISSIONS } from "#lib/immich.ts";
 import { createImmichIntegrationSchema, type ImmichIntegrationFormValue } from "./utils/schemas";
 import TextField from "./utils/text-field.svelte";
 
@@ -82,6 +83,18 @@ function isStoredHeader(name: string) {
         />
       {/snippet}
     </form.Field>
+
+    <div class="rounded-md border bg-muted/40 p-3 text-sm">
+      <p class="text-muted-foreground">When creating the key in Immich, grant these permissions:</p>
+      <ul class="mt-2 grid grid-cols-[auto_1fr] items-baseline gap-x-3 gap-y-1">
+        {#each IMMICH_API_KEY_PERMISSIONS as permission (permission.name)}
+          <li class="col-span-2 grid grid-cols-subgrid">
+            <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{permission.name}</code>
+            <span class="text-muted-foreground">{permission.usage}</span>
+          </li>
+        {/each}
+      </ul>
+    </div>
   </div>
 
   <form.Field name="headers" mode="array">

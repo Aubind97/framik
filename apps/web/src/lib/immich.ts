@@ -1,5 +1,12 @@
 export type ImmichHeader = { name: string; value: string };
 
+export const IMMICH_API_KEY_PERMISSIONS = [
+	{ name: "user.read", usage: "Test the connection" },
+	{ name: "asset.read", usage: "List your photos by month" },
+	{ name: "asset.view", usage: "Show thumbnails and previews" },
+	{ name: "album.read", usage: "List your albums and the ones shared with you" },
+] as const;
+
 const HEADER_NAME = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
 const RESERVED_HEADERS = new Set(["x-api-key", "host", "content-length", "connection", "transfer-encoding"]);
 
