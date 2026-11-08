@@ -48,6 +48,10 @@ async function handleDisconnect() {
 }
 </script>
 
+<svelte:head>
+    <title>Account settings · Framik</title>
+</svelte:head>
+
 <div class="max-w-prose w-full mx-auto flex flex-col gap-6">
     <h1 class="text-2xl font-bold">Account settings</h1>
 

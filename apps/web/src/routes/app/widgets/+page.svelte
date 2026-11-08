@@ -14,6 +14,10 @@ function getLock(requires: keyof typeof INTEGRATIONS | undefined) {
 }
 </script>
 
+<svelte:head>
+    <title>Widgets · Framik</title>
+</svelte:head>
+
 {#each Object.entries(WIDGETS) as [id, widget] (id) }
     <WidgetItem id={id} logo={mode.current === 'dark'? widget.logoDark : widget.logoLight} name={widget.name} description={widget.description} disabled={widget.disabled} locked={getLock(widget.requires)} />
 {/each}

@@ -12,6 +12,10 @@ $effect(() => {
 });
 </script>
 
+<svelte:head>
+    <title>Dithering · Framik</title>
+</svelte:head>
+
 <div class="h-screen w-screen flex flex-col gap-8 items-center justify-center">
     <div class="relative">
         <img src={base64Img} alt="Original" class="h-full block" />

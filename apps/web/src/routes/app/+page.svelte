@@ -20,6 +20,10 @@ function handleSelectedFrame(frame: Frame | undefined) {
 }
 </script>
 
+<svelte:head>
+    <title>Home · Framik</title>
+</svelte:head>
+
 <div class="h-full flex flex-col gap-4">
     <FrameControls onSelectedFrame={handleSelectedFrame} />
 

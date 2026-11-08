@@ -4,6 +4,10 @@ import { Button } from "#lib/components/ui/button/index.ts";
 import { page } from "$app/state";
 </script>
 
+<svelte:head>
+    <title>{page.status} · Framik</title>
+</svelte:head>
+
 <div class="h-screen flex flex-col gap-4 items-center justify-center">
     <Binoculars size={64} class="text-muted" />
     <h1 class="text-2xl font-bold">{page.error?.message ?? 'Error'} - {page.status}</h1>
