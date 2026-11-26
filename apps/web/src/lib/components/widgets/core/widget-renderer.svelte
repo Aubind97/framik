@@ -31,7 +31,7 @@ $effect(() => {
 });
 </script>
 
-<div class={cn("bg-muted rounded overflow-hidden flex items-center justify-center h-full select-none", className)} style={`aspect-ratio: ${ratio}; --frame-aspect: calc(${ratio});`}>
+<div class={cn("bg-muted border rounded overflow-hidden flex items-center justify-center h-full select-none", className)} style={`aspect-ratio: ${ratio}; --frame-aspect: calc(${ratio});`}>
     {#if image === undefined}
         <div class="p-2">
             <span
