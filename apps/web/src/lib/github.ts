@@ -16,7 +16,10 @@ export const GITHUB_REPO_PATTERN = "^[a-zA-Z\\d-]+/[\\w.-]+$";
 // What fits under the repository header at 800×480
 export const REPOSITORY_LIMITS = { commits: 8, pulls: 6, rows: 10 } as const;
 
-export type GithubConfig = { mode: "contributions"; username: string } | { mode: "repository"; repo: string; commits: number; pulls: number } | { mode: "releases" };
+export type GithubConfig =
+	| { mode: "contributions"; username: string; icon: "github" | "avatar" }
+	| { mode: "repository"; repo: string; commits: number; pulls: number }
+	| { mode: "releases" };
 export type GithubMode = GithubConfig["mode"];
 
 export const GITHUB_MODES = {

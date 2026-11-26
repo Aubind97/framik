@@ -73,9 +73,9 @@ export function renderContributionsSvg(username: string, days: ContributionDay[]
 	const gridX = (WIDTH - weeks * PITCH + (PITCH - CELL)) / 2;
 	const gridY = 345;
 	// ponytail: title width estimated at ~17px per DejaVu character; measure with a font lib if centring looks off
-	const avatarWidth = avatar ? 62 : 0;
-	const avatarX = (WIDTH - avatarWidth - 50 - `GitHub/${username}`.length * 17) / 2;
-	const titleX = avatarX + avatarWidth;
+	const iconWidth = avatar ? 60 : 50;
+	const iconX = (WIDTH - iconWidth - `GitHub/${username}`.length * 17) / 2;
+	const icon = avatar ? avatarImage("avatar", avatar, iconX, 42, 48) : `<g transform="translate(${iconX} 48) scale(2.5)"><path d="${GITHUB_MARK}"/></g>`;
 
 	const cells: string[] = [];
 	const months: string[] = [];
@@ -98,9 +98,8 @@ export function renderContributionsSvg(username: string, days: ContributionDay[]
 
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" font-family="DejaVu Sans, sans-serif" fill="#000">
 <rect width="${WIDTH}" height="${HEIGHT}" fill="#fff"/>
-${avatarImage("avatar", avatar, avatarX, 42, 48)}
-<g transform="translate(${titleX} 48) scale(2.5)"><path d="${GITHUB_MARK}"/></g>
-<text x="${titleX + 50}" y="84" font-size="36">GitHub/${username}</text>
+${icon}
+<text x="${iconX + iconWidth}" y="84" font-size="36">GitHub/${username}</text>
 ${stat(WIDTH / 6, "Contributions", total)}
 ${stat(WIDTH / 2, "Current Streak", currentStreak)}
 ${stat((WIDTH * 5) / 6, "Longest Streak", longestStreak)}

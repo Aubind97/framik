@@ -16,7 +16,7 @@ const logger = getLogger(["@framik", "server", "frame-schedule"]);
 
 async function renderGithubSvg(config: GithubConfig, userId: string): Promise<string> {
 	if (config.mode === "contributions") {
-		const [days, avatar] = await Promise.all([fetchContributions(config.username), fetchUserAvatar(config.username)]);
+		const [days, avatar] = await Promise.all([fetchContributions(config.username), config.icon === "avatar" ? fetchUserAvatar(config.username) : null]);
 		return renderContributionsSvg(config.username, days, avatar);
 	}
 

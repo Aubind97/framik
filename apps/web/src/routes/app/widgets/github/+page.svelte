@@ -1,5 +1,5 @@
 <script lang="ts">
-import { KeyRound } from "@lucide/svelte";
+import { KeyRound, UserRound } from "@lucide/svelte";
 import { createQuery } from "@tanstack/svelte-query";
 import { mode as theme } from "mode-watcher";
 import { getFrameScheduleQueryOptions } from "#lib/api/fetch/frame.ts";
@@ -8,6 +8,7 @@ import { Button } from "#lib/components/ui/button/index.ts";
 import { Input } from "#lib/components/ui/input/index.ts";
 import Label from "#lib/components/ui/label/label.svelte";
 import * as Select from "#lib/components/ui/select/index.ts";
+import { Toggle } from "#lib/components/ui/toggle/index.ts";
 import FrameControls from "#lib/components/utils/frame-controls.svelte";
 import Widget from "#lib/components/widgets/core/widget.svelte";
 import { INTEGRATIONS, WIDGETS } from "#lib/constants.ts";
@@ -19,6 +20,7 @@ const id = $props.id();
 
 let mode = $state<GithubMode>("contributions");
 let username = $state("");
+let icon = $state<"github" | "avatar">("avatar");
 let repo = $state("");
 let commits = $state(5);
 let pulls = $state(3);
@@ -58,7 +60,7 @@ function toRepoName(input: string) {
 function buildDraft(): GithubConfig {
 	switch (mode) {
 		case "contributions":
-			return { mode, username: username.trim() };
+			return { mode, username: username.trim(), icon };
 		case "repository":
 			return { mode, repo: toRepoName(repo), commits, pulls };
 		case "releases":
@@ -79,9 +81,15 @@ function isComplete(next: GithubConfig) {
 
 function applyConfig(next: GithubConfig) {
 	mode = next.mode;
-	if (next.mode === "contributions") username = next.username;
+	if (next.mode === "contributions") ({ username, icon } = next);
 	if (next.mode === "repository") ({ repo, commits, pulls } = next);
 	config = next;
+}
+
+function handleIconChange(showAvatar: boolean) {
+	icon = showAvatar ? "avatar" : "github";
+	// Refresh a loaded preview right away instead of waiting for "Load preview"
+	if (config?.mode === "contributions") config = { ...config, icon };
 }
 
 function handleLoad(event: SubmitEvent) {
@@ -162,6 +170,12 @@ $effect(() => {
                             <Label for="{id}-username">GitHub username</Label>
                             <Input id="{id}-username" bind:value={username} placeholder="octocat" autocomplete="off" />
                         </div>
+                        <Label>
+                            <Toggle variant="outline" aria-label="Show the user's avatar" pressed={icon === "avatar"} onPressedChange={handleIconChange}>
+                                <UserRound class="size-4" />
+                            </Toggle>
+                            Show the user's avatar instead of the GitHub logo
+                        </Label>
                     {:else if mode === "repository"}
                         <div class="flex flex-col gap-2">
                             <Label for="{id}-repo">Repository</Label>

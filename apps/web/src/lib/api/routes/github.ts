@@ -10,7 +10,11 @@ import { deleteGithubIntegration, getGithubIntegration, saveGithubIntegration } 
 const logger = getLogger(["@framik", "api", "github"]);
 
 export const githubConfigSchema = t.Union([
-	t.Object({ mode: t.Literal("contributions"), username: t.String({ pattern: GITHUB_USERNAME_PATTERN }) }),
+	t.Object({
+		mode: t.Literal("contributions"),
+		username: t.String({ pattern: GITHUB_USERNAME_PATTERN }),
+		icon: t.Union([t.Literal("github"), t.Literal("avatar")]),
+	}),
 	t.Object({
 		mode: t.Literal("repository"),
 		repo: t.String({ pattern: GITHUB_REPO_PATTERN }),

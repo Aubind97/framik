@@ -50,4 +50,11 @@ describe("renderContributionsSvg", () => {
 		expect(svg).toContain("GitHub/octocat");
 		expect(svg).toContain(">5</text>");
 	});
+
+	test("shows either the avatar or the GitHub logo", () => {
+		const withAvatar = renderContributionsSvg("octocat", days([1]), "data:image/png;base64,AAAA");
+		expect(withAvatar).toContain("<image");
+		expect(withAvatar).not.toContain("<path");
+		expect(renderContributionsSvg("octocat", days([1]))).toContain("<path");
+	});
 });
