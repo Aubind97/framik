@@ -18,7 +18,7 @@ async function renderGithubSvg(config: GithubConfig, userId: string): Promise<st
 	if (config.mode === "contributions") return renderContributionsSvg(config.username, await fetchContributions(config.username));
 
 	const integration = await getGithubIntegration(userId);
-	if (!integration) throw new Error("GitHub is not connected: add a token in account settings");
+	if (!integration) throw new Error("Add a GitHub token in your account settings to use this mode");
 	if (config.mode === "repository") return renderRepositorySvg(await fetchRepositoryActivity(integration.token, config));
 	return renderReleasesSvg(await fetchReleases(integration.token));
 }

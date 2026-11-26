@@ -1,4 +1,5 @@
 <script lang="ts">
+import { KeyRound } from "@lucide/svelte";
 import { createQuery } from "@tanstack/svelte-query";
 import { mode as theme } from "mode-watcher";
 import { getFrameScheduleQueryOptions } from "#lib/api/fetch/frame.ts";
@@ -25,6 +26,7 @@ let config = $state<GithubConfig | undefined>(undefined);
 let selectedFrame = $state<Frame | undefined>(undefined);
 
 const integrationQuery = createQuery(() => getGithubIntegrationQueryOptions());
+const hasToken = $derived(integrationQuery.data?.connected ?? false);
 const reposQuery = createQuery(() => ({ ...getGithubReposQueryOptions(), enabled: hasToken && mode === "repository" }));
 const previewQuery = createQuery(() => ({
 	// biome-ignore lint/style/noNonNullAssertion: can't be null since the query will be disabled
@@ -37,7 +39,6 @@ const scheduleQuery = createQuery(() => ({
 	enabled: !!selectedFrame,
 }));
 
-const hasToken = $derived(integrationQuery.data?.connected ?? false);
 const preview = $derived(!config || previewQuery.isError ? null : previewQuery.data);
 const draft = $derived(buildDraft());
 const draftError = $derived(validateGithubConfig(draft));
@@ -136,10 +137,14 @@ $effect(() => {
                             {/each}
                         </Select.Content>
                     </Select.Root>
-                    {#if !hasToken && Object.values(GITHUB_MODES).some((option) => option.needsToken)}
-                        <p class="text-xs text-muted-foreground">
-                            <a class="underline" href={INTEGRATIONS.github.settingsUrl}>Add a GitHub token</a> to unlock the other modes.
-                        </p>
+                    {#if integrationQuery.isSuccess && !hasToken}
+                        <div class="rounded-md border bg-muted/40 p-3 text-sm flex flex-col gap-2">
+                            <p class="text-muted-foreground">Repository activity and the releases feed read your GitHub data, so they need a GitHub token first.</p>
+                            <Button href={INTEGRATIONS.github.settingsUrl} variant="outline" size="sm">
+                                <KeyRound />
+                                Add a GitHub token
+                            </Button>
+                        </div>
                     {/if}
                 </div>
 
@@ -179,6 +184,13 @@ $effect(() => {
                     {/if}
                     <Button type="submit" variant="secondary" disabled={!canLoad}>Load preview</Button>
                 </form>
+
+                {#if previewQuery.isError && config && GITHUB_MODES[config.mode].needsToken && hasToken}
+                    <Button href={INTEGRATIONS.github.settingsUrl} variant="outline" size="sm">
+                        <KeyRound />
+                        Check your GitHub token
+                    </Button>
+                {/if}
 
                 {#if scheduleQuery.data}
                     <p class="text-sm text-muted-foreground">
