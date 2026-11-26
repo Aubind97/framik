@@ -30,7 +30,3 @@ export function getFrameScheduleQueryOptions(params: { frameId: string }, fetch?
 export function scheduleFrame(frameId: string, body: { widget: "github"; config: { username: string } }, fetch?: typeof globalThis.fetch) {
 	return getFetcher(fetch)("/api/frames/:id/schedule", { method: "POST", params: { id: frameId }, body });
 }
-
-export function unscheduleFrame(frameId: string, fetch?: typeof globalThis.fetch) {
-	return getFetcher(fetch)("/api/frames/:id/schedule", { method: "DELETE", params: { id: frameId } });
-}

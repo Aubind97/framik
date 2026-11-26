@@ -1,11 +1,8 @@
 <script lang="ts">
-import { CalendarX } from "@lucide/svelte";
-import { createQuery, useQueryClient } from "@tanstack/svelte-query";
+import { createQuery } from "@tanstack/svelte-query";
 import { mode } from "mode-watcher";
-import { toast } from "svelte-sonner";
-import { getFrameScheduleQueryOptions, unscheduleFrame } from "#lib/api/fetch/frame.ts";
+import { getFrameScheduleQueryOptions } from "#lib/api/fetch/frame.ts";
 import { getGithubPreviewQueryOptions } from "#lib/api/fetch/github.ts";
-import { getErrorMessage } from "#lib/api/fetch/index.ts";
 import { Button } from "#lib/components/ui/button/index.ts";
 import { Input } from "#lib/components/ui/input/index.ts";
 import Label from "#lib/components/ui/label/label.svelte";
@@ -16,7 +13,6 @@ import type { Frame } from "#lib/server/db/types.ts";
 
 const WIDGET = WIDGETS.github;
 const id = $props.id();
-const queryClient = useQueryClient();
 
 let usernameInput = $state("");
 let username = $state("");
@@ -33,13 +29,6 @@ const preview = $derived(!username || previewQuery.isError ? null : previewQuery
 function handleLoad(event: SubmitEvent) {
 	event.preventDefault();
 	username = usernameInput.trim();
-}
-
-async function handleUnschedule() {
-	if (!selectedFrame) return;
-	const { error } = await unscheduleFrame(selectedFrame.id);
-	await queryClient.invalidateQueries({ queryKey: ["frames", selectedFrame.id, "schedule"] });
-	if (error) toast.error(getErrorMessage(error));
 }
 </script>
 
@@ -78,16 +67,10 @@ async function handleUnschedule() {
                 </form>
 
                 {#if scheduleQuery.data}
-                    <div class="flex flex-col gap-2 text-sm text-muted-foreground">
-                        <p>
-                            This frame shows GitHub/{scheduleQuery.data.config.username} daily
-                            {#if scheduleQuery.data.lastPushedOn}(last pushed {scheduleQuery.data.lastPushedOn}){/if}
-                        </p>
-                        <Button variant="outline" onclick={handleUnschedule}>
-                            <CalendarX />
-                            Stop daily refresh
-                        </Button>
-                    </div>
+                    <p class="text-sm text-muted-foreground">
+                        This frame shows GitHub/{scheduleQuery.data.config.username} daily
+                        {#if scheduleQuery.data.lastPushedOn}(last pushed {scheduleQuery.data.lastPushedOn}){/if}
+                    </p>
                 {/if}
             </aside>
         </div>

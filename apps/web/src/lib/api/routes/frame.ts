@@ -108,14 +108,4 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 				config: t.Object({ username: t.String({ pattern: GITHUB_USERNAME_PATTERN }) }),
 			}),
 		},
-	)
-	.delete(
-		"/:id/schedule",
-		async ({ params, request, status }) => {
-			if (!(await isFrameInActiveOrganization(request.headers, params.id))) return status("Not Found");
-
-			await db.delete(frameSchedule).where(eq(frameSchedule.frameId, params.id));
-			logger.info`Frame ${params.id} schedule removed`;
-		},
-		{ params: t.Object({ id: t.String() }) },
 	);
