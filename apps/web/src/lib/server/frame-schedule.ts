@@ -1,6 +1,8 @@
 import { getLogger } from "@logtape/logtape";
 import { eq } from "drizzle-orm";
-import { type GithubConfig, isScheduleDue } from "#lib/github.ts";
+import type { GithubConfig } from "#lib/github.ts";
+import type { PresidentialConfig } from "#lib/presidential.ts";
+import { isScheduleDue, type ScheduledWidget, scheduleRefresh } from "#lib/schedule.ts";
 import { pushImageToDaemon } from "#lib/server/daemon.ts";
 import { frame } from "#lib/server/db/frame.schema.ts";
 import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
@@ -9,6 +11,7 @@ import { fetchContributions, fetchUserAvatar, renderContributionsSvg } from "#li
 import { getGithubIntegration } from "#lib/server/github-integration.ts";
 import { fetchReleases, renderReleasesSvg } from "#lib/server/github-releases.ts";
 import { fetchRepositoryActivity, renderRepositorySvg } from "#lib/server/github-repository.ts";
+import { fetchPollPage, renderRankingSvg, renderTrendSvg, summarizePolls, summarizeTrend, withLeaderPhotos } from "#lib/server/presidential.ts";
 
 const CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
@@ -26,28 +29,42 @@ async function renderGithubSvg(config: GithubConfig, userId: string): Promise<st
 	return renderReleasesSvg(await fetchReleases(integration.token));
 }
 
+const toBase64 = (svg: string) => Buffer.from(svg).toString("base64");
+
 export async function renderGithubImage(config: GithubConfig, userId: string): Promise<string> {
-	return Buffer.from(await renderGithubSvg(config, userId)).toString("base64");
+	return toBase64(await renderGithubSvg(config, userId));
+}
+
+export async function renderPresidentialImage(config: PresidentialConfig): Promise<string> {
+	const { candidates, polls } = await fetchPollPage();
+	if (config.mode === "trend") return toBase64(renderTrendSvg(summarizeTrend(candidates, polls)));
+	return toBase64(renderRankingSvg(await withLeaderPhotos(summarizePolls(candidates, polls))));
+}
+
+function renderScheduledImage(schedule: ScheduledWidget, userId: string) {
+	return schedule.widget === "github" ? renderGithubImage(schedule.config, userId) : renderPresidentialImage(schedule.config);
 }
 
 export async function runFrameSchedule(frameId: string) {
 	const [row] = await db
-		.select({ apiUrl: frame.apiUrl, config: frameSchedule.config, userId: frameSchedule.userId })
+		.select({ apiUrl: frame.apiUrl, widget: frameSchedule.widget, config: frameSchedule.config, userId: frameSchedule.userId })
 		.from(frameSchedule)
 		.innerJoin(frame, eq(frame.id, frameSchedule.frameId))
 		.where(eq(frameSchedule.frameId, frameId));
 	if (!row) return;
 
-	await pushImageToDaemon(row.apiUrl, await renderGithubImage(row.config, row.userId));
+	await pushImageToDaemon(row.apiUrl, await renderScheduledImage({ widget: row.widget, config: row.config } as ScheduledWidget, row.userId));
 	await db.update(frameSchedule).set({ lastPushedAt: new Date(), updatedAt: new Date() }).where(eq(frameSchedule.frameId, frameId));
 	logger.info`Scheduled push to frame ${frameId} done`;
 }
 
 async function runDueSchedules() {
-	const schedules = await db.select({ frameId: frameSchedule.frameId, config: frameSchedule.config, lastPushedAt: frameSchedule.lastPushedAt }).from(frameSchedule);
+	const schedules = await db
+		.select({ frameId: frameSchedule.frameId, widget: frameSchedule.widget, config: frameSchedule.config, lastPushedAt: frameSchedule.lastPushedAt })
+		.from(frameSchedule);
 
-	for (const { frameId, config, lastPushedAt } of schedules) {
-		if (!isScheduleDue(config.mode, lastPushedAt)) continue;
+	for (const { frameId, widget, config, lastPushedAt } of schedules) {
+		if (!isScheduleDue(scheduleRefresh({ widget, config } as ScheduledWidget), lastPushedAt)) continue;
 		await runFrameSchedule(frameId).catch((error) => logger.error`Scheduled push to frame ${frameId} failed: ${error}`);
 	}
 }

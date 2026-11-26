@@ -3,7 +3,10 @@ export const HEIGHT = 480;
 export const MONO_FONT = "DejaVu Sans Mono, DejaVu Sans, monospace";
 
 // Measured panel colours (EPAPER_PALETTE in @framik/shared): exact matches dither to solid ink
-export const INK = { black: "#000000", white: "#ffffff", red: "#bf0000", blue: "#6440ff", green: "#438a1c" } as const;
+export const INK = { black: "#000000", white: "#ffffff", yellow: "#fff338", red: "#bf0000", blue: "#6440ff", green: "#438a1c" } as const;
+
+// Wikimedia asks automated clients for a descriptive User-Agent
+export const USER_AGENT = "Framik (e-paper frame)";
 
 // DejaVu Sans Mono advance width per unit of font size
 const MONO_ADVANCE = 0.602;
@@ -38,14 +41,16 @@ export function formatAge(date: string | Date, now = new Date()) {
 	return `${Math.floor(days / 365)}y`;
 }
 
-/** Fetches a GitHub avatar as a data URI to embed in the SVG; null when unavailable. */
+// Image URLs come from scraped or API data, so only these hosts are fetched
+const IMAGE_HOSTS = new Set(["avatars.githubusercontent.com", "thumb.wikimedia.org"]);
+
+/** Fetches a GitHub avatar or Wikimedia thumbnail as a data URI to embed in the SVG; null when unavailable. */
 export async function fetchAvatar(url: string): Promise<string | null> {
 	const parsed = URL.parse(url);
-	// Only GitHub's avatar host: the URL comes from API data
-	if (parsed?.protocol !== "https:" || parsed.hostname !== "avatars.githubusercontent.com") return null;
+	if (parsed?.protocol !== "https:" || !IMAGE_HOSTS.has(parsed.hostname)) return null;
 
 	try {
-		const response = await fetch(parsed, { redirect: "error", signal: AbortSignal.timeout(10_000) });
+		const response = await fetch(parsed, { headers: { "User-Agent": USER_AGENT }, redirect: "error", signal: AbortSignal.timeout(10_000) });
 		const type = response.headers.get("content-type") ?? "";
 		if (!response.ok || !/^image\/(png|jpeg)$/.test(type)) return null;
 		return `data:${type};base64,${Buffer.from(await response.arrayBuffer()).toString("base64")}`;

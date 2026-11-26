@@ -1,5 +1,5 @@
 import type { FetchQueryOptions } from "@tanstack/svelte-query";
-import type { GithubConfig } from "#lib/github.ts";
+import type { ScheduledWidget } from "#lib/schedule.ts";
 import { getErrorMessage, getFetcher } from "./index.ts";
 
 export function getAllFramesQueryOptions(params: { organizationId: string }, fetch?: typeof globalThis.fetch) {
@@ -28,6 +28,6 @@ export function getFrameScheduleQueryOptions(params: { frameId: string }, fetch?
 	} satisfies FetchQueryOptions;
 }
 
-export function scheduleFrame(frameId: string, body: { widget: "github"; config: GithubConfig }, fetch?: typeof globalThis.fetch) {
+export function scheduleFrame(frameId: string, body: ScheduledWidget, fetch?: typeof globalThis.fetch) {
 	return getFetcher(fetch)("/api/frames/:id/schedule", { method: "POST", params: { id: frameId }, body });
 }

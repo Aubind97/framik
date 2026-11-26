@@ -3,6 +3,7 @@ import { getLogger } from "@logtape/logtape";
 import { and, desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { githubConfigSchema } from "#lib/api/routes/github.ts";
+import { presidentialConfigSchema } from "#lib/api/routes/presidential.ts";
 import { auth } from "#lib/auth.ts";
 import { validateGithubConfig } from "#lib/github.ts";
 import { frame } from "#lib/server/db/frame.schema.ts";
@@ -90,7 +91,7 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 		async ({ params, body, request, status }) => {
 			const userId = await getFrameUserId(request.headers, params.id);
 			if (!userId) return status("Not Found");
-			const invalid = validateGithubConfig(body.config);
+			const invalid = body.widget === "github" ? validateGithubConfig(body.config) : null;
 			if (invalid) return status("Bad Request", invalid);
 
 			const values = { userId, widget: body.widget, config: body.config, lastPushedAt: null, updatedAt: new Date() };
@@ -109,9 +110,9 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 		},
 		{
 			params: t.Object({ id: t.String() }),
-			body: t.Object({
-				widget: t.Literal("github"),
-				config: githubConfigSchema,
-			}),
+			body: t.Union([
+				t.Object({ widget: t.Literal("github"), config: githubConfigSchema }),
+				t.Object({ widget: t.Literal("presidential_2027"), config: presidentialConfigSchema }),
+			]),
 		},
 	);

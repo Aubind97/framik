@@ -10,7 +10,7 @@ import { Button } from "#lib/components/ui/button/index.ts";
 import FrameClearControl from "#lib/components/utils/frame-clear-control.svelte";
 import FrameRefreshControl from "#lib/components/utils/frame-refresh-control.svelte";
 import FrameSelector from "#lib/components/utils/frame-selector.svelte";
-import { GITHUB_MODES } from "#lib/github.ts";
+import { type ScheduledWidget, scheduleRefresh } from "#lib/schedule.ts";
 import type { Frame } from "#lib/server/db/types.ts";
 
 let {
@@ -19,12 +19,12 @@ let {
 	onSelectedFrame,
 }: {
 	loadedImage?: string | undefined;
-	schedule?: Parameters<typeof scheduleFrame>[1] | undefined;
+	schedule?: ScheduledWidget | undefined;
 	onSelectedFrame?: (frame: Frame | undefined) => void;
 } = $props();
 
 const queryClient = useQueryClient();
-const refresh = $derived(schedule && GITHUB_MODES[schedule.config.mode].refresh);
+const refresh = $derived(schedule && scheduleRefresh(schedule));
 
 let activeOrganization = useActiveOrganization();
 

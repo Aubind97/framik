@@ -46,8 +46,10 @@ const draft = $derived(buildDraft());
 const draftError = $derived(validateGithubConfig(draft));
 const isFilled = $derived(isComplete(draft));
 const canLoad = $derived(isFilled && !draftError && (!GITHUB_MODES[mode].needsToken || hasToken));
+// The schedule row does not tie its config type to its widget
+const githubSchedule = $derived(scheduleQuery.data?.widget === "github" ? { ...scheduleQuery.data, config: scheduleQuery.data.config as GithubConfig } : undefined);
 // Serialised so a background refetch of the same schedule does not reset the fields
-const scheduledConfig = $derived(scheduleQuery.data ? JSON.stringify(scheduleQuery.data.config) : undefined);
+const scheduledConfig = $derived(githubSchedule && JSON.stringify(githubSchedule.config));
 
 /** Accepts `owner/name` or a pasted GitHub URL. */
 function toRepoName(input: string) {
@@ -213,10 +215,10 @@ $effect(() => {
                     </Button>
                 {/if}
 
-                {#if scheduleQuery.data}
+                {#if githubSchedule}
                     <p class="text-sm text-muted-foreground">
-                        This frame shows {describe(scheduleQuery.data.config)}, refreshed {GITHUB_MODES[scheduleQuery.data.config.mode].refresh.toLowerCase()}
-                        {#if scheduleQuery.data.lastPushedAt}(last pushed {new Date(scheduleQuery.data.lastPushedAt).toLocaleString()}){/if}
+                        This frame shows {describe(githubSchedule.config)}, refreshed {GITHUB_MODES[githubSchedule.config.mode].refresh.toLowerCase()}
+                        {#if githubSchedule.lastPushedAt}(last pushed {new Date(githubSchedule.lastPushedAt).toLocaleString()}){/if}
                     </p>
                 {/if}
             </aside>

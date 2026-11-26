@@ -40,6 +40,14 @@ export const WIDGETS = {
 		description: "Show contributions, repository activity or releases on a frame",
 		requires: undefined,
 	},
+	presidential_2027: {
+		disabled: false,
+		name: "Présidentielle 2027",
+		logoLight: "/logos/presidential_light.svg",
+		logoDark: "/logos/presidential_dark.svg",
+		description: "Poll average for the 2027 French presidential election, from Wikipedia",
+		requires: undefined,
+	},
 	calendar: {
 		disabled: true,
 		name: "Calendar",
