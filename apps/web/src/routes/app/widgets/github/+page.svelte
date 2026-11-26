@@ -25,6 +25,11 @@ const scheduleQuery = createQuery(() => ({
 }));
 
 const preview = $derived(!username || previewQuery.isError ? null : previewQuery.data);
+const scheduledUsername = $derived(scheduleQuery.data?.config.username);
+
+$effect(() => {
+	if (scheduledUsername) usernameInput = username = scheduledUsername;
+});
 
 function handleLoad(event: SubmitEvent) {
 	event.preventDefault();
