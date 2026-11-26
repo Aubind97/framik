@@ -2,11 +2,13 @@ import { applyDitheringNode, toMeasuredColorsNode } from "@framik/shared/node";
 import { getLogger } from "@logtape/logtape";
 import { Elysia, t } from "elysia";
 import { auth } from "#lib/auth.ts";
+import { GITHUB_USERNAME_PATTERN, validateGithubConfig } from "#lib/github.ts";
 import { renderGithubImage } from "#lib/server/frame-schedule.ts";
-import { GITHUB_USERNAME_PATTERN } from "#lib/server/github.ts";
 import { deleteGithubIntegration, getGithubIntegration, githubGraphql, saveGithubIntegration } from "#lib/server/github-api.ts";
 
 const logger = getLogger(["@framik", "api", "github"]);
+
+export const githubConfigSchema = t.Union([t.Object({ mode: t.Literal("contributions"), username: t.String({ pattern: GITHUB_USERNAME_PATTERN }) })]);
 
 export const githubRoutes = new Elysia({ prefix: "/github" })
 	.onError(({ code, error, path }) => {
@@ -40,16 +42,19 @@ export const githubRoutes = new Elysia({ prefix: "/github" })
 		await deleteGithubIntegration(userId);
 		logger.info`GitHub integration removed for user ${userId}`;
 	})
-	.get(
+	.post(
 		"/preview",
-		async ({ query, status }) => {
+		async ({ userId, body, status }) => {
+			const invalid = validateGithubConfig(body);
+			if (invalid) return status("Bad Request", invalid);
+
 			try {
-				const dithered = await applyDitheringNode(await renderGithubImage(query.username));
+				const dithered = await applyDitheringNode(await renderGithubImage(body, userId));
 				return `data:image/png;base64,${await toMeasuredColorsNode(dithered)}`;
 			} catch (error) {
-				logger.warn`GitHub preview for ${query.username} failed: ${error}`;
-				return status("Bad Gateway", `Could not load contributions for "${query.username}"`);
+				logger.warn`GitHub ${body.mode} preview failed: ${error}`;
+				return status("Bad Gateway", error instanceof Error ? error.message : "Could not load GitHub data");
 			}
 		},
-		{ query: t.Object({ username: t.String({ pattern: GITHUB_USERNAME_PATTERN }) }) },
+		{ body: githubConfigSchema },
 	);

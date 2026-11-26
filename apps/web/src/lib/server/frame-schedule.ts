@@ -1,42 +1,42 @@
 import { getLogger } from "@logtape/logtape";
-import { eq, isNull, ne, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+import { type GithubConfig, isScheduleDue } from "#lib/github.ts";
 import { pushImageToDaemon } from "#lib/server/daemon.ts";
 import { frame } from "#lib/server/db/frame.schema.ts";
 import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
 import { db } from "#lib/server/db/index.ts";
 import { fetchContributions, renderContributionsSvg } from "#lib/server/github.ts";
 
-const CHECK_INTERVAL_MS = 60 * 60 * 1000;
+const CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
 const logger = getLogger(["@framik", "server", "frame-schedule"]);
 
-const pad = (n: number) => String(n).padStart(2, "0");
-const localDate = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+async function renderGithubSvg(config: GithubConfig, _userId: string): Promise<string> {
+	return renderContributionsSvg(config.username, await fetchContributions(config.username));
+}
 
-export async function renderGithubImage(username: string): Promise<string> {
-	return Buffer.from(renderContributionsSvg(username, await fetchContributions(username))).toString("base64");
+export async function renderGithubImage(config: GithubConfig, userId: string): Promise<string> {
+	return Buffer.from(await renderGithubSvg(config, userId)).toString("base64");
 }
 
 export async function runFrameSchedule(frameId: string) {
 	const [row] = await db
-		.select({ apiUrl: frame.apiUrl, config: frameSchedule.config })
+		.select({ apiUrl: frame.apiUrl, config: frameSchedule.config, userId: frameSchedule.userId })
 		.from(frameSchedule)
 		.innerJoin(frame, eq(frame.id, frameSchedule.frameId))
 		.where(eq(frameSchedule.frameId, frameId));
 	if (!row) return;
 
-	await pushImageToDaemon(row.apiUrl, await renderGithubImage(row.config.username));
-	await db.update(frameSchedule).set({ lastPushedOn: localDate(), updatedAt: new Date() }).where(eq(frameSchedule.frameId, frameId));
+	await pushImageToDaemon(row.apiUrl, await renderGithubImage(row.config, row.userId));
+	await db.update(frameSchedule).set({ lastPushedAt: new Date(), updatedAt: new Date() }).where(eq(frameSchedule.frameId, frameId));
 	logger.info`Scheduled push to frame ${frameId} done`;
 }
 
 async function runDueSchedules() {
-	const due = await db
-		.select({ frameId: frameSchedule.frameId })
-		.from(frameSchedule)
-		.where(or(isNull(frameSchedule.lastPushedOn), ne(frameSchedule.lastPushedOn, localDate())));
+	const schedules = await db.select({ frameId: frameSchedule.frameId, config: frameSchedule.config, lastPushedAt: frameSchedule.lastPushedAt }).from(frameSchedule);
 
-	for (const { frameId } of due) {
+	for (const { frameId, config, lastPushedAt } of schedules) {
+		if (!isScheduleDue(config.mode, lastPushedAt)) continue;
 		await runFrameSchedule(frameId).catch((error) => logger.error`Scheduled push to frame ${frameId} failed: ${error}`);
 	}
 }

@@ -2,24 +2,27 @@ import { randomUUID } from "node:crypto";
 import { getLogger } from "@logtape/logtape";
 import { and, desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
+import { githubConfigSchema } from "#lib/api/routes/github.ts";
 import { auth } from "#lib/auth.ts";
+import { validateGithubConfig } from "#lib/github.ts";
 import { frame } from "#lib/server/db/frame.schema.ts";
 import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
 import { db } from "#lib/server/db/index.ts";
 import { runFrameSchedule } from "#lib/server/frame-schedule.ts";
-import { GITHUB_USERNAME_PATTERN } from "#lib/server/github.ts";
 
 const logger = getLogger(["@framik", "api", "frames"]);
 
-async function isFrameInActiveOrganization(headers: Headers, frameId: string) {
-	const organizationId = (await auth.api.getSession({ headers }))?.session.activeOrganizationId;
-	if (!organizationId) return false;
+/** The signed-in user's id when the frame belongs to their active organization. */
+async function getFrameUserId(headers: Headers, frameId: string) {
+	const session = await auth.api.getSession({ headers });
+	const organizationId = session?.session.activeOrganizationId;
+	if (!organizationId) return null;
 
 	const [row] = await db
 		.select({ id: frame.id })
 		.from(frame)
 		.where(and(eq(frame.id, frameId), eq(frame.organizationId, organizationId)));
-	return !!row;
+	return row ? session.user.id : null;
 }
 
 export const frameRoutes = new Elysia({ prefix: "/frames" })
@@ -75,7 +78,7 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 	.get(
 		"/:id/schedule",
 		async ({ params, request, status }) => {
-			if (!(await isFrameInActiveOrganization(request.headers, params.id))) return status("Not Found");
+			if (!(await getFrameUserId(request.headers, params.id))) return status("Not Found");
 
 			const [schedule] = await db.select().from(frameSchedule).where(eq(frameSchedule.frameId, params.id));
 			return schedule ?? null;
@@ -85,9 +88,12 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 	.post(
 		"/:id/schedule",
 		async ({ params, body, request, status }) => {
-			if (!(await isFrameInActiveOrganization(request.headers, params.id))) return status("Not Found");
+			const userId = await getFrameUserId(request.headers, params.id);
+			if (!userId) return status("Not Found");
+			const invalid = validateGithubConfig(body.config);
+			if (invalid) return status("Bad Request", invalid);
 
-			const values = { widget: body.widget, config: body.config, lastPushedOn: null, updatedAt: new Date() };
+			const values = { userId, widget: body.widget, config: body.config, lastPushedAt: null, updatedAt: new Date() };
 			await db
 				.insert(frameSchedule)
 				.values({ frameId: params.id, ...values })
@@ -98,14 +104,14 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 				await runFrameSchedule(params.id);
 			} catch (error) {
 				logger.error`First scheduled push to frame ${params.id} failed: ${error}`;
-				return status("Bad Gateway", "Schedule saved, but the first push failed. It will be retried within the hour.");
+				return status("Bad Gateway", "Schedule saved, but the first push failed. It will be retried shortly.");
 			}
 		},
 		{
 			params: t.Object({ id: t.String() }),
 			body: t.Object({
 				widget: t.Literal("github"),
-				config: t.Object({ username: t.String({ pattern: GITHUB_USERNAME_PATTERN }) }),
+				config: githubConfigSchema,
 			}),
 		},
 	);

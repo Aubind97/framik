@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8524a527-408f-4faa-b372-7243a4611fb2",
+  "id": "b1b4a2a6-9a12-472d-9fb9-a471fef165be",
   "prevId": "25e4b3a2-13dc-41ce-8b31-d15345a4246f",
   "tables": {
     "account": {
@@ -195,6 +195,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "widget": {
           "name": "widget",
           "type": "text",
@@ -209,9 +216,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "last_pushed_on": {
-          "name": "last_pushed_on",
-          "type": "text",
+        "last_pushed_at": {
+          "name": "last_pushed_at",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -239,6 +246,19 @@
           "tableTo": "frame",
           "columnsFrom": [
             "frame_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "frame_schedule_user_id_user_id_fk": {
+          "name": "frame_schedule_user_id_user_id_fk",
+          "tableFrom": "frame_schedule",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "id"

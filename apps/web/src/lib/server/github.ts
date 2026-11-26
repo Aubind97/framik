@@ -1,8 +1,6 @@
 export type ContributionDay = { date: string; count: number; level: number };
 export type ContributionStats = { total: number; currentStreak: number; longestStreak: number };
 
-export const GITHUB_USERNAME_PATTERN = "^[a-zA-Z\\d](?:[a-zA-Z\\d]|-(?=[a-zA-Z\\d])){0,38}$";
-
 const REQUEST_TIMEOUT_MS = 15_000;
 
 const attr = (tag: string, name: string) => tag.match(new RegExp(`(?:^|\\s)${name}="([^"]*)"`))?.[1];
@@ -65,7 +63,7 @@ const GITHUB_MARK =
 
 const utcDate = (date: string) => new Date(`${date}T00:00:00Z`);
 
-// username must already match GITHUB_USERNAME_PATTERN: it is inlined in the SVG unescaped
+// username must already match GITHUB_USERNAME_PATTERN (#lib/github.ts): it is inlined in the SVG unescaped
 export function renderContributionsSvg(username: string, days: ContributionDay[]): string {
 	const { total, currentStreak, longestStreak } = getContributionStats(days);
 	const firstWeekday = days.length ? utcDate(days[0].date).getUTCDay() : 0;

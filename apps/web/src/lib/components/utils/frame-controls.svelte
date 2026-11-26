@@ -10,6 +10,7 @@ import { Button } from "#lib/components/ui/button/index.ts";
 import FrameClearControl from "#lib/components/utils/frame-clear-control.svelte";
 import FrameRefreshControl from "#lib/components/utils/frame-refresh-control.svelte";
 import FrameSelector from "#lib/components/utils/frame-selector.svelte";
+import { GITHUB_MODES } from "#lib/github.ts";
 import type { Frame } from "#lib/server/db/types.ts";
 
 let {
@@ -23,6 +24,7 @@ let {
 } = $props();
 
 const queryClient = useQueryClient();
+const refresh = $derived(schedule && GITHUB_MODES[schedule.config.mode].refresh);
 
 let activeOrganization = useActiveOrganization();
 
@@ -48,7 +50,7 @@ async function handleSchedule(frame: Frame, body: NonNullable<typeof schedule>) 
 	await queryClient.invalidateQueries({ queryKey: ["frames", frame.id, "schedule"] });
 
 	if (error) toast.error(getErrorMessage(error));
-	else toast.success(`"${frame.name}" updated, refreshed daily`);
+	else toast.success(`"${frame.name}" updated, refreshed ${refresh?.toLowerCase()}`);
 }
 
 async function handlePush() {
@@ -86,9 +88,9 @@ $effect(() => {
         variant="default"
         disabled={selectedFrame === undefined || isProcessing || !(loadedImage || schedule)}
         onclick={handlePush}
-        title={schedule ? "Push now and refresh daily" : "Push"}
+        title={refresh ? `Push now and refresh ${refresh.toLowerCase()}` : "Push"}
     >
         <SendHorizontal />
-        {#if schedule}Daily{/if}
+        {refresh}
     </Button>
 </header>
