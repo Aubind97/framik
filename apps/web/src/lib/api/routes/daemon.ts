@@ -1,7 +1,10 @@
 import { toMeasuredColorsNode } from "@framik/shared/node";
 import { getLogger } from "@logtape/logtape";
+import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { pushImageToDaemon } from "#lib/server/daemon.ts";
+import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
+import { db } from "#lib/server/db/index.ts";
 
 const logger = getLogger(["@framik", "api", "daemon"]);
 
@@ -41,8 +44,10 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 		"/frame/push",
 		async ({ body }) => {
 			await pushImageToDaemon(body.daemonUrl, body.image)
-				.then((res) => {
+				.then(async (res) => {
 					logger.info`Image push response: ${res}`;
+					// A manual push replaces whatever widget the frame was scheduled with
+					if (body.frameId) await db.delete(frameSchedule).where(eq(frameSchedule.frameId, body.frameId));
 				})
 				.catch((error) => {
 					logger.error`Image push error: ${error}`;
@@ -52,6 +57,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 		{
 			body: t.Object({
 				daemonUrl: t.String({ format: "uri" }),
+				frameId: t.Optional(t.String()),
 				image: t.String(),
 				options: t.Optional(
 					t.Object({

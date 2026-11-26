@@ -4,9 +4,23 @@ import { and, desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { auth } from "#lib/auth.ts";
 import { frame } from "#lib/server/db/frame.schema.ts";
+import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
 import { db } from "#lib/server/db/index.ts";
+import { runFrameSchedule } from "#lib/server/frame-schedule.ts";
+import { GITHUB_USERNAME_PATTERN } from "#lib/server/github.ts";
 
 const logger = getLogger(["@framik", "api", "frames"]);
+
+async function isFrameInActiveOrganization(headers: Headers, frameId: string) {
+	const organizationId = (await auth.api.getSession({ headers }))?.session.activeOrganizationId;
+	if (!organizationId) return false;
+
+	const [row] = await db
+		.select({ id: frame.id })
+		.from(frame)
+		.where(and(eq(frame.id, frameId), eq(frame.organizationId, organizationId)));
+	return !!row;
+}
 
 export const frameRoutes = new Elysia({ prefix: "/frames" })
 	.get(
@@ -55,6 +69,53 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 			}
 
 			logger.info`Frame deleted ${params.id}`;
+		},
+		{ params: t.Object({ id: t.String() }) },
+	)
+	.get(
+		"/:id/schedule",
+		async ({ params, request, status }) => {
+			if (!(await isFrameInActiveOrganization(request.headers, params.id))) return status("Not Found");
+
+			const [schedule] = await db.select().from(frameSchedule).where(eq(frameSchedule.frameId, params.id));
+			return schedule ?? null;
+		},
+		{ params: t.Object({ id: t.String() }) },
+	)
+	.post(
+		"/:id/schedule",
+		async ({ params, body, request, status }) => {
+			if (!(await isFrameInActiveOrganization(request.headers, params.id))) return status("Not Found");
+
+			const values = { widget: body.widget, config: body.config, lastPushedOn: null, updatedAt: new Date() };
+			await db
+				.insert(frameSchedule)
+				.values({ frameId: params.id, ...values })
+				.onConflictDoUpdate({ target: frameSchedule.frameId, set: values });
+			logger.info`Frame ${params.id} scheduled with ${body.widget}`;
+
+			try {
+				await runFrameSchedule(params.id);
+			} catch (error) {
+				logger.error`First scheduled push to frame ${params.id} failed: ${error}`;
+				return status("Bad Gateway", "Schedule saved, but the first push failed. It will be retried within the hour.");
+			}
+		},
+		{
+			params: t.Object({ id: t.String() }),
+			body: t.Object({
+				widget: t.Literal("github"),
+				config: t.Object({ username: t.String({ pattern: GITHUB_USERNAME_PATTERN }) }),
+			}),
+		},
+	)
+	.delete(
+		"/:id/schedule",
+		async ({ params, request, status }) => {
+			if (!(await isFrameInActiveOrganization(request.headers, params.id))) return status("Not Found");
+
+			await db.delete(frameSchedule).where(eq(frameSchedule.frameId, params.id));
+			logger.info`Frame ${params.id} schedule removed`;
 		},
 		{ params: t.Object({ id: t.String() }) },
 	);

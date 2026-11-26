@@ -35,6 +35,7 @@ async function handlePush() {
 		isProcessing = true;
 		const { error } = await pushDaemonFrame({
 			daemonUrl: selectedFrame.apiUrl,
+			frameId: selectedFrame.id,
 			image: loadedImage,
 		});
 
