@@ -63,4 +63,8 @@ export const INTEGRATIONS = {
 		name: "Immich",
 		settingsUrl: "/app/account/settings",
 	},
+	github: {
+		name: "GitHub",
+		settingsUrl: "/app/account/settings",
+	},
 } as const;
