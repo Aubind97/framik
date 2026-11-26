@@ -2,7 +2,7 @@
 import { createQuery } from "@tanstack/svelte-query";
 import { mode as theme } from "mode-watcher";
 import { getFrameScheduleQueryOptions } from "#lib/api/fetch/frame.ts";
-import { getGithubIntegrationQueryOptions, getGithubPreviewQueryOptions } from "#lib/api/fetch/github.ts";
+import { getGithubIntegrationQueryOptions, getGithubPreviewQueryOptions, getGithubReposQueryOptions } from "#lib/api/fetch/github.ts";
 import { Button } from "#lib/components/ui/button/index.ts";
 import { Input } from "#lib/components/ui/input/index.ts";
 import Label from "#lib/components/ui/label/label.svelte";
@@ -10,7 +10,7 @@ import * as Select from "#lib/components/ui/select/index.ts";
 import FrameControls from "#lib/components/utils/frame-controls.svelte";
 import Widget from "#lib/components/widgets/core/widget.svelte";
 import { INTEGRATIONS, WIDGETS } from "#lib/constants.ts";
-import { GITHUB_MODES, type GithubConfig, type GithubMode, validateGithubConfig } from "#lib/github.ts";
+import { GITHUB_MODES, GITHUB_REPO_PATTERN, type GithubConfig, type GithubMode, REPOSITORY_LIMITS, validateGithubConfig } from "#lib/github.ts";
 import type { Frame } from "#lib/server/db/types.ts";
 
 const WIDGET = WIDGETS.github;
@@ -18,10 +18,14 @@ const id = $props.id();
 
 let mode = $state<GithubMode>("contributions");
 let username = $state("");
+let repo = $state("");
+let commits = $state(5);
+let pulls = $state(3);
 let config = $state<GithubConfig | undefined>(undefined);
 let selectedFrame = $state<Frame | undefined>(undefined);
 
 const integrationQuery = createQuery(() => getGithubIntegrationQueryOptions());
+const reposQuery = createQuery(() => ({ ...getGithubReposQueryOptions(), enabled: hasToken && mode === "repository" }));
 const previewQuery = createQuery(() => ({
 	// biome-ignore lint/style/noNonNullAssertion: can't be null since the query will be disabled
 	...getGithubPreviewQueryOptions(config!),
@@ -35,15 +39,19 @@ const scheduleQuery = createQuery(() => ({
 
 const hasToken = $derived(integrationQuery.data?.connected ?? false);
 const preview = $derived(!config || previewQuery.isError ? null : previewQuery.data);
-const draft = $derived<GithubConfig>({ mode: "contributions", username: username.trim() });
+const draft = $derived<GithubConfig>(mode === "repository" ? { mode, repo: repo.trim(), commits, pulls } : { mode: "contributions", username: username.trim() });
 const draftError = $derived(validateGithubConfig(draft));
-const canLoad = $derived(!draftError && (!GITHUB_MODES[mode].needsToken || hasToken) && (mode !== "contributions" || !!username.trim()));
+const isFilled = $derived(
+	draft.mode === "contributions" ? !!draft.username : new RegExp(GITHUB_REPO_PATTERN).test(draft.repo) && Number.isInteger(draft.commits) && Number.isInteger(draft.pulls),
+);
+const canLoad = $derived(isFilled && !draftError && (!GITHUB_MODES[mode].needsToken || hasToken));
 // Serialised so a background refetch of the same schedule does not reset the fields
 const scheduledConfig = $derived(scheduleQuery.data ? JSON.stringify(scheduleQuery.data.config) : undefined);
 
 function applyConfig(next: GithubConfig) {
 	mode = next.mode;
 	if (next.mode === "contributions") username = next.username;
+	if (next.mode === "repository") ({ repo, commits, pulls } = next);
 	config = next;
 }
 
@@ -53,7 +61,7 @@ function handleLoad(event: SubmitEvent) {
 }
 
 function describe(scheduled: GithubConfig) {
-	return `GitHub/${scheduled.username}`;
+	return scheduled.mode === "contributions" ? `GitHub/${scheduled.username}` : `${scheduled.repo} activity`;
 }
 
 $effect(() => {
@@ -114,6 +122,27 @@ $effect(() => {
                             <Label for="{id}-username">GitHub username</Label>
                             <Input id="{id}-username" bind:value={username} placeholder="octocat" autocomplete="off" />
                         </div>
+                    {:else if mode === "repository"}
+                        <div class="flex flex-col gap-2">
+                            <Label for="{id}-repo">Repository</Label>
+                            <Input id="{id}-repo" bind:value={repo} placeholder="owner/name" autocomplete="off" list="{id}-repos" />
+                            <datalist id="{id}-repos">
+                                {#each reposQuery.data ?? [] as name (name)}
+                                    <option value={name}></option>
+                                {/each}
+                            </datalist>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flex flex-col gap-2">
+                                <Label for="{id}-commits">Last commits</Label>
+                                <Input id="{id}-commits" type="number" min={1} max={REPOSITORY_LIMITS.commits} bind:value={commits} />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <Label for="{id}-pulls">Open PRs</Label>
+                                <Input id="{id}-pulls" type="number" min={0} max={REPOSITORY_LIMITS.pulls} bind:value={pulls} />
+                            </div>
+                        </div>
+                        <p class="text-xs text-muted-foreground">Up to {REPOSITORY_LIMITS.rows} rows fit on the frame.</p>
                     {/if}
 
                     {#if draftError}

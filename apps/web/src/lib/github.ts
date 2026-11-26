@@ -10,11 +10,17 @@ export const GITHUB_TOKEN_PERMISSIONS = [
 
 export const GITHUB_USERNAME_PATTERN = "^[a-zA-Z\\d](?:[a-zA-Z\\d]|-(?=[a-zA-Z\\d])){0,38}$";
 
-export type GithubConfig = { mode: "contributions"; username: string };
+export const GITHUB_REPO_PATTERN = "^[a-zA-Z\\d-]+/[\\w.-]+$";
+
+// What fits under the repository header at 800×480
+export const REPOSITORY_LIMITS = { commits: 8, pulls: 6, rows: 10 } as const;
+
+export type GithubConfig = { mode: "contributions"; username: string } | { mode: "repository"; repo: string; commits: number; pulls: number };
 export type GithubMode = GithubConfig["mode"];
 
 export const GITHUB_MODES = {
 	contributions: { label: "Contributions", refresh: "Daily", needsToken: false },
+	repository: { label: "Repository activity", refresh: "Hourly", needsToken: true },
 } as const satisfies Record<GithubMode, { label: string; refresh: "Daily" | "Hourly"; needsToken: boolean }>;
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -28,6 +34,9 @@ export function isScheduleDue(mode: GithubMode, lastPushedAt: Date | null, now =
 }
 
 /** Cross-field rules the request schema cannot express; returns a user-facing message when invalid. */
-export function validateGithubConfig(_config: GithubConfig): string | null {
+export function validateGithubConfig(config: GithubConfig): string | null {
+	if (config.mode === "repository" && config.commits + config.pulls > REPOSITORY_LIMITS.rows) {
+		return `Commits and pull requests together cannot exceed ${REPOSITORY_LIMITS.rows} rows`;
+	}
 	return null;
 }

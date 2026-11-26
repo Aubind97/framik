@@ -31,3 +31,14 @@ export function saveGithubIntegration(body: { token: string }, fetch?: typeof gl
 export function deleteGithubIntegration(fetch?: typeof globalThis.fetch) {
 	return getFetcher(fetch)("/api/github/integration", { method: "DELETE" });
 }
+
+export function getGithubReposQueryOptions(fetch?: typeof globalThis.fetch) {
+	return {
+		queryKey: ["github", "repos"],
+		queryFn: async () => {
+			const { data, error } = await getFetcher(fetch)("/api/github/repos", { method: "GET" });
+			if (error) throw new Error(getErrorMessage(error));
+			return data;
+		},
+	} satisfies FetchQueryOptions;
+}

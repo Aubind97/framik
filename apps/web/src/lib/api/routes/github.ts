@@ -2,13 +2,22 @@ import { applyDitheringNode, toMeasuredColorsNode } from "@framik/shared/node";
 import { getLogger } from "@logtape/logtape";
 import { Elysia, t } from "elysia";
 import { auth } from "#lib/auth.ts";
-import { GITHUB_USERNAME_PATTERN, validateGithubConfig } from "#lib/github.ts";
+import { GITHUB_REPO_PATTERN, GITHUB_USERNAME_PATTERN, REPOSITORY_LIMITS, validateGithubConfig } from "#lib/github.ts";
 import { renderGithubImage } from "#lib/server/frame-schedule.ts";
-import { deleteGithubIntegration, getGithubIntegration, githubGraphql, saveGithubIntegration } from "#lib/server/github-api.ts";
+import { githubGraphql } from "#lib/server/github-api.ts";
+import { deleteGithubIntegration, getGithubIntegration, saveGithubIntegration } from "#lib/server/github-integration.ts";
 
 const logger = getLogger(["@framik", "api", "github"]);
 
-export const githubConfigSchema = t.Union([t.Object({ mode: t.Literal("contributions"), username: t.String({ pattern: GITHUB_USERNAME_PATTERN }) })]);
+export const githubConfigSchema = t.Union([
+	t.Object({ mode: t.Literal("contributions"), username: t.String({ pattern: GITHUB_USERNAME_PATTERN }) }),
+	t.Object({
+		mode: t.Literal("repository"),
+		repo: t.String({ pattern: GITHUB_REPO_PATTERN }),
+		commits: t.Integer({ minimum: 1, maximum: REPOSITORY_LIMITS.commits }),
+		pulls: t.Integer({ minimum: 0, maximum: REPOSITORY_LIMITS.pulls }),
+	}),
+]);
 
 export const githubRoutes = new Elysia({ prefix: "/github" })
 	.onError(({ code, error, path }) => {
@@ -41,6 +50,16 @@ export const githubRoutes = new Elysia({ prefix: "/github" })
 	.delete("/integration", async ({ userId }) => {
 		await deleteGithubIntegration(userId);
 		logger.info`GitHub integration removed for user ${userId}`;
+	})
+	.get("/repos", async ({ userId, status }) => {
+		const integration = await getGithubIntegration(userId);
+		if (!integration) return status("Precondition Failed", "GitHub is not connected");
+
+		const { viewer } = await githubGraphql<{ viewer: { repositories: { nodes: { nameWithOwner: string }[] } } }>(
+			integration.token,
+			"query { viewer { repositories(first: 100, orderBy: { field: PUSHED_AT, direction: DESC }, affiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER]) { nodes { nameWithOwner } } } }",
+		);
+		return viewer.repositories.nodes.map((repository) => repository.nameWithOwner);
 	})
 	.post(
 		"/preview",
