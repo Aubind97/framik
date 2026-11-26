@@ -133,11 +133,14 @@ $effect(() => {
     </div>
     <div class="flex-1 flex items-start lg:items-center justify-center">
         <div class="w-full grid lg:grid-cols-[1fr_auto] gap-4">
-            <Widget
-                image={preview}
-                showProcessedPreview={false}
-                emptyLabel={previewQuery.isError ? previewQuery.error.message : "Pick a mode and load a preview"}
-            />
+            <!-- Not stretched to a taller settings panel, so the frame keeps its aspect ratio -->
+            <div class="min-w-0 self-start">
+                <Widget
+                    image={preview}
+                    showProcessedPreview={false}
+                    emptyLabel={previewQuery.isError ? previewQuery.error.message : "Pick a mode and load a preview"}
+                />
+            </div>
 
             <aside class="p-4 border rounded min-w-64 lg:w-72 flex flex-col gap-4">
                 <h1 class="font-bold">Settings</h1>

@@ -52,11 +52,14 @@ $effect(() => {
     </div>
     <div class="flex-1 flex items-start lg:items-center justify-center">
         <div class="w-full grid lg:grid-cols-[1fr_auto] gap-4">
-            <Widget
-                image={previewQuery.data}
-                showProcessedPreview={false}
-                emptyLabel={previewQuery.isError ? previewQuery.error.message : "Loading the latest polls…"}
-            />
+            <!-- Not stretched to a taller settings panel, so the frame keeps its aspect ratio -->
+            <div class="min-w-0 self-start">
+                <Widget
+                    image={previewQuery.data}
+                    showProcessedPreview={false}
+                    emptyLabel={previewQuery.isError ? previewQuery.error.message : "Loading the latest polls…"}
+                />
+            </div>
 
             <aside class="p-4 border rounded min-w-64 lg:w-72 flex flex-col gap-4 text-sm">
                 <h1 class="font-bold text-base">Settings</h1>
