@@ -32,6 +32,14 @@ export const WIDGETS = {
 		description: "Upload an image to show it on the frame",
 		requires: undefined,
 	},
+	github: {
+		disabled: false,
+		name: "GitHub",
+		logoLight: "/logos/github_light.svg",
+		logoDark: "/logos/github_dark.svg",
+		description: "Show a user's public contributions, refreshed daily",
+		requires: undefined,
+	},
 	calendar: {
 		disabled: true,
 		name: "Calendar",
