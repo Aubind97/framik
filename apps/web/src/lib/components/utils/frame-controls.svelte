@@ -1,9 +1,10 @@
 <script lang="ts">
 import { SendHorizontal } from "@lucide/svelte";
-import { createQuery } from "@tanstack/svelte-query";
+import { createQuery, useQueryClient } from "@tanstack/svelte-query";
 import { toast } from "svelte-sonner";
 import { pushDaemonFrame } from "#lib/api/fetch/daemon.ts";
-import { getAllFramesQueryOptions } from "#lib/api/fetch/frame.ts";
+import { getAllFramesQueryOptions, scheduleFrame } from "#lib/api/fetch/frame.ts";
+import { getErrorMessage } from "#lib/api/fetch/index.ts";
 import { useActiveOrganization } from "#lib/auth-client.ts";
 import { Button } from "#lib/components/ui/button/index.ts";
 import FrameClearControl from "#lib/components/utils/frame-clear-control.svelte";
@@ -11,7 +12,17 @@ import FrameRefreshControl from "#lib/components/utils/frame-refresh-control.sve
 import FrameSelector from "#lib/components/utils/frame-selector.svelte";
 import type { Frame } from "#lib/server/db/types.ts";
 
-let { loadedImage, onSelectedFrame }: { loadedImage?: string | undefined; onSelectedFrame?: (frame: Frame | undefined) => void } = $props();
+let {
+	loadedImage,
+	schedule,
+	onSelectedFrame,
+}: {
+	loadedImage?: string | undefined;
+	schedule?: Parameters<typeof scheduleFrame>[1] | undefined;
+	onSelectedFrame?: (frame: Frame | undefined) => void;
+} = $props();
+
+const queryClient = useQueryClient();
 
 let activeOrganization = useActiveOrganization();
 
@@ -30,7 +41,18 @@ function handleChange(frame: Frame | undefined) {
 	selectedFrame = frame;
 }
 
+async function handleSchedule(frame: Frame, body: NonNullable<typeof schedule>) {
+	isProcessing = true;
+	const { error } = await scheduleFrame(frame.id, body);
+	isProcessing = false;
+	await queryClient.invalidateQueries({ queryKey: ["frames", frame.id, "schedule"] });
+
+	if (error) toast.error(getErrorMessage(error));
+	else toast.success(`"${frame.name}" updated, refreshed daily`);
+}
+
 async function handlePush() {
+	if (selectedFrame && schedule) return handleSchedule(selectedFrame, schedule);
 	if (selectedFrame && loadedImage) {
 		isProcessing = true;
 		const { error } = await pushDaemonFrame({
@@ -46,6 +68,7 @@ async function handlePush() {
 		}
 
 		isProcessing = false;
+		await queryClient.invalidateQueries({ queryKey: ["frames", selectedFrame.id, "schedule"] });
 		toast.success(`Image pushed to "${selectedFrame.name}"`);
 	}
 }
@@ -59,7 +82,13 @@ $effect(() => {
     <FrameSelector frames={framesQuery?.data ?? undefined} {handleChange} />
     <FrameClearControl frame={selectedFrame} />
     <FrameRefreshControl frame={selectedFrame} />
-    <Button variant="default" disabled={selectedFrame === undefined || isProcessing || !loadedImage} onclick={handlePush}>
+    <Button
+        variant="default"
+        disabled={selectedFrame === undefined || isProcessing || !(loadedImage || schedule)}
+        onclick={handlePush}
+        title={schedule ? "Push now and refresh daily" : "Push"}
+    >
         <SendHorizontal />
+        {#if schedule}Daily{/if}
     </Button>
 </header>

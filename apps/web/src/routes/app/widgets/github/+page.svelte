@@ -1,9 +1,9 @@
 <script lang="ts">
-import { CalendarSync, CalendarX } from "@lucide/svelte";
+import { CalendarX } from "@lucide/svelte";
 import { createQuery, useQueryClient } from "@tanstack/svelte-query";
 import { mode } from "mode-watcher";
 import { toast } from "svelte-sonner";
-import { getFrameScheduleQueryOptions, scheduleFrame, unscheduleFrame } from "#lib/api/fetch/frame.ts";
+import { getFrameScheduleQueryOptions, unscheduleFrame } from "#lib/api/fetch/frame.ts";
 import { getGithubPreviewQueryOptions } from "#lib/api/fetch/github.ts";
 import { getErrorMessage } from "#lib/api/fetch/index.ts";
 import { Button } from "#lib/components/ui/button/index.ts";
@@ -21,7 +21,6 @@ const queryClient = useQueryClient();
 let usernameInput = $state("");
 let username = $state("");
 let selectedFrame = $state<Frame | undefined>(undefined);
-let isProcessing = $state(false);
 
 const previewQuery = createQuery(() => ({ ...getGithubPreviewQueryOptions({ username }), enabled: !!username, retry: false }));
 const scheduleQuery = createQuery(() => ({
@@ -34,17 +33,6 @@ const preview = $derived(!username || previewQuery.isError ? null : previewQuery
 function handleLoad(event: SubmitEvent) {
 	event.preventDefault();
 	username = usernameInput.trim();
-}
-
-async function handleSchedule() {
-	if (!selectedFrame || !username) return;
-	isProcessing = true;
-	const { error } = await scheduleFrame(selectedFrame.id, { widget: "github", config: { username } });
-	isProcessing = false;
-	await queryClient.invalidateQueries({ queryKey: ["frames", selectedFrame.id, "schedule"] });
-
-	if (error) toast.error(getErrorMessage(error));
-	else toast.success(`"${selectedFrame.name}" now shows GitHub/${username}, refreshed daily`);
 }
 
 async function handleUnschedule() {
@@ -69,7 +57,7 @@ async function handleUnschedule() {
             </div>
         </div>
 
-        <FrameControls loadedImage={preview ?? undefined} onSelectedFrame={(frame) => (selectedFrame = frame)} />
+        <FrameControls schedule={preview ? { widget: "github", config: { username } } : undefined} onSelectedFrame={(frame) => (selectedFrame = frame)} />
     </div>
     <div class="flex-1 flex items-start lg:items-center justify-center">
         <div class="w-full grid lg:grid-cols-[1fr_auto] gap-4">
@@ -88,11 +76,6 @@ async function handleUnschedule() {
                         <Button type="submit" variant="secondary" disabled={!usernameInput.trim()}>Load</Button>
                     </div>
                 </form>
-
-                <Button disabled={!selectedFrame || !preview || isProcessing} onclick={handleSchedule}>
-                    <CalendarSync />
-                    Push & refresh daily
-                </Button>
 
                 {#if scheduleQuery.data}
                     <div class="flex flex-col gap-2 text-sm text-muted-foreground">
