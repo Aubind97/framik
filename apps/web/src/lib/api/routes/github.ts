@@ -17,6 +17,7 @@ export const githubConfigSchema = t.Union([
 		commits: t.Integer({ minimum: 1, maximum: REPOSITORY_LIMITS.commits }),
 		pulls: t.Integer({ minimum: 0, maximum: REPOSITORY_LIMITS.pulls }),
 	}),
+	t.Object({ mode: t.Literal("releases") }),
 ]);
 
 export const githubRoutes = new Elysia({ prefix: "/github" })

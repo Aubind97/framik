@@ -7,6 +7,7 @@ import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
 import { db } from "#lib/server/db/index.ts";
 import { fetchContributions, renderContributionsSvg } from "#lib/server/github.ts";
 import { getGithubIntegration } from "#lib/server/github-integration.ts";
+import { fetchReleases, renderReleasesSvg } from "#lib/server/github-releases.ts";
 import { fetchRepositoryActivity, renderRepositorySvg } from "#lib/server/github-repository.ts";
 
 const CHECK_INTERVAL_MS = 5 * 60 * 1000;
@@ -18,7 +19,8 @@ async function renderGithubSvg(config: GithubConfig, userId: string): Promise<st
 
 	const integration = await getGithubIntegration(userId);
 	if (!integration) throw new Error("GitHub is not connected: add a token in account settings");
-	return renderRepositorySvg(await fetchRepositoryActivity(integration.token, config));
+	if (config.mode === "repository") return renderRepositorySvg(await fetchRepositoryActivity(integration.token, config));
+	return renderReleasesSvg(await fetchReleases(integration.token));
 }
 
 export async function renderGithubImage(config: GithubConfig, userId: string): Promise<string> {

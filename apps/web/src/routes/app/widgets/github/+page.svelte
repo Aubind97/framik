@@ -39,14 +39,34 @@ const scheduleQuery = createQuery(() => ({
 
 const hasToken = $derived(integrationQuery.data?.connected ?? false);
 const preview = $derived(!config || previewQuery.isError ? null : previewQuery.data);
-const draft = $derived<GithubConfig>(mode === "repository" ? { mode, repo: repo.trim(), commits, pulls } : { mode: "contributions", username: username.trim() });
+const draft = $derived(buildDraft());
 const draftError = $derived(validateGithubConfig(draft));
-const isFilled = $derived(
-	draft.mode === "contributions" ? !!draft.username : new RegExp(GITHUB_REPO_PATTERN).test(draft.repo) && Number.isInteger(draft.commits) && Number.isInteger(draft.pulls),
-);
+const isFilled = $derived(isComplete(draft));
 const canLoad = $derived(isFilled && !draftError && (!GITHUB_MODES[mode].needsToken || hasToken));
 // Serialised so a background refetch of the same schedule does not reset the fields
 const scheduledConfig = $derived(scheduleQuery.data ? JSON.stringify(scheduleQuery.data.config) : undefined);
+
+function buildDraft(): GithubConfig {
+	switch (mode) {
+		case "contributions":
+			return { mode, username: username.trim() };
+		case "repository":
+			return { mode, repo: repo.trim(), commits, pulls };
+		case "releases":
+			return { mode };
+	}
+}
+
+function isComplete(next: GithubConfig) {
+	switch (next.mode) {
+		case "contributions":
+			return !!next.username;
+		case "repository":
+			return new RegExp(GITHUB_REPO_PATTERN).test(next.repo) && Number.isInteger(next.commits) && Number.isInteger(next.pulls);
+		case "releases":
+			return true;
+	}
+}
 
 function applyConfig(next: GithubConfig) {
 	mode = next.mode;
@@ -61,7 +81,14 @@ function handleLoad(event: SubmitEvent) {
 }
 
 function describe(scheduled: GithubConfig) {
-	return scheduled.mode === "contributions" ? `GitHub/${scheduled.username}` : `${scheduled.repo} activity`;
+	switch (scheduled.mode) {
+		case "contributions":
+			return `GitHub/${scheduled.username}`;
+		case "repository":
+			return `${scheduled.repo} activity`;
+		case "releases":
+			return "your releases feed";
+	}
 }
 
 $effect(() => {
@@ -143,6 +170,8 @@ $effect(() => {
                             </div>
                         </div>
                         <p class="text-xs text-muted-foreground">Up to {REPOSITORY_LIMITS.rows} rows fit on the frame.</p>
+                    {:else if mode === "releases"}
+                        <p class="text-sm text-muted-foreground">The latest releases of the repositories you star or watch on GitHub.</p>
                     {/if}
 
                     {#if draftError}

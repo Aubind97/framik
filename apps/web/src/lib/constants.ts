@@ -37,7 +37,7 @@ export const WIDGETS = {
 		name: "GitHub",
 		logoLight: "/logos/github_light.svg",
 		logoDark: "/logos/github_dark.svg",
-		description: "Show a user's public contributions, refreshed daily",
+		description: "Show contributions, repository activity or releases on a frame",
 		requires: undefined,
 	},
 	calendar: {
