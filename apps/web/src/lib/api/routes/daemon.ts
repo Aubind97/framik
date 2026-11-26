@@ -1,6 +1,7 @@
-import { applyDitheringNode, toMeasuredColorsNode } from "@framik/shared/node";
+import { toMeasuredColorsNode } from "@framik/shared/node";
 import { getLogger } from "@logtape/logtape";
 import { Elysia, t } from "elysia";
+import { pushImageToDaemon } from "#lib/server/daemon.ts";
 
 const logger = getLogger(["@framik", "api", "daemon"]);
 
@@ -39,15 +40,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 	.post(
 		"/frame/push",
 		async ({ body }) => {
-			const base64Img = body.image;
-			const preparedImage = await applyDitheringNode(base64Img);
-
-			await fetch(`${body.daemonUrl}/frame/push`, {
-				method: "POST",
-				body: JSON.stringify({ base64Img: preparedImage }),
-				headers: { "Content-Type": "application/json" },
-			})
-				.then((res) => res.text())
+			await pushImageToDaemon(body.daemonUrl, body.image)
 				.then((res) => {
 					logger.info`Image push response: ${res}`;
 				})

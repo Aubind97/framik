@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { type ContributionDay, getContributionStats, parseContributions } from "./github.ts";
+import { type ContributionDay, getContributionStats, parseContributions, renderContributionsSvg } from "./github.ts";
 
 const day = (id: string, date: string, level: number) =>
 	`<td tabindex="0" data-ix="0" aria-describedby="contribution-graph-legend-level-${level}" style="width: 10px" data-date="${date}" id="${id}" data-level="${level}" role="gridcell" data-view-component="true" class="ContributionCalendar-day">`;
@@ -40,5 +40,14 @@ describe("getContributionStats", () => {
 
 	test("a gap before today ends the streak", () => {
 		expect(getContributionStats(days([5, 0, 0])).currentStreak).toBe(0);
+	});
+});
+
+describe("renderContributionsSvg", () => {
+	test("draws one cell per day and the stats", () => {
+		const svg = renderContributionsSvg("octocat", days([1, 0, 4]));
+		expect(svg.match(/<rect x=/g)).toHaveLength(3);
+		expect(svg).toContain("GitHub/octocat");
+		expect(svg).toContain(">5</text>");
 	});
 });
