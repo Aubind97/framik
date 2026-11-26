@@ -32,19 +32,27 @@ export const WIDGETS = {
 		description: "Upload an image to show it on the frame",
 		requires: undefined,
 	},
-	calendar: {
-		disabled: true,
-		name: "Calendar",
-		logoLight: undefined,
-		logoDark: undefined,
-		description: "Show your agenda using calDav urls",
+	github: {
+		disabled: false,
+		name: "GitHub",
+		logoLight: "/logos/github_light.svg",
+		logoDark: "/logos/github_dark.svg",
+		description: "Show contributions, repository activity or releases on a frame",
+		requires: undefined,
+	},
+	presidential_2027: {
+		disabled: false,
+		name: "Présidentielle 2027",
+		logoLight: "/logos/presidential_light.svg",
+		logoDark: "/logos/presidential_dark.svg",
+		description: "Poll average for the 2027 French presidential election, from Wikipedia",
 		requires: undefined,
 	},
 	weather: {
-		disabled: true,
+		disabled: false,
 		name: "Weather",
-		logoLight: undefined,
-		logoDark: undefined,
+		logoLight: "/logos/weather_light.svg",
+		logoDark: "/logos/weather_dark.svg",
 		description: "Display the current and forecasted weather",
 		requires: undefined,
 	},
@@ -53,6 +61,10 @@ export const WIDGETS = {
 export const INTEGRATIONS = {
 	immich: {
 		name: "Immich",
+		settingsUrl: "/app/account/settings",
+	},
+	github: {
+		name: "GitHub",
 		settingsUrl: "/app/account/settings",
 	},
 } as const;

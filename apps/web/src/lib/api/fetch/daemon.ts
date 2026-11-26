@@ -18,6 +18,7 @@ export function getOnFrameImageQueryOption(params: { daemonUrl: string }, fetch?
 export function pushDaemonFrame(
 	body: {
 		daemonUrl: string;
+		frameId?: string;
 		image: string;
 		options?:
 			| {

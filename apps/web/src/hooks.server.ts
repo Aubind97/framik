@@ -3,6 +3,7 @@ import type { ServerInit } from "@sveltejs/kit/hooks";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { auth } from "#lib/auth.ts";
 import type { AuthSession, AuthUser } from "#lib/server/db/types.ts";
+import { startFrameScheduler } from "#lib/server/frame-schedule.ts";
 import { building } from "$app/env";
 
 export async function handle({ event, resolve }) {
@@ -48,4 +49,6 @@ export const init: ServerInit = async () => {
 			{ category: ["@framik"], lowestLevel: "debug", sinks: ["console"] },
 		],
 	});
+
+	if (!building) startFrameScheduler();
 };

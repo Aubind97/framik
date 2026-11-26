@@ -14,3 +14,17 @@ export const immichIntegration = sqliteTable("immich_integration", {
 		.$defaultFn(() => /* @__PURE__ */ new Date())
 		.notNull(),
 });
+
+export const githubIntegration = sqliteTable("github_integration", {
+	userId: text("user_id")
+		.primaryKey()
+		.references(() => user.id, { onDelete: "cascade" }),
+	login: text("login").notNull(),
+	secret: text("secret").notNull(),
+	createdAt: integer("created_at", { mode: "timestamp" })
+		.$defaultFn(() => /* @__PURE__ */ new Date())
+		.notNull(),
+	updatedAt: integer("updated_at", { mode: "timestamp" })
+		.$defaultFn(() => /* @__PURE__ */ new Date())
+		.notNull(),
+});

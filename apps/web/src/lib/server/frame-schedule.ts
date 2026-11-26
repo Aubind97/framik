@@ -1,0 +1,92 @@
+import { getLogger } from "@logtape/logtape";
+import { eq } from "drizzle-orm";
+import type { GithubConfig } from "#lib/github.ts";
+import type { PresidentialConfig } from "#lib/presidential.ts";
+import { isScheduleDue, type ScheduledWidget, scheduleRefresh } from "#lib/schedule.ts";
+import { pushImageToDaemon } from "#lib/server/daemon.ts";
+import { frame } from "#lib/server/db/frame.schema.ts";
+import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
+import { db } from "#lib/server/db/index.ts";
+import { fetchContributions, fetchUserAvatar, renderContributionsSvg } from "#lib/server/github.ts";
+import { getGithubIntegration } from "#lib/server/github-integration.ts";
+import { fetchReleases, renderReleasesSvg } from "#lib/server/github-releases.ts";
+import { fetchRepositoryActivity, renderRepositorySvg } from "#lib/server/github-repository.ts";
+import { fetchPollPage, renderRankingSvg, renderTrendSvg, summarizePolls, summarizeTrend, withLeaderPhotos } from "#lib/server/presidential.ts";
+import { fetchForecast, renderWeatherSvg } from "#lib/server/weather.ts";
+import type { WeatherConfig } from "#lib/weather.ts";
+
+const CHECK_INTERVAL_MS = 5 * 60 * 1000;
+
+const logger = getLogger(["@framik", "server", "frame-schedule"]);
+
+async function renderGithubSvg(config: GithubConfig, userId: string): Promise<string> {
+	if (config.mode === "contributions") {
+		const [days, avatar] = await Promise.all([fetchContributions(config.username), config.icon === "avatar" ? fetchUserAvatar(config.username) : null]);
+		return renderContributionsSvg(config.username, days, avatar);
+	}
+
+	const integration = await getGithubIntegration(userId);
+	if (!integration) throw new Error("Add a GitHub token in your account settings to use this mode");
+	if (config.mode === "repository") return renderRepositorySvg(await fetchRepositoryActivity(integration.token, config));
+	return renderReleasesSvg(await fetchReleases(integration.token));
+}
+
+const toBase64 = (svg: string) => Buffer.from(svg).toString("base64");
+
+export async function renderGithubImage(config: GithubConfig, userId: string): Promise<string> {
+	return toBase64(await renderGithubSvg(config, userId));
+}
+
+export async function renderPresidentialImage(config: PresidentialConfig): Promise<string> {
+	const { candidates, polls } = await fetchPollPage();
+	if (config.mode === "trend") return toBase64(renderTrendSvg(summarizeTrend(candidates, polls)));
+	return toBase64(renderRankingSvg(await withLeaderPhotos(summarizePolls(candidates, polls))));
+}
+
+export async function renderWeatherImage(config: WeatherConfig): Promise<string> {
+	return toBase64(renderWeatherSvg(config, await fetchForecast(config)));
+}
+
+function renderScheduledImage(schedule: ScheduledWidget, userId: string) {
+	switch (schedule.widget) {
+		case "github":
+			return renderGithubImage(schedule.config, userId);
+		case "presidential_2027":
+			return renderPresidentialImage(schedule.config);
+		case "weather":
+			return renderWeatherImage(schedule.config);
+	}
+}
+
+export async function runFrameSchedule(frameId: string) {
+	const [row] = await db
+		.select({ apiUrl: frame.apiUrl, widget: frameSchedule.widget, config: frameSchedule.config, userId: frameSchedule.userId })
+		.from(frameSchedule)
+		.innerJoin(frame, eq(frame.id, frameSchedule.frameId))
+		.where(eq(frameSchedule.frameId, frameId));
+	if (!row) return;
+
+	await pushImageToDaemon(row.apiUrl, await renderScheduledImage({ widget: row.widget, config: row.config } as ScheduledWidget, row.userId));
+	await db.update(frameSchedule).set({ lastPushedAt: new Date(), updatedAt: new Date() }).where(eq(frameSchedule.frameId, frameId));
+	logger.info`Scheduled push to frame ${frameId} done`;
+}
+
+async function runDueSchedules() {
+	const schedules = await db
+		.select({ frameId: frameSchedule.frameId, widget: frameSchedule.widget, config: frameSchedule.config, lastPushedAt: frameSchedule.lastPushedAt })
+		.from(frameSchedule);
+
+	for (const { frameId, widget, config, lastPushedAt } of schedules) {
+		if (!isScheduleDue(scheduleRefresh({ widget, config } as ScheduledWidget), lastPushedAt)) continue;
+		await runFrameSchedule(frameId).catch((error) => logger.error`Scheduled push to frame ${frameId} failed: ${error}`);
+	}
+}
+
+export function startFrameScheduler() {
+	// Dev HMR re-runs the server init; one timer is enough
+	const scope = globalThis as { framikScheduler?: ReturnType<typeof setInterval> };
+	if (scope.framikScheduler) return;
+
+	scope.framikScheduler = setInterval(() => runDueSchedules().catch((error) => logger.error`Schedule check failed: ${error}`), CHECK_INTERVAL_MS);
+	runDueSchedules().catch((error) => logger.error`Schedule check failed: ${error}`);
+}

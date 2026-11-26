@@ -2,7 +2,7 @@
 	"name": "@framik/daemon",
 	"private": true,
 	"scripts": {
-		"dev": "SKIP_FRAME_UPDATE=true go run .",
+		"dev": "PORT=3001 SKIP_FRAME_UPDATE=true go run .",
 		"build": "GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o dist/framik-daemon .",
 		"test": "go test ./..."
 	}

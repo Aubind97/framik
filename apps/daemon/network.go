@@ -168,7 +168,7 @@ func leaveSetup() {
 	if img, err := loadCurrent(); err == nil {
 		showBlocking(false, pack(img))
 	} else {
-		showBlocking(false, pack(connectedScreen("http://"+localIP()+":3000")))
+		showBlocking(false, pack(connectedScreen("http://"+localIP()+":"+port)))
 	}
 }
 

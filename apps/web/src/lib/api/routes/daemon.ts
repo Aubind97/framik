@@ -1,6 +1,10 @@
-import { applyDitheringNode, toMeasuredColorsNode } from "@framik/shared/node";
+import { toMeasuredColorsNode } from "@framik/shared/node";
 import { getLogger } from "@logtape/logtape";
+import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
+import { pushImageToDaemon } from "#lib/server/daemon.ts";
+import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
+import { db } from "#lib/server/db/index.ts";
 
 const logger = getLogger(["@framik", "api", "daemon"]);
 
@@ -39,17 +43,11 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 	.post(
 		"/frame/push",
 		async ({ body }) => {
-			const base64Img = body.image;
-			const preparedImage = await applyDitheringNode(base64Img);
-
-			await fetch(`${body.daemonUrl}/frame/push`, {
-				method: "POST",
-				body: JSON.stringify({ base64Img: preparedImage }),
-				headers: { "Content-Type": "application/json" },
-			})
-				.then((res) => res.text())
-				.then((res) => {
+			await pushImageToDaemon(body.daemonUrl, body.image)
+				.then(async (res) => {
 					logger.info`Image push response: ${res}`;
+					// A manual push replaces whatever widget the frame was scheduled with
+					if (body.frameId) await db.delete(frameSchedule).where(eq(frameSchedule.frameId, body.frameId));
 				})
 				.catch((error) => {
 					logger.error`Image push error: ${error}`;
@@ -59,6 +57,7 @@ export const daemonRoutes = new Elysia({ prefix: "/daemon" })
 		{
 			body: t.Object({
 				daemonUrl: t.String({ format: "uri" }),
+				frameId: t.Optional(t.String()),
 				image: t.String(),
 				options: t.Optional(
 					t.Object({

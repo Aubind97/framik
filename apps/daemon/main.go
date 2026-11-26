@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -29,6 +30,7 @@ var (
 	updatePanel = epdUpdate
 	frameMu     sync.Mutex
 	lastUpdate  atomic.Int64
+	port        = cmp.Or(os.Getenv("PORT"), "3000")
 )
 
 func withFrameLock(task func() error) (bool, error) {
@@ -165,7 +167,7 @@ func main() {
 		json.NewEncoder(w).Encode(map[string]any{"online": true, "version": version})
 	})
 
-	srv := &http.Server{Addr: ":3000", Handler: mux, ReadHeaderTimeout: 30 * time.Second, IdleTimeout: 30 * time.Second}
+	srv := &http.Server{Addr: ":" + port, Handler: mux, ReadHeaderTimeout: 30 * time.Second, IdleTimeout: 30 * time.Second}
 	slog.Info("server running", "addr", srv.Addr)
 	if err := srv.ListenAndServe(); err != nil {
 		slog.Error("server stopped", "err", err)

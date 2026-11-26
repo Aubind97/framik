@@ -22,6 +22,8 @@ COPY packages/shared/package.json packages/shared/
 RUN bun install --frozen-lockfile --production --omit=peer --ignore-scripts
 
 FROM oven/bun:1.4.4-alpine
+# sharp renders SVG text (GitHub widget) through fontconfig; Alpine ships no fonts
+RUN apk add --no-cache font-dejavu
 ENV NODE_ENV=production \
 	PORT=3000 \
 	DATABASE_URL=file:/data/framik.db
