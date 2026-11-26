@@ -47,12 +47,20 @@ const canLoad = $derived(isFilled && !draftError && (!GITHUB_MODES[mode].needsTo
 // Serialised so a background refetch of the same schedule does not reset the fields
 const scheduledConfig = $derived(scheduleQuery.data ? JSON.stringify(scheduleQuery.data.config) : undefined);
 
+/** Accepts `owner/name` or a pasted GitHub URL. */
+function toRepoName(input: string) {
+	return input
+		.trim()
+		.replace(/^(https?:\/\/)?(www\.)?github\.com\//, "")
+		.replace(/(\.git)?\/*$/, "");
+}
+
 function buildDraft(): GithubConfig {
 	switch (mode) {
 		case "contributions":
 			return { mode, username: username.trim() };
 		case "repository":
-			return { mode, repo: repo.trim(), commits, pulls };
+			return { mode, repo: toRepoName(repo), commits, pulls };
 		case "releases":
 			return { mode };
 	}
@@ -158,6 +166,7 @@ $effect(() => {
                         <div class="flex flex-col gap-2">
                             <Label for="{id}-repo">Repository</Label>
                             <Input id="{id}-repo" bind:value={repo} placeholder="owner/name" autocomplete="off" list="{id}-repos" />
+                            <p class="text-xs text-muted-foreground">Pick one of yours, or type any public repository as owner/name or its GitHub URL.</p>
                             <datalist id="{id}-repos">
                                 {#each reposQuery.data ?? [] as name (name)}
                                     <option value={name}></option>

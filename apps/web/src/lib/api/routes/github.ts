@@ -4,7 +4,7 @@ import { Elysia, t } from "elysia";
 import { auth } from "#lib/auth.ts";
 import { GITHUB_REPO_PATTERN, GITHUB_USERNAME_PATTERN, REPOSITORY_LIMITS, validateGithubConfig } from "#lib/github.ts";
 import { renderGithubImage } from "#lib/server/frame-schedule.ts";
-import { githubGraphql } from "#lib/server/github-api.ts";
+import { githubGraphql, githubRest } from "#lib/server/github-api.ts";
 import { deleteGithubIntegration, getGithubIntegration, saveGithubIntegration } from "#lib/server/github-integration.ts";
 
 const logger = getLogger(["@framik", "api", "github"]);
@@ -56,11 +56,9 @@ export const githubRoutes = new Elysia({ prefix: "/github" })
 		const integration = await getGithubIntegration(userId);
 		if (!integration) return status("Precondition Failed", "GitHub is not connected");
 
-		const { viewer } = await githubGraphql<{ viewer: { repositories: { nodes: { nameWithOwner: string }[] } } }>(
-			integration.token,
-			"query { viewer { repositories(first: 100, orderBy: { field: PUSHED_AT, direction: DESC }, affiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER]) { nodes { nameWithOwner } } } }",
-		);
-		return viewer.repositories.nodes.map((repository) => repository.nameWithOwner);
+		// REST, not GraphQL: GraphQL's ORGANIZATION_MEMBER affiliation skips repos reached through the org's base permission
+		const repositories = await githubRest<{ full_name: string }[]>(integration.token, "/user/repos?affiliation=owner,collaborator,organization_member&sort=pushed&per_page=100");
+		return repositories.map((repository) => repository.full_name);
 	})
 	.post(
 		"/preview",
