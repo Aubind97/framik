@@ -1,4 +1,5 @@
 export const GITHUB_TOKEN_URL = "https://github.com/settings/personal-access-tokens/new";
+export const GITHUB_CLASSIC_TOKEN_URL = "https://github.com/settings/tokens/new?scopes=repo&description=Framik";
 
 export const GITHUB_TOKEN_PERMISSIONS = [
 	{ scope: "Repository", name: "Metadata", usage: "Read stars, forks and owners" },
