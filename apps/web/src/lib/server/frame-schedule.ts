@@ -12,6 +12,8 @@ import { getGithubIntegration } from "#lib/server/github-integration.ts";
 import { fetchReleases, renderReleasesSvg } from "#lib/server/github-releases.ts";
 import { fetchRepositoryActivity, renderRepositorySvg } from "#lib/server/github-repository.ts";
 import { fetchPollPage, renderRankingSvg, renderTrendSvg, summarizePolls, summarizeTrend, withLeaderPhotos } from "#lib/server/presidential.ts";
+import { fetchForecast, renderWeatherSvg } from "#lib/server/weather.ts";
+import type { WeatherConfig } from "#lib/weather.ts";
 
 const CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
@@ -41,8 +43,19 @@ export async function renderPresidentialImage(config: PresidentialConfig): Promi
 	return toBase64(renderRankingSvg(await withLeaderPhotos(summarizePolls(candidates, polls))));
 }
 
+export async function renderWeatherImage(config: WeatherConfig): Promise<string> {
+	return toBase64(renderWeatherSvg(config, await fetchForecast(config)));
+}
+
 function renderScheduledImage(schedule: ScheduledWidget, userId: string) {
-	return schedule.widget === "github" ? renderGithubImage(schedule.config, userId) : renderPresidentialImage(schedule.config);
+	switch (schedule.widget) {
+		case "github":
+			return renderGithubImage(schedule.config, userId);
+		case "presidential_2027":
+			return renderPresidentialImage(schedule.config);
+		case "weather":
+			return renderWeatherImage(schedule.config);
+	}
 }
 
 export async function runFrameSchedule(frameId: string) {

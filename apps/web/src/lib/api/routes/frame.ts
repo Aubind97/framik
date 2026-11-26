@@ -4,6 +4,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { githubConfigSchema } from "#lib/api/routes/github.ts";
 import { presidentialConfigSchema } from "#lib/api/routes/presidential.ts";
+import { weatherConfigSchema } from "#lib/api/routes/weather.ts";
 import { auth } from "#lib/auth.ts";
 import { validateGithubConfig } from "#lib/github.ts";
 import { frame } from "#lib/server/db/frame.schema.ts";
@@ -113,6 +114,7 @@ export const frameRoutes = new Elysia({ prefix: "/frames" })
 			body: t.Union([
 				t.Object({ widget: t.Literal("github"), config: githubConfigSchema }),
 				t.Object({ widget: t.Literal("presidential_2027"), config: presidentialConfigSchema }),
+				t.Object({ widget: t.Literal("weather"), config: weatherConfigSchema }),
 			]),
 		},
 	);

@@ -21,9 +21,12 @@ describe("isScheduleDue", () => {
 });
 
 describe("scheduleRefresh", () => {
-	test("follows the GitHub mode, and the presidential widget is daily", () => {
+	test("follows the GitHub mode, and presidential is daily, weather hourly", () => {
 		expect(scheduleRefresh({ widget: "github", config: { mode: "releases" } })).toBe("Hourly");
 		expect(scheduleRefresh({ widget: "github", config: { mode: "contributions", username: "a", icon: "github" } })).toBe("Daily");
 		expect(scheduleRefresh({ widget: "presidential_2027", config: { mode: "trend" } })).toBe("Daily");
+		expect(
+			scheduleRefresh({ widget: "weather", config: { name: "Paris", region: "", country: "France", latitude: 48.85, longitude: 2.35, unit: "celsius", forecast: "none" } }),
+		).toBe("Hourly");
 	});
 });

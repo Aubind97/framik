@@ -4,8 +4,9 @@ import { frameRoutes } from "#lib/api/routes/frame.ts";
 import { githubRoutes } from "#lib/api/routes/github.ts";
 import { immichRoutes } from "#lib/api/routes/immich.ts";
 import { presidentialRoutes } from "#lib/api/routes/presidential.ts";
+import { weatherRoutes } from "#lib/api/routes/weather.ts";
 
-const app = new Elysia({ prefix: "/api" }).use(frameRoutes).use(daemonRoutes).use(immichRoutes).use(githubRoutes).use(presidentialRoutes);
+const app = new Elysia({ prefix: "/api" }).use(frameRoutes).use(daemonRoutes).use(immichRoutes).use(githubRoutes).use(presidentialRoutes).use(weatherRoutes);
 
 type RequestHandler = (v: { request: Request }) => Response | Promise<Response>;
 

@@ -11,7 +11,7 @@ export const frameSchedule = sqliteTable("frame_schedule", {
 	userId: text("user_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
-	widget: text("widget", { enum: ["github", "presidential_2027"] }).notNull(),
+	widget: text("widget", { enum: ["github", "presidential_2027", "weather"] }).notNull(),
 	config: text("config", { mode: "json" }).$type<ScheduledWidget["config"]>().notNull(),
 	lastPushedAt: integer("last_pushed_at", { mode: "timestamp" }),
 	createdAt: integer("created_at", { mode: "timestamp" })

@@ -1,11 +1,22 @@
 import { GITHUB_MODES, type GithubConfig } from "#lib/github.ts";
 import type { PresidentialConfig } from "#lib/presidential.ts";
+import type { WeatherConfig } from "#lib/weather.ts";
 
-export type ScheduledWidget = { widget: "github"; config: GithubConfig } | { widget: "presidential_2027"; config: PresidentialConfig };
+export type ScheduledWidget =
+	| { widget: "github"; config: GithubConfig }
+	| { widget: "presidential_2027"; config: PresidentialConfig }
+	| { widget: "weather"; config: WeatherConfig };
 export type Refresh = "Daily" | "Hourly";
 
 export function scheduleRefresh(schedule: ScheduledWidget): Refresh {
-	return schedule.widget === "github" ? GITHUB_MODES[schedule.config.mode].refresh : "Daily";
+	switch (schedule.widget) {
+		case "github":
+			return GITHUB_MODES[schedule.config.mode].refresh;
+		case "presidential_2027":
+			return "Daily";
+		case "weather":
+			return "Hourly";
+	}
 }
 
 const HOUR_MS = 60 * 60 * 1000;
