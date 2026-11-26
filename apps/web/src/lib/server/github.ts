@@ -1,3 +1,5 @@
+import { avatarImage, fetchAvatar } from "#lib/server/svg.ts";
+
 export type ContributionDay = { date: string; count: number; level: number };
 export type ContributionStats = { total: number; currentStreak: number; longestStreak: number };
 
@@ -64,14 +66,16 @@ const GITHUB_MARK =
 const utcDate = (date: string) => new Date(`${date}T00:00:00Z`);
 
 // username must already match GITHUB_USERNAME_PATTERN (#lib/github.ts): it is inlined in the SVG unescaped
-export function renderContributionsSvg(username: string, days: ContributionDay[]): string {
+export function renderContributionsSvg(username: string, days: ContributionDay[], avatar: string | null = null): string {
 	const { total, currentStreak, longestStreak } = getContributionStats(days);
 	const firstWeekday = days.length ? utcDate(days[0].date).getUTCDay() : 0;
 	const weeks = Math.ceil((days.length + firstWeekday) / 7);
 	const gridX = (WIDTH - weeks * PITCH + (PITCH - CELL)) / 2;
 	const gridY = 345;
 	// ponytail: title width estimated at ~17px per DejaVu character; measure with a font lib if centring looks off
-	const titleX = (WIDTH - 50 - `GitHub/${username}`.length * 17) / 2;
+	const avatarWidth = avatar ? 62 : 0;
+	const avatarX = (WIDTH - avatarWidth - 50 - `GitHub/${username}`.length * 17) / 2;
+	const titleX = avatarX + avatarWidth;
 
 	const cells: string[] = [];
 	const months: string[] = [];
@@ -94,6 +98,7 @@ export function renderContributionsSvg(username: string, days: ContributionDay[]
 
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" font-family="DejaVu Sans, sans-serif" fill="#000">
 <rect width="${WIDTH}" height="${HEIGHT}" fill="#fff"/>
+${avatarImage("avatar", avatar, avatarX, 42, 48)}
 <g transform="translate(${titleX} 48) scale(2.5)"><path d="${GITHUB_MARK}"/></g>
 <text x="${titleX + 50}" y="84" font-size="36">GitHub/${username}</text>
 ${stat(WIDTH / 6, "Contributions", total)}
@@ -103,3 +108,5 @@ ${months.join("\n")}
 ${cells.join("\n")}
 </svg>`;
 }
+
+export const fetchUserAvatar = (username: string) => fetchAvatar(`https://avatars.githubusercontent.com/${encodeURIComponent(username)}?s=96`);

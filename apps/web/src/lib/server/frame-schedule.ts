@@ -5,7 +5,7 @@ import { pushImageToDaemon } from "#lib/server/daemon.ts";
 import { frame } from "#lib/server/db/frame.schema.ts";
 import { frameSchedule } from "#lib/server/db/frame-schedule.schema.ts";
 import { db } from "#lib/server/db/index.ts";
-import { fetchContributions, renderContributionsSvg } from "#lib/server/github.ts";
+import { fetchContributions, fetchUserAvatar, renderContributionsSvg } from "#lib/server/github.ts";
 import { getGithubIntegration } from "#lib/server/github-integration.ts";
 import { fetchReleases, renderReleasesSvg } from "#lib/server/github-releases.ts";
 import { fetchRepositoryActivity, renderRepositorySvg } from "#lib/server/github-repository.ts";
@@ -15,7 +15,10 @@ const CHECK_INTERVAL_MS = 5 * 60 * 1000;
 const logger = getLogger(["@framik", "server", "frame-schedule"]);
 
 async function renderGithubSvg(config: GithubConfig, userId: string): Promise<string> {
-	if (config.mode === "contributions") return renderContributionsSvg(config.username, await fetchContributions(config.username));
+	if (config.mode === "contributions") {
+		const [days, avatar] = await Promise.all([fetchContributions(config.username), fetchUserAvatar(config.username)]);
+		return renderContributionsSvg(config.username, days, avatar);
+	}
 
 	const integration = await getGithubIntegration(userId);
 	if (!integration) throw new Error("Add a GitHub token in your account settings to use this mode");
