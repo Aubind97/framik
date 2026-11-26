@@ -1,5 +1,5 @@
 <script lang="ts">
-import { KeyRound, UserRound } from "@lucide/svelte";
+import { KeyRound } from "@lucide/svelte";
 import { createQuery } from "@tanstack/svelte-query";
 import { mode as theme } from "mode-watcher";
 import { getFrameScheduleQueryOptions } from "#lib/api/fetch/frame.ts";
@@ -8,7 +8,7 @@ import { Button } from "#lib/components/ui/button/index.ts";
 import { Input } from "#lib/components/ui/input/index.ts";
 import Label from "#lib/components/ui/label/label.svelte";
 import * as Select from "#lib/components/ui/select/index.ts";
-import { Toggle } from "#lib/components/ui/toggle/index.ts";
+import { Switch } from "#lib/components/ui/switch/index.ts";
 import FrameControls from "#lib/components/utils/frame-controls.svelte";
 import Widget from "#lib/components/widgets/core/widget.svelte";
 import { INTEGRATIONS, WIDGETS } from "#lib/constants.ts";
@@ -170,12 +170,10 @@ $effect(() => {
                             <Label for="{id}-username">GitHub username</Label>
                             <Input id="{id}-username" bind:value={username} placeholder="octocat" autocomplete="off" />
                         </div>
-                        <Label>
-                            <Toggle variant="outline" aria-label="Show the user's avatar" pressed={icon === "avatar"} onPressedChange={handleIconChange}>
-                                <UserRound class="size-4" />
-                            </Toggle>
-                            Show the user's avatar instead of the GitHub logo
-                        </Label>
+                        <div class="flex items-center justify-between gap-3">
+                            <Label for="{id}-avatar" class="font-normal">Show the user's avatar instead of the GitHub logo</Label>
+                            <Switch id="{id}-avatar" checked={icon === "avatar"} onCheckedChange={handleIconChange} />
+                        </div>
                     {:else if mode === "repository"}
                         <div class="flex flex-col gap-2">
                             <Label for="{id}-repo">Repository</Label>
